@@ -22,3 +22,5 @@
 [Miro](https://miro.com/app/board/uXjVPgHy0fg=/?share_link_id=897598389692)
 
 [Диаграммы](https://github.com/ilyastaver/messenger_project/tree/main/Диаграмм)
+
+[Trello](https://trello.com/b/xPTp0wMz/веб-приложение-мессенджер)
