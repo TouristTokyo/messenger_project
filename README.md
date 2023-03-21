@@ -3,11 +3,11 @@
 
 Выполняют студенты 5.1:
 
-1.[Ставер Илья](https://github.com/ilyastaver)
+1. [Ставер Илья](https://github.com/ilyastaver)
 
-2.[Шеменев Михаил](https://github.com/TouristTokyo)
+2. [Шеменев Михаил](https://github.com/TouristTokyo)
 
-3.Попов Максим
+3. [Попов Максим](https://github.com/maxembo)
 
 # Тема: Аналог мессенджера.
 
