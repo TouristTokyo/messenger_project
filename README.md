@@ -20,3 +20,4 @@
 Возможность репооста необходимых сообщений в раздел избранное в два клика;
 
 [Miro](https://miro.com/app/board/uXjVPgHy0fg=/?share_link_id=897598389692)
+[Диаграммы](https://github.com/ilyastaver/messenger_project/tree/main/Диаграмм)
