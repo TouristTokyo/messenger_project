@@ -5,7 +5,7 @@
 
 1.[Ставер Илья](https://github.com/ilyastaver)
 
-2.Шеменев Михаил
+2.[Шеменев Михаил](https://github.com/TouristTokyo)
 
 3.Попов Максим
 
