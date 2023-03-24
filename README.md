@@ -22,9 +22,9 @@
 # Визуализация проекта 
 1) [Miro](https://miro.com/app/board/uXjVPgHy0fg=/?share_link_id=897598389692)
 
-2) [Диаграммы](https://github.com/ilyastaver/messenger_project/tree/main/Diagrams)
+2) [Диаграммы](https://github.com/TouristTokyo/messenger_project/tree/main/Diagrams)
 
-3) [Документация](https://github.com/ilyastaver/messenger_project/tree/main/Documents)
+3) [Документация](https://github.com/TouristTokyor/messenger_project/tree/main/Documents)
 
 4) [Trello](https://trello.com/b/xPTp0wMz/веб-приложение-мессенджер)
 
