@@ -24,7 +24,7 @@
 
 2) [Диаграммы](https://github.com/TouristTokyo/messenger_project/tree/main/Diagrams)
 
-3) [Документация](https://github.com/TouristTokyor/messenger_project/tree/main/Documents)
+3) [Документация](https://github.com/TouristTokyo/messenger_project/tree/main/Documents)
 
 4) [Trello](https://trello.com/b/xPTp0wMz/веб-приложение-мессенджер)
 
