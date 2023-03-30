@@ -29,3 +29,5 @@
 4) [Trello](https://trello.com/b/xPTp0wMz/веб-приложение-мессенджер)
 
 5) [Figma](https://www.figma.com/file/TKYZGoCgf4RVoTxHGIkMBT/Messenger?node-id=0%3A1&t=gyPvwPvUUnbrJ0hj-1)
+
+6) [Видеопрезентация технического задания](https://youtu.be/BFVJCdGCEMA)
