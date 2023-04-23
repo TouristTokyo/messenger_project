@@ -31,3 +31,7 @@
 5) [Figma](https://www.figma.com/file/LBIOJMVFno7KNdw1x7hkke/Messenger?node-id=0%3A1&t=gMBF8YJx8i0pk3g9-1)
 
 6) [Видеопрезентация технического задания](https://youtu.be/BFVJCdGCEMA)
+
+# Визуализация проекта 
+
+[Figma](https://www.figma.com/file/LBIOJMVFno7KNdw1x7hkke/Messenger?node-id=0%3A1&t=gMBF8YJx8i0pk3g9-1)
