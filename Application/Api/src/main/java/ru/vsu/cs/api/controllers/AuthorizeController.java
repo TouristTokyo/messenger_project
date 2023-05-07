@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin
 public class AuthorizeController {
     private final UserService userService;
     private final SavedMessageService savedMessageService;
