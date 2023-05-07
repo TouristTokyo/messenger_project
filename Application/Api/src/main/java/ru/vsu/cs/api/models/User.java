@@ -31,4 +31,10 @@ public class User {
     @OneToMany(mappedBy = "userFirst")
     private List<Chat> chats;
 
+    @Transient
+    private List<Message> savedMessage;
+
+    @Transient
+    private List<Channel> channels;
+
 }
