@@ -5,7 +5,8 @@ CREATE TABLE users
     email    text NOT NULL,
     password text NOT NULL,
     image    bytea,
-    UNIQUE (name)
+    UNIQUE (name),
+    UNIQUE (email)
 );
 
 CREATE TABLE chats
