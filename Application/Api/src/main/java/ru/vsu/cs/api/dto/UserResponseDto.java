@@ -14,7 +14,7 @@ public class UserResponseDto {
     private String name;
     private String email;
     private String password;
-    private Byte[] image;
+    private byte[] image;
     private List<Chat> chats;
     private List<Channel> channels;
     private List<Message> savedMessages;
