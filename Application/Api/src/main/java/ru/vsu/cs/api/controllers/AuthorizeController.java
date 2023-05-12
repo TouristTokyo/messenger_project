@@ -12,6 +12,7 @@ import ru.vsu.cs.api.services.SavedMessageService;
 import ru.vsu.cs.api.services.UserService;
 import ru.vsu.cs.api.utils.ErrorResponse;
 import ru.vsu.cs.api.utils.exceptions.UserException;
+import ru.vsu.cs.api.utils.mapper.Mapper;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -45,38 +46,13 @@ public class AuthorizeController {
         user.setSavedMessage(savedMessages);
         user.setChannels(channels);
 
-        return new ResponseEntity<>(convertToUserResponseDto(user), HttpStatus.OK);
+        return new ResponseEntity<>(Mapper.convertToUserResponseDto(user), HttpStatus.OK);
     }
 
     @PostMapping("/register")
     public ResponseEntity<HttpStatus> register(@RequestBody UserCreationDto userCreationDto) {
-        userService.save(convertToUser(userCreationDto));
+        userService.save(Mapper.convertToUser(userCreationDto));
         return ResponseEntity.ok(HttpStatus.OK);
-    }
-
-    private UserResponseDto convertToUserResponseDto(User user) {
-        UserResponseDto userResponseDto = new UserResponseDto();
-
-        userResponseDto.setId(user.getId());
-        userResponseDto.setName(user.getName());
-        userResponseDto.setEmail(user.getEmail());
-        userResponseDto.setPassword(user.getPassword());
-        userResponseDto.setImage(user.getImage());
-        userResponseDto.setChats(user.getChats());
-        userResponseDto.setSavedMessages(user.getSavedMessage());
-        userResponseDto.setChannels(user.getChannels());
-
-        return userResponseDto;
-    }
-
-    private User convertToUser(UserCreationDto userCreationDto) {
-        User user = new User();
-
-        user.setName(userCreationDto.getName());
-        user.setEmail(userCreationDto.getEmail());
-        user.setPassword(userCreationDto.getPassword());
-
-        return user;
     }
 
     @ExceptionHandler

@@ -26,7 +26,7 @@ public class User {
     private String password;
 
     @Column(name = "image")
-    private Byte[] image;
+    private byte[] image;
 
     @OneToMany(mappedBy = "userFirst")
     private List<Chat> chats;
