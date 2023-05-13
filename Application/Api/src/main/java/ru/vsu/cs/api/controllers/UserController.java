@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.api.dto.UserResponseDto;
 import ru.vsu.cs.api.services.UserService;
@@ -19,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @CrossOrigin
+@ControllerAdvice
 public class UserController {
 
     public final UserService userService;
@@ -89,5 +91,14 @@ public class UserController {
                 LocalDate.now()
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler()
+    private ResponseEntity<ErrorResponse> fileMaxSizeException(MaxUploadSizeExceededException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDate.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.PAYLOAD_TOO_LARGE);
     }
 }
