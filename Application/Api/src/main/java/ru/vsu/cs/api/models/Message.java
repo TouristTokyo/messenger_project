@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "messages")
@@ -29,4 +30,7 @@ public class Message {
 
     @Column(name = "data")
     private String data;
+
+    @Column(name = "date")
+    private LocalDate date;
 }
