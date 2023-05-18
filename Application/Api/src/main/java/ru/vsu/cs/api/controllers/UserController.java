@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.vsu.cs.api.dto.UserResponseDto;
+import ru.vsu.cs.api.models.*;
+import ru.vsu.cs.api.services.ChatService;
+import ru.vsu.cs.api.services.MemberService;
+import ru.vsu.cs.api.services.SavedMessageService;
 import ru.vsu.cs.api.services.UserService;
 import ru.vsu.cs.api.utils.ErrorResponse;
 import ru.vsu.cs.api.utils.exceptions.UserException;
@@ -15,6 +19,7 @@ import ru.vsu.cs.api.utils.mapper.Mapper;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,21 +28,48 @@ import java.util.List;
 @ControllerAdvice
 public class UserController {
 
-    public final UserService userService;
+    private final UserService userService;
+    private final SavedMessageService savedMessageService;
+    private final MemberService memberService;
+
+    private final ChatService chatService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, SavedMessageService savedMessageService, MemberService memberService, ChatService chatService) {
         this.userService = userService;
+        this.savedMessageService = savedMessageService;
+        this.memberService = memberService;
+        this.chatService = chatService;
     }
 
     @GetMapping
     public List<UserResponseDto> getUsers() {
-        return userService.getUsers().stream().map(Mapper::convertToUserResponseDto).toList();
+        List<User> users = userService.getUsers();
+        List<UserResponseDto> response = new ArrayList<>();
+
+        users.forEach(user -> {
+            List<Chat> chats = chatService.getChatsByUser(user);
+            List<Message> messages = savedMessageService.getSavedMessageByUser(user)
+                    .stream()
+                    .map(SavedMessage::getMessage)
+                    .toList();
+            List<Channel> channels = memberService.getMembersByUser(user).stream().map(Member::getChannel).toList();
+
+            response.add(Mapper.convertToUserResponseDto(user, chats, messages, channels));
+        });
+
+        return response;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getProfile(@PathVariable("id") BigInteger id) {
-        return new ResponseEntity<>(Mapper.convertToUserResponseDto(userService.getById(id)), HttpStatus.OK);
+        User user = userService.getById(id);
+
+        return new ResponseEntity<>(Mapper.convertToUserResponseDto(
+                user, chatService.getChatsByUser(user),
+                savedMessageService.getSavedMessageByUser(user).stream().map(SavedMessage::getMessage).toList(),
+                memberService.getMembersByUser(user).stream().map(Member::getChannel).toList()
+        ), HttpStatus.OK);
     }
 
     @PutMapping(value = "/{id}/update/image", consumes = {"multipart/form-data"})
