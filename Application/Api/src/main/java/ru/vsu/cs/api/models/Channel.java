@@ -22,7 +22,4 @@ public class Channel {
 
     @Column(name = "name")
     private String name;
-
-    @OneToMany(mappedBy = "channel")
-    private List<Message> messages;
 }
