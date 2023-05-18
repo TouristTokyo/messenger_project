@@ -1,6 +1,6 @@
 package ru.vsu.cs.api.utils.mapper;
 
-import ru.vsu.cs.api.dto.ChatResponseDto;
+import ru.vsu.cs.api.dto.ChatMessageDto;
 import ru.vsu.cs.api.dto.UserCreationDto;
 import ru.vsu.cs.api.dto.UserResponseDto;
 import ru.vsu.cs.api.models.Channel;
@@ -8,7 +8,6 @@ import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.Message;
 import ru.vsu.cs.api.models.User;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Mapper {
@@ -47,14 +46,15 @@ public class Mapper {
         return chat;
     }
 
-    public static ChatResponseDto convertToChatResponseDto(Chat chat) {
-        ChatResponseDto chatResponseDto = new ChatResponseDto();
+    public static ChatMessageDto convertToChatMessageDto(Message message) {
+        ChatMessageDto chatMessageDto = new ChatMessageDto();
 
-        chatResponseDto.setId(chat.getId());
-        chatResponseDto.setCurrentUsername(chat.getUserFirst().getName());
-        chatResponseDto.setOtherUsername(chat.getUserSecond().getName());
-        chatResponseDto.setMessages(chat.getMessages());
+        chatMessageDto.setId(message.getId());
+        chatMessageDto.setChat(message.getChat());
+        chatMessageDto.setData(message.getData());
+        chatMessageDto.setAuthor(message.getSender());
+        chatMessageDto.setDate(message.getDate());
 
-        return chatResponseDto;
+        return chatMessageDto;
     }
 }

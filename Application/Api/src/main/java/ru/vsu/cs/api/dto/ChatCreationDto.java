@@ -6,4 +6,5 @@ import lombok.Data;
 public class ChatCreationDto {
     private String currentUsername;
     private String otherUsername;
+    private String message;
 }
