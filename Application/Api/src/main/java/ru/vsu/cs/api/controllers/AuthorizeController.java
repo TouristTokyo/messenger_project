@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,6 +8,7 @@ import ru.vsu.cs.api.dto.UserCreationDto;
 import ru.vsu.cs.api.dto.UserLoginDto;
 import ru.vsu.cs.api.dto.UserResponseDto;
 import ru.vsu.cs.api.models.*;
+import ru.vsu.cs.api.services.ChatService;
 import ru.vsu.cs.api.services.MemberService;
 import ru.vsu.cs.api.services.SavedMessageService;
 import ru.vsu.cs.api.services.UserService;
@@ -24,11 +26,14 @@ public class AuthorizeController {
     private final UserService userService;
     private final SavedMessageService savedMessageService;
     private final MemberService memberService;
+    private final ChatService chatService;
 
-    public AuthorizeController(UserService userService, SavedMessageService savedMessageService, MemberService memberService) {
+    @Autowired
+    public AuthorizeController(UserService userService, SavedMessageService savedMessageService, MemberService memberService, ChatService chatService) {
         this.userService = userService;
         this.savedMessageService = savedMessageService;
         this.memberService = memberService;
+        this.chatService = chatService;
     }
 
     @PostMapping("/login")
@@ -43,10 +48,9 @@ public class AuthorizeController {
                 .map(Member::getChannel)
                 .toList();
 
-        user.setSavedMessage(savedMessages);
-        user.setChannels(channels);
+        List<Chat> chats = chatService.getChatsByUser(user);
 
-        return new ResponseEntity<>(Mapper.convertToUserResponseDto(user), HttpStatus.OK);
+        return new ResponseEntity<>(Mapper.convertToUserResponseDto(user, chats, savedMessages, channels), HttpStatus.OK);
     }
 
     @PostMapping("/register")
