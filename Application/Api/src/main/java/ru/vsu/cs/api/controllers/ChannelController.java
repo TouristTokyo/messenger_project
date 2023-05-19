@@ -66,6 +66,31 @@ public class ChannelController {
         return new ResponseEntity<>(Mapper.convertToChannelMessageDto(message), HttpStatus.OK);
     }
 
+    @PostMapping("/join")
+    public ResponseEntity<HttpStatus> joinToChannel(@RequestParam("username") String username,
+                                                    @RequestParam("channel_name") String channelName) {
+        if (username == null || channelName == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        User user = userService.getUserByName(username);
+        Channel channel = channelService.getChannelByName(channelName);
+
+        Role role = roleService.save(new Role("member", false, false));
+
+        Member member = new Member(channel, user, role);
+        memberService.save(member);
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/update")
+    public ResponseEntity<HttpStatus> updateName(@PathVariable("id") BigInteger id,
+                                                  @RequestParam("name") String name) {
+        channelService.updateName(id, name);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ChannelResponseDto getChannel(@PathVariable("id") BigInteger id) {
         Channel channel = channelService.getChannelById(id);
