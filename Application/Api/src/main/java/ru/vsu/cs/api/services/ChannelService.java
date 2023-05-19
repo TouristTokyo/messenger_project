@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vsu.cs.api.models.Channel;
+import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.repositories.ChannelRepository;
 import ru.vsu.cs.api.utils.exceptions.ChannelException;
+import ru.vsu.cs.api.utils.exceptions.UserException;
 
 import java.math.BigInteger;
 
@@ -50,7 +52,13 @@ public class ChannelService {
 
     @Transactional
     public void updateName(BigInteger id, String name) {
+        Channel foundChannel = channelRepository.findByName(name).orElse(null);
         Channel channel = getChannelById(id);
+
+        if (foundChannel != null && !foundChannel.getId().equals(id)) {
+            throw new UserException("Exist channel with name: " + name);
+        }
+
         channel.setName(name);
         channelRepository.save(channel);
     }

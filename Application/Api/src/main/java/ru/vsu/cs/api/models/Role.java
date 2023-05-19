@@ -16,9 +16,6 @@ public class Role {
     private BigInteger id;
     @Column(name = "name")
     private String name;
- /*   @OneToOne
-    @JoinColumn(name = "member", referencedColumnName = "id")
-    private Member member;*/
     @Column(name = "is_admin")
     private Boolean isAdmin;
 
