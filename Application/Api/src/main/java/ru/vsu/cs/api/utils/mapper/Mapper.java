@@ -1,12 +1,7 @@
 package ru.vsu.cs.api.utils.mapper;
 
-import ru.vsu.cs.api.dto.ChatMessageDto;
-import ru.vsu.cs.api.dto.UserCreationDto;
-import ru.vsu.cs.api.dto.UserResponseDto;
-import ru.vsu.cs.api.models.Channel;
-import ru.vsu.cs.api.models.Chat;
-import ru.vsu.cs.api.models.Message;
-import ru.vsu.cs.api.models.User;
+import ru.vsu.cs.api.dto.*;
+import ru.vsu.cs.api.models.*;
 
 import java.util.List;
 
@@ -56,5 +51,29 @@ public class Mapper {
         chatMessageDto.setDate(message.getDate());
 
         return chatMessageDto;
+    }
+
+    public static ChannelResponseDto convertToChannelResponseDto(Channel channel, List<Member> members,
+                                                                 List<Message> messages) {
+        ChannelResponseDto channelResponseDto = new ChannelResponseDto();
+
+        channelResponseDto.setId(channel.getId());
+        channelResponseDto.setCreator(channel.getCreator());
+        channelResponseDto.setName(channel.getName());
+        channelResponseDto.setMembers(members);
+        channelResponseDto.setMessages(messages);
+        return channelResponseDto;
+    }
+
+    public static ChannelMessageDto convertToChannelMessageDto(Message message) {
+        ChannelMessageDto channelMessageDto = new ChannelMessageDto();
+
+        channelMessageDto.setId(message.getId());
+        channelMessageDto.setChannel(message.getChannel());
+        channelMessageDto.setData(message.getData());
+        channelMessageDto.setAuthor(message.getSender());
+        channelMessageDto.setDate(message.getDate());
+
+        return channelMessageDto;
     }
 }

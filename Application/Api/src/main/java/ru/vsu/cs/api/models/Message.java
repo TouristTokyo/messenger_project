@@ -42,4 +42,11 @@ public class Message {
         this.data = data;
         this.date = LocalDateTime.now();
     }
+
+    public Message(User sender, Channel channel, String data) {
+        this.sender = sender;
+        this.channel = channel;
+        this.data = data;
+        this.date = LocalDateTime.now();
+    }
 }

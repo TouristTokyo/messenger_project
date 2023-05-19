@@ -117,7 +117,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(UserException ex) {
+    private ResponseEntity<ErrorResponse> userException(UserException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now()

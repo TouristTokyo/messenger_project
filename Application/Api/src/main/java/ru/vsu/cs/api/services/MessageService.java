@@ -3,6 +3,7 @@ package ru.vsu.cs.api.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.vsu.cs.api.models.Channel;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.Message;
 import ru.vsu.cs.api.repositories.MessageRepository;
@@ -28,6 +29,10 @@ public class MessageService {
 
     public List<Message> getMessagesByChat(Chat chat){
         return messageRepository.findByChat(chat);
+    }
+
+    public List<Message> getMessagesByChannel(Channel channel){
+        return messageRepository.findByChannel(channel);
     }
 
     public Message getMessage(BigInteger id) {
