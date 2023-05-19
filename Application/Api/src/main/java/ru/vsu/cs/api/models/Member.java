@@ -24,5 +24,5 @@ public class Member {
     private User user;
 
     @OneToOne(mappedBy = "member")
-    Role role;
+    private Role role;
 }

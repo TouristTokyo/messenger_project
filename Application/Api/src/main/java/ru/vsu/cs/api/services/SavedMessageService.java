@@ -22,4 +22,9 @@ public class SavedMessageService {
     public List<SavedMessage> getSavedMessageByUser(User user) {
         return savedMessageRepository.findByUser(user);
     }
+
+    @Transactional
+    public void save(SavedMessage savedMessage){
+        savedMessageRepository.save(savedMessage);
+    }
 }

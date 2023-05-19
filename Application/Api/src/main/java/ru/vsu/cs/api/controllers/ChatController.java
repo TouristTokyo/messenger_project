@@ -6,19 +6,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.ChatCreationDto;
 import ru.vsu.cs.api.dto.ChatMessageDto;
+import ru.vsu.cs.api.dto.SavedMessageDto;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.Message;
+import ru.vsu.cs.api.models.SavedMessage;
 import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.services.ChatService;
 import ru.vsu.cs.api.services.MessageService;
+import ru.vsu.cs.api.services.SavedMessageService;
 import ru.vsu.cs.api.services.UserService;
 import ru.vsu.cs.api.utils.ErrorResponse;
 import ru.vsu.cs.api.utils.exceptions.ChatException;
+import ru.vsu.cs.api.utils.exceptions.MessageException;
 import ru.vsu.cs.api.utils.exceptions.UserException;
 import ru.vsu.cs.api.utils.mapper.Mapper;
 
 import java.math.BigInteger;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,12 +32,14 @@ public class ChatController {
     private final UserService userService;
     private final ChatService chatService;
     private final MessageService messageService;
+    private final SavedMessageService savedMessageService;
 
     @Autowired
-    public ChatController(UserService userService, ChatService chatService, MessageService messageService) {
+    public ChatController(UserService userService, ChatService chatService, MessageService messageService, SavedMessageService savedMessageService) {
         this.userService = userService;
         this.chatService = chatService;
         this.messageService = messageService;
+        this.savedMessageService = savedMessageService;
     }
 
     @PostMapping("/create")
@@ -84,11 +90,30 @@ public class ChatController {
         return new ResponseEntity<>(messages.stream().map(Mapper::convertToChatMessageDto).toList(), HttpStatus.OK);
     }
 
+    @PostMapping("/save_message")
+    public ResponseEntity<HttpStatus> saveMessage(@RequestBody SavedMessageDto savedMessageDto) {
+        User user = userService.getUserByName(savedMessageDto.getUsername());
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        savedMessageService.save(new SavedMessage(messageService.getMessage(savedMessageDto.getMessageId()), user));
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> handleException(UserException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
-                LocalDate.now()
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> messageException(MessageException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -98,7 +123,7 @@ public class ChatController {
     private ResponseEntity<ErrorResponse> chatException(ChatException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
-                LocalDate.now()
+                LocalDateTime.now()
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }

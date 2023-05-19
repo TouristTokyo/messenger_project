@@ -23,4 +23,8 @@ public class SavedMessage {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    public SavedMessage(Message message, User user) {
+        this.message = message;
+        this.user = user;
+    }
 }
