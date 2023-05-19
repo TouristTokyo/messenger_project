@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.Message;
 import ru.vsu.cs.api.repositories.MessageRepository;
+import ru.vsu.cs.api.utils.exceptions.MessageException;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -30,6 +31,10 @@ public class MessageService {
     }
 
     public Message getMessage(BigInteger id) {
-        return messageRepository.findById(id).orElse(null); //Возможно придётся сделать Exception
+        Message message = messageRepository.findById(id).orElse(null);
+        if(message == null){
+            throw new MessageException("Not found message with id: "+ id);
+        }
+        return message;
     }
 }

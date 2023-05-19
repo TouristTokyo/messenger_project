@@ -18,7 +18,7 @@ import ru.vsu.cs.api.utils.mapper.Mapper;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +120,7 @@ public class UserController {
     private ResponseEntity<ErrorResponse> handleException(UserException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
-                LocalDate.now()
+                LocalDateTime.now()
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -129,7 +129,7 @@ public class UserController {
     private ResponseEntity<ErrorResponse> fileMaxSizeException(MaxUploadSizeExceededException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
-                LocalDate.now()
+                LocalDateTime.now()
         );
         return new ResponseEntity<>(response, HttpStatus.PAYLOAD_TOO_LARGE);
     }

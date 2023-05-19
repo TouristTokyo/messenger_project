@@ -16,7 +16,7 @@ import ru.vsu.cs.api.utils.ErrorResponse;
 import ru.vsu.cs.api.utils.exceptions.UserException;
 import ru.vsu.cs.api.utils.mapper.Mapper;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -63,7 +63,7 @@ public class AuthorizeController {
     private ResponseEntity<ErrorResponse> handleException(UserException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
-                LocalDate.now()
+                LocalDateTime.now()
         );
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
