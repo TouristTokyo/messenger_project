@@ -24,14 +24,15 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElse(null);
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null) {
+            throw new UserException("Not found user with email: " + email);
+        }
+        return user;
     }
 
     public User login(String email, String password) {
         User user = getUserByEmail(email);
-        if (user == null) {
-            throw new UserException("Not found user with email: " + email);
-        }
         if (passwordEncoder.matches(password, user.getPassword())) {
             return user;
         } else {
@@ -40,7 +41,11 @@ public class UserService {
     }
 
     public User getUserByName(String name) {
-        return userRepository.findByName(name).orElse(null);
+        User user = userRepository.findByName(name).orElse(null);
+        if (user == null) {
+            throw new UserException("Not found user with name: " + name);
+        }
+        return user;
     }
 
     public User getById(BigInteger id) {
@@ -57,10 +62,10 @@ public class UserService {
 
     @Transactional
     public void save(User user) {
-        if (getUserByEmail(user.getEmail()) != null) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new UserException("Exist user with email: " + user.getEmail());
         }
-        if (getUserByName(user.getName()) != null) {
+        if (userRepository.findByName(user.getName()).isPresent()) {
             throw new UserException("Exist user with nickname: " + user.getName());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -77,7 +82,7 @@ public class UserService {
 
     @Transactional
     public void updateEmail(BigInteger id, String email) {
-        User foundUserByEmail = getUserByEmail(email);
+        User foundUserByEmail = userRepository.findByEmail(email).orElse(null);
         User user = getById(id);
 
         if (foundUserByEmail != null && !foundUserByEmail.getId().equals(id)) {
@@ -91,7 +96,7 @@ public class UserService {
 
     @Transactional
     public void updateName(BigInteger id, String name) {
-        User foundUserByName = getUserByName(name);
+        User foundUserByName = userRepository.findByName(name).orElse(null);
         User user = getById(id);
 
         if (foundUserByName != null && !foundUserByName.getId().equals(id)) {

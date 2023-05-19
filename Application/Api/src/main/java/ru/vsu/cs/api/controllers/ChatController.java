@@ -4,16 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.cs.api.dto.ChatCreationDto;
+import ru.vsu.cs.api.dto.ChatMessageCreationDto;
 import ru.vsu.cs.api.dto.ChatMessageDto;
-import ru.vsu.cs.api.dto.SavedMessageDto;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.Message;
-import ru.vsu.cs.api.models.SavedMessage;
 import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.services.ChatService;
 import ru.vsu.cs.api.services.MessageService;
-import ru.vsu.cs.api.services.SavedMessageService;
 import ru.vsu.cs.api.services.UserService;
 import ru.vsu.cs.api.utils.ErrorResponse;
 import ru.vsu.cs.api.utils.exceptions.ChatException;
@@ -32,27 +29,22 @@ public class ChatController {
     private final UserService userService;
     private final ChatService chatService;
     private final MessageService messageService;
-    private final SavedMessageService savedMessageService;
 
     @Autowired
-    public ChatController(UserService userService, ChatService chatService, MessageService messageService, SavedMessageService savedMessageService) {
+    public ChatController(UserService userService, ChatService chatService, MessageService messageService) {
         this.userService = userService;
         this.chatService = chatService;
         this.messageService = messageService;
-        this.savedMessageService = savedMessageService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<ChatMessageDto> createChat(@RequestBody ChatCreationDto chatCreationDto) {
-        User currentUser = userService.getUserByName(chatCreationDto.getCurrentUsername());
-        User otherUser = userService.getUserByName(chatCreationDto.getOtherUsername());
+    @PostMapping("/add_message")
+    public ResponseEntity<ChatMessageDto> addMessage(@RequestBody ChatMessageCreationDto chatMessageCreationDto) {
+        User currentUser = userService.getUserByName(chatMessageCreationDto.getCurrentUsername());
+        User otherUser = userService.getUserByName(chatMessageCreationDto.getOtherUsername());
 
-        if (currentUser == null || otherUser == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         Chat chat = chatService.create(Mapper.convertToChat(currentUser, otherUser));
-        Message message = messageService.save(new Message(currentUser, chat, chatCreationDto.getMessage()));
+        Message message = messageService.save(new Message(currentUser, chat, chatMessageCreationDto.getMessage()));
 
         return new ResponseEntity<>(Mapper.convertToChatMessageDto(message), HttpStatus.OK);
     }
@@ -80,28 +72,15 @@ public class ChatController {
         User currentUser = userService.getUserByName(firstUser);
         User otherUser = userService.getUserByName(secondUser);
 
-        if (currentUser == null || otherUser == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         Chat chat = chatService.getByUsernames(currentUser, otherUser);
         List<Message> messages = messageService.getMessagesByChat(chat);
 
         return new ResponseEntity<>(messages.stream().map(Mapper::convertToChatMessageDto).toList(), HttpStatus.OK);
     }
 
-    @PostMapping("/save_message")
-    public ResponseEntity<HttpStatus> saveMessage(@RequestBody SavedMessageDto savedMessageDto) {
-        User user = userService.getUserByName(savedMessageDto.getUsername());
-        if (user == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        savedMessageService.save(new SavedMessage(messageService.getMessage(savedMessageDto.getMessageId()), user));
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
 
     @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(UserException ex) {
+    private ResponseEntity<ErrorResponse> userException(UserException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now()

@@ -22,4 +22,9 @@ public class Channel {
 
     @Column(name = "name")
     private String name;
+
+    public Channel(User creator, String name) {
+        this.creator = creator;
+        this.name = name;
+    }
 }
