@@ -39,10 +39,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   username: {
+    fontFamily: 'Montserrat-Regular',
     fontSize: 24,
     fontWeight: "bold",
   },
   channelName: {
+    fontFamily: 'Montserrat-Regular',
     fontSize: 24,
     fontWeight: "bold",
   },

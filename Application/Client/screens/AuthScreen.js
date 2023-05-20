@@ -15,6 +15,7 @@ function AuthScreen({ navigation }) {
 
   const { login } = useContext(AuthContext);
 
+
   const handleLogin = () => {
     // Perform any additional validation or data processing before logging in
     const userData = {
@@ -25,7 +26,7 @@ function AuthScreen({ navigation }) {
     // Call the login function from the AuthContext
     login(userData);
     console.log(userData);
-    navigation.navigate('MainAuth');
+    
   };
 
   return (

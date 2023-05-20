@@ -75,6 +75,7 @@ export default function useStyles() {
       alignItems: 'center',
     },
     text: {
+      fontFamily: 'Montserrat-Regular',
       color: '#000000',
       fontSize: 24,
       textAlign: 'center',

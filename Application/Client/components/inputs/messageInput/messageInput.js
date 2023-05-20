@@ -4,16 +4,27 @@ import { useWindowDimensions } from 'react-native-web';
 
 import SendSvg from '../../../assets/icons/sendSvg';
 
-const MessageInput = ({ onSend }) => {
+const MessageInput = ({ onSend, role }) => {
   const [message, setMessage] = useState('');
   const { width, height } = useWindowDimensions();
 
   const handleSend = () => {
-    if (message) {
+    if (message && !role) {
       const messageOwn = {
         own: true,
         nickname: "John Doe",
         channel: false,
+        message: message,
+      };
+      onSend(messageOwn);
+      setMessage('');
+    }
+    else {
+      const messageOwn = {
+        own: true,
+        nickname: "John Doe",
+        role: role,
+        channel: true,
         message: message,
       };
       onSend(messageOwn);
@@ -51,7 +62,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     color: '#000000',
     boxShadow: '2px 2px 2px rgba(0, 0, 0, 1)',
-   
+    fontFamily: 'Montserrat-Regular',
     alignSelf: 'flex-start',
     marginRight: 30
   },

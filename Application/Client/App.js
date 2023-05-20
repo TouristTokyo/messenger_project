@@ -21,6 +21,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import ChannelUnauthScreen from './screens/ChannelUnauthScreen';
 import { ImageProvider } from './context/ImageContext';
 import { AuthProvider } from './context/AuthContext';
+import {MessageProvider} from './context/MessageContext';
 
 
 export default function App( ) {
@@ -594,6 +595,7 @@ const screens = [
 
   return (
     <AuthProvider >
+      <MessageProvider>
       <NavigationContainer>
         <ImageProvider>
           <Stack.Navigator >
@@ -603,6 +605,7 @@ const screens = [
           </Stack.Navigator>
         </ImageProvider>
       </NavigationContainer>
+      </MessageProvider>
     </AuthProvider>
 
   );

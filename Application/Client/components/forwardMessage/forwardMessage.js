@@ -61,23 +61,27 @@ const styles = StyleSheet.create({
   },
   nickname: {
     fontSize: 24,
+    fontFamily: 'Montserrat-Regular',
     color: 'black',
     fontWeight: 'bold',
     marginBottom: 5,
   },
   ownNickname: {
     fontSize: 24,
+    fontFamily: 'Montserrat-Regular',
     color: 'black',
     fontWeight: 'bold',
     marginBottom: 5,
   },
   message: {
     fontSize: 19,
+    fontFamily: 'Montserrat-Regular',
     color: 'black',
     flexWrap: 'wrap',
   },
   ownMessage: {
     fontSize: 19,
+    fontFamily: 'Montserrat-Regular',
     color: 'black',
     flexWrap: 'wrap',
   },

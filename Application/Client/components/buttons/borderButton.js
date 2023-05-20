@@ -1,8 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableHighlight, Text } from 'react-native-web';
 
-
-
 export default function BorderButton({ data }) {
     const {onPress, text} = data;
     
@@ -27,6 +25,7 @@ const styles = StyleSheet.create({
     
   },
   text: {
+    fontFamily: 'Montserrat-Regular',
     fontSize: 36,
     color: '#000000',
     textAlign: 'center',

@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
         
     },
     text: {
+        fontFamily: 'Montserrat-Regular',
         color: '#000000',
         fontSize: 24,
         textAlign: 'center',
@@ -111,11 +112,13 @@ const styles = StyleSheet.create({
         flex: 1
     },
     username: {
+        fontFamily: 'Montserrat-Regular',
         fontSize: 24,
         color: "#000000",
         marginLeft: 40,
     },
     role: {
+        fontFamily: 'Montserrat-Regular',
         fontSize: 24,
         color: "#0076B9",
         marginLeft: 40,

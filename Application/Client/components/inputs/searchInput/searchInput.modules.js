@@ -39,6 +39,7 @@ export default function useStyles() {
     },
     input: {
       flex: 1,
+      fontFamily: 'Montserrat-Regular',
       height: 44,
       width: 600,
       fontSize: 20,                 // Increase the font size

@@ -12,6 +12,7 @@ export default function useStyles() {
     },
     input: {
       flex: 1,
+      fontFamily: 'Montserrat-Regular',
       height: 44,
       fontSize: 16,
       paddingLeft: 40,

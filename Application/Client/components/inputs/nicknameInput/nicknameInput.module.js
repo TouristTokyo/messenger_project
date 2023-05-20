@@ -12,6 +12,7 @@ export default function useStyles() {
     input: {
       flex: 1,
       height: 60,
+      fontFamily: 'Montserrat-Regular',
       fontSize: 48,
       paddingLeft: "5%", // Adjust the padding to your liking
       backgroundColor: "#FFFFFF",

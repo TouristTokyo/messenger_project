@@ -131,6 +131,7 @@ export default function useStyles() {
       alignItems: 'center', // align items vertically to the center
     },
     barText: {
+      fontFamily: 'Montserrat-Regular',
       fontSize: 24,
       paddingLeft: 20,
     },
@@ -257,6 +258,7 @@ export default function useStyles() {
       flexDirection: 'column', // add this line to make items centered in a column
     },
     text: {
+      fontFamily: 'Montserrat-Regular',
       color: '#000000',
       fontSize: 24,
       textAlign: 'center',

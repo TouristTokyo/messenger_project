@@ -18,6 +18,7 @@ export default function useStyles(disabled) {
       marginRight: 20,
     },
     buttonText: {
+      fontFamily: 'Montserrat-Regular',
       color: '#000000',
       fontSize: 24,
       textAlign: 'center',

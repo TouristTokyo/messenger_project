@@ -6,41 +6,21 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const [currentScreen, setCurrentScreen] = useState(null);
 
   useEffect(() => {
     checkLoginStatus();
-    checkCurrentScreen();
   }, []);
 
   const checkLoginStatus = async () => {
     try {
-      const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
+      const isLoggedInValue = await AsyncStorage.getItem('isLoggedIn');
       const userData = await AsyncStorage.getItem('user');
-      if (isLoggedIn === 'true' && userData) {
+      if (isLoggedInValue === 'true' && userData) {
         setIsLoggedIn(true);
         setUser(JSON.parse(userData));
       }
     } catch (error) {
       console.error('Error during checkLoginStatus:', error);
-    }
-  };
-
-  const checkCurrentScreen = async () => {
-    try {
-      const storedScreen = await AsyncStorage.getItem('currentScreen');
-      setCurrentScreen(storedScreen);
-    } catch (error) {
-      console.error('Error during checkCurrentScreen:', error);
-    }
-  };
-
-  const saveCurrentScreen = async (screen) => {
-    setCurrentScreen(screen);
-    try {
-      await AsyncStorage.setItem('currentScreen', screen);
-    } catch (error) {
-      console.error('Error during saveCurrentScreen:', error);
     }
   };
 
@@ -62,8 +42,8 @@ export const AuthProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem('isLoggedIn');
       await AsyncStorage.removeItem('user');
-      await AsyncStorage.removeItem('currentScreen'); // Use AsyncStorage to remove the item
-      // navigation.navigate('Auth'); // Assuming you have a navigation object available
+     
+      navigation.navigate("Auth"); // Assuming you have a navigation object available
     } catch (error) {
       console.error('Error during logout:', error);
     }
@@ -74,8 +54,7 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-    currentScreen,
-    saveCurrentScreen,
+   
   };
 
   return (
