@@ -8,9 +8,11 @@ import ru.vsu.cs.api.models.User;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, BigInteger> {
     List<Member> findByUser(User user);
     List<Member> findByChannel(Channel channel);
+    Optional<Member> findByUserAndChannel(User user, Channel channel);
 }

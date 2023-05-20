@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vsu.cs.api.models.Channel;
 import ru.vsu.cs.api.models.Member;
+import ru.vsu.cs.api.models.Role;
 import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.repositories.MemberRepository;
+import ru.vsu.cs.api.utils.exceptions.MemberException;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -29,6 +31,16 @@ public class MemberService {
         return memberRepository.findByChannel(channel);
     }
 
+    public Member getMemberByUserAndChannel(User user, Channel channel) {
+        Member member = memberRepository.findByUserAndChannel(user, channel).orElse(null);
+        if (member == null) {
+            throw new MemberException("Not found member with name (" + user.getName() + ") for channel with name ( "
+                    + channel.getName() + ")");
+        }
+
+        return member;
+    }
+
     @Transactional
     public void save(Member member) {
         memberRepository.save(member);
@@ -37,5 +49,13 @@ public class MemberService {
     @Transactional
     public void delete(BigInteger id) {
         memberRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void updateRole(User user, Channel channel, Role role) {
+        Member member = getMemberByUserAndChannel(user, channel);
+        member.setRole(role);
+        memberRepository.save(member);
+
     }
 }
