@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -26,9 +25,6 @@ public class User {
     private String password;
 
     @Column(name = "image")
-    private Byte[] image;
-
-    @OneToMany(mappedBy = "userFirst")
-    private List<Chat> chats;
+    private byte[] image;
 
 }

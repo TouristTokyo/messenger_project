@@ -14,17 +14,17 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
-
-    @OneToOne
-    @JoinColumn(name = "member", referencedColumnName = "id")
-    private Member member;
-
     @Column(name = "name")
     private String name;
-
     @Column(name = "is_admin")
     private Boolean isAdmin;
 
     @Column(name = "is_creator")
     private Boolean isCreator;
+
+    public Role(String name, Boolean isAdmin, Boolean isCreator) {
+        this.name = name;
+        this.isAdmin = isAdmin;
+        this.isCreator = isCreator;
+    }
 }

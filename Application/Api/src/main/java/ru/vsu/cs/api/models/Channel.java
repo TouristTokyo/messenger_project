@@ -23,6 +23,8 @@ public class Channel {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "channel")
-    private List<Message> messages;
+    public Channel(User creator, String name) {
+        this.creator = creator;
+        this.name = name;
+    }
 }

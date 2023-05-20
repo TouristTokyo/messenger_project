@@ -23,6 +23,13 @@ public class Member {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToOne(mappedBy = "member")
-    Role role;
+    @OneToOne
+    @JoinColumn(name = "role", referencedColumnName = "id")
+    private Role role;
+
+    public Member(Channel channel, User user, Role role) {
+        this.channel = channel;
+        this.user = user;
+        this.role = role;
+    }
 }

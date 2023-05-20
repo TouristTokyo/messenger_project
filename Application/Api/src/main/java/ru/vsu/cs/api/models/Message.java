@@ -1,10 +1,13 @@
 package ru.vsu.cs.api.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "messages")
@@ -29,4 +32,21 @@ public class Message {
 
     @Column(name = "data")
     private String data;
+
+    @Column(name = "date")
+    private LocalDateTime date;
+
+    public Message(User sender, Chat chat, String data) {
+        this.sender = sender;
+        this.chat = chat;
+        this.data = data;
+        this.date = LocalDateTime.now();
+    }
+
+    public Message(User sender, Channel channel, String data) {
+        this.sender = sender;
+        this.channel = channel;
+        this.data = data;
+        this.date = LocalDateTime.now();
+    }
 }

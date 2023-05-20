@@ -25,6 +25,4 @@ public class Chat {
     @JoinColumn(name = "second_user", referencedColumnName = "id")
     private User userSecond;
 
-    @OneToMany(mappedBy = "chat")
-    private List<Message> messages;
 }
