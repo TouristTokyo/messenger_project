@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}/update/email")
-    public ResponseEntity<HttpStatus> updateImage(@PathVariable("id") BigInteger id,
+    public ResponseEntity<HttpStatus> updateEmail(@PathVariable("id") BigInteger id,
                                                   @RequestParam("email") String email) {
         userService.updateEmail(id, email);
         return ResponseEntity.ok(HttpStatus.OK);
@@ -65,8 +65,9 @@ public class UserController {
 
     @PutMapping(value = "/{id}/update/password")
     public ResponseEntity<HttpStatus> updatePassword(@PathVariable("id") BigInteger id,
-                                                     @RequestParam("password") String password) {
-        userService.updatePassword(id, password);
+                                                     @RequestParam("last_password") String lastPassword,
+                                                     @RequestParam("new_password") String newPassword) {
+        userService.updatePassword(id, lastPassword, newPassword);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
