@@ -18,7 +18,7 @@ public class EmailService {
         this.emailSender = sender;
     }
 
-    public void sendSimpleEmail(String toAddress) {
+    public String sendSimpleEmail(String toAddress) {
         String message = generateCode();
         String subject = "Code";
 
@@ -28,6 +28,8 @@ public class EmailService {
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(message);
         emailSender.send(simpleMailMessage);
+
+        return message;
     }
 
     private String generateCode() {
