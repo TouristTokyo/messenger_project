@@ -109,9 +109,12 @@ public class UserService {
     }
 
     @Transactional
-    public void updatePassword(BigInteger id, String password) {
+    public void updatePassword(BigInteger id, String lastPassword, String newPassword) {
         User user = getById(id);
-        user.setPassword(passwordEncoder.encode(password));
+        if(!passwordEncoder.matches(lastPassword, user.getPassword())){
+            throw new UserException("Incorrect current password");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 

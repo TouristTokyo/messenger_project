@@ -7,6 +7,7 @@ import ru.vsu.cs.api.models.SavedMessage;
 import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.repositories.SavedMessageRepository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Service
@@ -24,7 +25,12 @@ public class SavedMessageService {
     }
 
     @Transactional
-    public void save(SavedMessage savedMessage){
+    public void save(SavedMessage savedMessage) {
         savedMessageRepository.save(savedMessage);
+    }
+
+    @Transactional
+    public void delete(BigInteger id) {
+        savedMessageRepository.deleteById(id);
     }
 }
