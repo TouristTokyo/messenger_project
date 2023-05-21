@@ -20,13 +20,12 @@ public class EmailController {
     }
 
     @GetMapping("/send_email")
-    public ResponseEntity<HttpStatus> sendEmail(@RequestParam("email") String email) {
+    public ResponseEntity<String> sendEmail(@RequestParam("email") String email) {
         try {
-            emailService.sendSimpleEmail(email);
+            return new ResponseEntity<>(emailService.sendSimpleEmail(email), HttpStatus.OK);
         } catch (MailException mailException) {
             System.out.println(mailException.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
