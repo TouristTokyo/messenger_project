@@ -13,10 +13,11 @@ import ru.vsu.cs.api.services.UserService;
 import ru.vsu.cs.api.utils.ErrorResponse;
 import ru.vsu.cs.api.utils.exceptions.UserException;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/save_message")
+@RequestMapping("/api/saved_message")
 @CrossOrigin
 public class SaveMessageController {
     private final UserService userService;
@@ -31,11 +32,17 @@ public class SaveMessageController {
         this.messageService = messageService;
     }
 
-    @PostMapping("/save_message")
+    @PostMapping("/save")
     public ResponseEntity<HttpStatus> saveMessage(@RequestBody SavedMessageDto savedMessageDto) {
         User user = userService.getUserByName(savedMessageDto.getUsername());
 
         savedMessageService.save(new SavedMessage(messageService.getMessage(savedMessageDto.getMessageId()), user));
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<HttpStatus> deleteMessage(@PathVariable("id")BigInteger id){
+        savedMessageService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
