@@ -84,9 +84,21 @@ public class ChannelController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @DeleteMapping("/{id}/leave")
+    public ResponseEntity<HttpStatus> leave(@PathVariable("id") BigInteger id,
+                                            @RequestParam("username") String username) {
+        Member member = memberService.getMemberByUserAndChannel(userService.getUserByName(username),
+                channelService.getChannelById(id));
+
+        roleService.delete(member.getRole().getId());
+        memberService.delete(member.getId());
+
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
     @PutMapping("/{id}/update")
     public ResponseEntity<HttpStatus> updateName(@PathVariable("id") BigInteger id,
-                                                  @RequestParam("name") String name) {
+                                                 @RequestParam("name") String name) {
         channelService.updateName(id, name);
         return ResponseEntity.ok(HttpStatus.OK);
     }
