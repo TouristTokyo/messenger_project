@@ -7,43 +7,48 @@ export default function useStyles() {
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: "#fff",
-      borderRadius: 10,
-      height: 44,
-      shadowColor: "rgba(0, 0, 0, 1)",
-      shadowOffset: {
-        width: 0,
-        height: 0,
-      },
-      shadowOpacity: 2,
-      shadowRadius: 0,
-      elevation: 5,
+      backgroundColor: "#FFFFFF",
+      zIndex: 0
     },
     icon: {
       position: "absolute",
       left: 10,
       zIndex: 1,
+      
     },
     dismissIcon: {
       position: "absolute",
       right: 10,
       top: "50%",
-      transform: [{ translateY: -27 }]
+      transform: [{ translateY: -17 }],
+      zIndex: 2,
     },
-    currencySymbol: {
+    dropdown: {
       position: "absolute",
-      right: 10,
-      top: "50%",
-      transform: [{ translateY: -10 }]
-  },
+      top: 50,
+      left: 0,
+      right: 0,
+      flex: 1,
+      maxHeight: 300, // Set the maximum height of the dropdown
+      overflowY: "auto", // Enable vertical scrolling when content exceeds the height
+      backgroundColor: "#FFFFFF",
+      borderRadius: 10,
+      boxShadow: "2px 2px 2px rgba(0, 0, 0, 1)",
+      zIndex: 1,
+      padding: 10,
+    },
     input: {
       flex: 1,
-      borderRadius: 10,
+      fontFamily: 'Montserrat-Regular',
       height: 44,
-      fontSize: 16,
-      backgroundColor: "#F9F9F9",
+      width: 600,
+      fontSize: 20,                 // Increase the font size
+      paddingLeft: 10,
+      paddingRight: 10,             // Add paddingRight to move the text more to the right
+      borderRadius: 10,
+      backgroundColor: "#FFFFFF",
       color: "#000000",
-      paddingLeft: 16,
+      boxShadow: "2px 2px 2px rgba(0, 0, 0, 1)"
     },
   });
 }
