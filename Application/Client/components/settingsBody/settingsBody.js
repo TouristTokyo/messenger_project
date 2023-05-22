@@ -56,7 +56,7 @@ export default function SettingsBody({ data }) {
     const handleRoleChange = (role) => {
         setInputText({ ...inputText, role: role }); // update role input value
     };
-
+    const currentUser = channelId.members.find(member => member.user.id === user.id);
     const handleSaveChanges = async () => {
         const url = 'http://localhost:8080/api/roles/create';
       

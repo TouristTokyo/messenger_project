@@ -5,16 +5,12 @@ import ForwardSvg from '../../assets/icons/forwardSvg';
 import ForwardFocusSvg from '../../assets/icons/forwardFocusSvg';
 import { MessageContext } from '../../context/MessageContext';
 
-const MessageBody = ({ data }) => {
-  const { imageUrl, nickname, role, message, own, channel } = data;
+const MessageBody = ({ data, currentUser }) => {
+  const { imageUrl, nickname, role, message, own, channel, date } = data;
   const [isFocused, setIsFocused] = useState(false);
-  const date = new Date();
-  const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const dated = new Date(date);
+  const time = dated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
- 
-  if (!data) {
-    return null; // Add a null check to handle undefined data object
-  }
 
   const { addForwardedMessage } = useContext(MessageContext);
 
@@ -32,6 +28,16 @@ const MessageBody = ({ data }) => {
 
   const forwardIcon = isFocused ? <ForwardFocusSvg /> : <ForwardSvg />;
 
+  const messageBoxStyles = [
+    styles.messageBox,
+    own ? styles.ownMessageBox : styles.box,
+    {
+      borderTopRightRadius: own ? 10 : 10,
+      borderBottomRightRadius: own ? 0 : 10,
+      borderBottomLeftRadius: own ? 10 : 0,
+    },
+  ];
+
   return (
     <View style={own ? styles.ownContainer : styles.container}>
       {!own && imageUrl && (
@@ -39,17 +45,7 @@ const MessageBody = ({ data }) => {
           <ShowAvatar imageUrl={imageUrl} profile={false} />
         </View>
       )}
-      <View
-        style={[
-          styles.messageBox,
-          own ? styles.ownMessageBox : styles.box,
-          {
-            borderTopRightRadius: own ? 10 : 10,
-            borderBottomRightRadius: own ? 0 : 10,
-            borderBottomLeftRadius: own ? 10 : 0,
-          },
-        ]}
-      >
+      <View style={messageBoxStyles}>
         <TouchableOpacity onPress={handleForwardPress}>
           <View style={own ? styles.ownForward : styles.forward}>{forwardIcon}</View>
         </TouchableOpacity>
@@ -77,14 +73,12 @@ const styles = StyleSheet.create({
   },
   avatar: {
     alignSelf: 'flex-start',
-    marginBottom: 0, // Remove marginBottom: 'auto'
   },
   messageBox: {
     backgroundColor: '#E7DEDE',
     paddingVertical: 10,
     paddingHorizontal: 15,
     maxWidth: '60%',
-    marginBottom: 0, // Remove marginBottom: 13
   },
   box: {
     borderTopRightRadius: 10,
@@ -99,7 +93,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
     borderTopLeftRadius: 10,
-    marginBottom: 0, // Remove marginBottom: 13
   },
   forward: {
     alignSelf: 'flex-end',

@@ -292,7 +292,7 @@ const screens = [
   {
     name: 'Chat',
     component: ChatScreen,
-    options: ({ navigation }) => ({
+    options: ({ navigation, route }) => ({
       title: "",
       headerLeft: () => (
         <TouchableHighlight onPress={() => navigation.navigate('MainAuth')}>
@@ -594,19 +594,21 @@ const screens = [
 
 
   return (
+    <ImageProvider>
     <AuthProvider >
       <MessageProvider>
       <NavigationContainer>
-        <ImageProvider>
+      
           <Stack.Navigator >
             {screens.map((screen) => (
               <Stack.Screen key={screen.name} {...screen} />
             ))}
           </Stack.Navigator>
-        </ImageProvider>
+       
       </NavigationContainer>
       </MessageProvider>
     </AuthProvider>
+    </ImageProvider>
 
   );
 }

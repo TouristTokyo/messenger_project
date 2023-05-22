@@ -4,19 +4,42 @@ import { useWindowDimensions } from 'react-native-web';
 
 import SendSvg from '../../../assets/icons/sendSvg';
 
-const MessageInput = ({ onSend, role, channelData }) => {
+const MessageInput = ({  curuser, chanInf }) => {
   const [message, setMessage] = useState('');
   const { width, height } = useWindowDimensions();
-
-  const handleSend = () => {
-    if (message && !role) {
-      onSend(message);
-      setMessage('');
-    } else {
-      onSend(message);
-      setMessage('');
+  const username = 'admin';
+  const password = 'root';
+  const handleSend = async () => {
+    if (message) {
+      const requestBody = {
+        currentUsername: curuser,
+        message: message,
+        channelName: chanInf.name,
+      };
+  
+      try {
+        const response = await fetch('http://localhost:8080/api/channels/add_message', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+          },
+          body: JSON.stringify(requestBody),
+        });
+  
+        if (response.ok) {
+          console.log('Message sent successfully');
+          setMessage('');
+        } else {
+          console.log('Failed to send message');
+          console.log(message);
+        }
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
     }
   };
+  
 
   return (
     <View style={styles.container}>

@@ -29,8 +29,7 @@ export default function SettingsScreen({ navigation, route }) {
   useFocusEffect(
     React.useCallback(() => {
       fetchChannelData();
-      console.log(channelData);
-    }, [])
+    }, [channelData.members])
   );
   const [inputText, setInputText] = useState({
     nickname: channelData.name || 'a',
@@ -47,7 +46,7 @@ export default function SettingsScreen({ navigation, route }) {
   
       if (response.ok) {
         const channelData = await response.json();
-        console.log('Fetched channel data:', channelData);
+        
         setChannelData(channelData);
         setInputText((prevInputText) => ({
           ...prevInputText,

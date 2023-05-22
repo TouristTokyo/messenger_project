@@ -1,13 +1,13 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
+import { ImageContext } from './ImageContext';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const { updateSelectedImage } = useContext(ImageContext);
 
   useEffect(() => {
     checkLoginStatus();
@@ -38,10 +38,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
   const logout = async () => {
     setIsLoggedIn(false);
     setUser(null);
+    updateSelectedImage(null); // Clear the selected image
     try {
       await AsyncStorage.removeItem('isLoggedIn');
       await AsyncStorage.removeItem('user');
@@ -51,10 +51,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
   const updateUser = (updatedUser) => {
     setUser(updatedUser);
-
   };
 
   const authContextValue = {
@@ -73,4 +71,3 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
-

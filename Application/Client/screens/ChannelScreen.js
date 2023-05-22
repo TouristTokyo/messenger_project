@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { View, Text, TouchableHighlight, Modal, TouchableOpacity, ScrollView } from 'react-native';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/mainAuthScreen.module';
@@ -36,13 +36,36 @@ export default function ChannelScreen({ navigation, route }) {
     const username = 'admin';
     const password = 'root';
     const [channelData, setChannelData] = useState([]);
+    const [shouldUseFocusEffect, setShouldUseFocusEffect] = useState(false);
 
+    useEffect(() => {
+        setShouldUseFocusEffect(false); // Reset the flag
+    }, [channelData.messages]);
     useFocusEffect(
         React.useCallback(() => {
             fetchProfileNickname();
             fetchChannelData();
-        }, [])
+        }, [channelData.messages])
     );
+
+    const scrollViewRef = useRef(null);
+    const [isAtBottom, setIsAtBottom] = useState(true);
+
+    useEffect(() => {
+        if (channelData?.messages?.length > 0 && isAtBottom) {
+            scrollViewRef.current.scrollToEnd({ animated: true });
+        }
+    }, [channelData?.messages, isAtBottom]);
+
+    const handleContentSizeChange = () => {
+        const isScrolledToBottom =
+            scrollViewRef.current &&
+            scrollViewRef.current.contentOffset &&
+            scrollViewRef.current.contentOffset.y + scrollViewRef.current.layoutMeasurement.height >=
+            scrollViewRef.current.contentSize.height;
+
+        setIsAtBottom(isScrolledToBottom);
+    };
 
     const fetchProfileNickname = async () => {
         try {
@@ -69,12 +92,7 @@ export default function ChannelScreen({ navigation, route }) {
         saveChannelState();
     }, [isMember, showSettings]);
 
-    const handleSend = (message, role) => {
-        setMessages((prevMessages) => [...prevMessages, message]);
 
-        // Call the sendMessage function to send the message to the API
-        sendMessage(message);
-    };
 
     const isFormValid = inputText.nickname;
     const buttons = [
@@ -134,32 +152,7 @@ export default function ChannelScreen({ navigation, route }) {
         }
     };
 
-    const sendMessage = async (message) => {
-        try {
-            const requestBody = {
-                currentUsername: userText,
-                message: message,
-                channelName: channelData.name
-            };
 
-            const response = await axios.post('http://localhost:8080/api/channels/add_message', requestBody, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
-                },
-            });
-
-            if (response.ok) {
-                console.log('Message sent successfully');
-                // Handle any additional logic or UI updates after sending the message
-            } else {
-                console.log('Failed to send message');
-                // Handle the error response
-            }
-        } catch (error) {
-            console.error('Error sending message:', error);
-        }
-    };
 
     const saveChannelState = async () => {
         try {
@@ -173,7 +166,7 @@ export default function ChannelScreen({ navigation, route }) {
         }
     };
 
-   
+
     const saveChatMessages = async () => {
         try {
             await AsyncStorage.setItem('chatMessages', JSON.stringify(messages));
@@ -248,11 +241,28 @@ export default function ChannelScreen({ navigation, route }) {
                 // Check if the user is the channel creator
                 const isCreator = user?.id === channelData.creator?.id;
                 const member = user.channels?.some((channel) => channel.id === channelData.id);
-                const admin = user.channels.id === channelData.id && user.channels.role.isAdmin
-                setIsAdmin(admin)
+                const currentUser = channelData.members.find(member => member.user.id === user.id);
+
+                if (currentUser) {
+                    // Access the role object of the current user
+                    const { role } = currentUser;
+
+                    if (role) {
+                        // User has a role, handle it accordingly
+
+
+                        if (role.isAdmin !== undefined) {
+                            // User has an isAdmin property
+
+                            setIsAdmin(role.isAdmin);
+                        }
+                    }
+                } else {
+                    console.log("Current user not found in the members list");
+                }
                 // Update isMember and showSettings based on the condition
                 setIsMember(member);
-                setShowSettings(isCreator);
+
                 setIsDisable(isCreator);
                 setChannelData(channelData);
             } else {
@@ -272,7 +282,7 @@ export default function ChannelScreen({ navigation, route }) {
                 <View>
                     <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} disabled={isDisable} />
                 </View>
-                {isMember && showSettings && (
+                {isMember && isAdmin && (
                     <View style={{ marginRight: 20 }}>
                         <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.id })}>
                             <SettingsSvg />
@@ -290,16 +300,36 @@ export default function ChannelScreen({ navigation, route }) {
                 ))}
             </View>
             <View style={styles.historyContainer}>
-                <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-                    {messageBodies.map((data, index) => (
-                        <MessageBody key={index} data={data} />
-                    ))}
-                    
+                <ScrollView ref={scrollViewRef} onContentSizeChange={handleContentSizeChange}
+                    style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+                    {channelData?.messages?.map((message) => {
+                        const senderId = message.sender?.id;
+                        const matchingMember = channelData.members.find((member) => member.user.id === senderId);
+
+                        const role = matchingMember?.role?.name;
+
+                        return (
+                            <MessageBody
+                                key={message.id}
+                                data={{
+                                    imageUrl: message.sender?.image,
+                                    nickname: message.sender?.name,
+                                    role: role,
+                                    message: message.data,
+                                    date: message.date,
+                                    own: message.sender?.name === user.name,
+                                    channel: true,
+                                }}
+                                currentUser={user}
+                            />
+                        );
+                    })}
+
                 </ScrollView>
             </View>
             {isMember && (
                 <View style={styles.sendContainer}>
-                    <MessageInput onSend={handleSend} role={true} />
+                    <MessageInput curuser={userText ? userText : user.name} chanInf={channelData} />
                 </View>
             )}
             <View style={styles.bottomLeft}>
