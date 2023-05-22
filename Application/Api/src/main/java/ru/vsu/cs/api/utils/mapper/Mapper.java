@@ -1,6 +1,9 @@
 package ru.vsu.cs.api.utils.mapper;
 
 import ru.vsu.cs.api.dto.*;
+import ru.vsu.cs.api.dto.message.ChannelMessageDto;
+import ru.vsu.cs.api.dto.message.ChatMessageDto;
+import ru.vsu.cs.api.dto.search.ChannelSearchDto;
 import ru.vsu.cs.api.models.*;
 
 import java.util.List;
@@ -75,5 +78,14 @@ public class Mapper {
         channelMessageDto.setDate(message.getDate());
 
         return channelMessageDto;
+    }
+
+    public static ChannelSearchDto convertToChannelDto(Channel channel){
+        ChannelSearchDto channelSearchDto = new ChannelSearchDto();
+
+        channelSearchDto.setId(channel.getId());
+        channelSearchDto.setName(channel.getName());
+
+        return channelSearchDto;
     }
 }
