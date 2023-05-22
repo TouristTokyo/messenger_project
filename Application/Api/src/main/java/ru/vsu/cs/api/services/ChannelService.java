@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vsu.cs.api.models.Channel;
-import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.repositories.ChannelRepository;
 import ru.vsu.cs.api.utils.exceptions.ChannelException;
 import ru.vsu.cs.api.utils.exceptions.UserException;

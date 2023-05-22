@@ -31,7 +31,6 @@ public class UserController {
     private final UserService userService;
     private final SavedMessageService savedMessageService;
     private final MemberService memberService;
-
     private final ChatService chatService;
 
     @Autowired
