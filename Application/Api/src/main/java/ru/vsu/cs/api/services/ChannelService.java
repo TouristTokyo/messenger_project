@@ -10,6 +10,7 @@ import ru.vsu.cs.api.utils.exceptions.ChannelException;
 import ru.vsu.cs.api.utils.exceptions.UserException;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,10 +22,14 @@ public class ChannelService {
         this.channelRepository = channelRepository;
     }
 
+    public List<Channel> getAll() {
+        return channelRepository.findAll();
+    }
+
     @Transactional
     public Channel create(Channel channel) {
-        if(channelRepository.findByName(channel.getName()).isPresent()){
-            throw new ChannelException("Exist channel with name: "+ channel.getName());
+        if (channelRepository.findByName(channel.getName()).isPresent()) {
+            throw new ChannelException("Exist channel with name: " + channel.getName());
         }
         return channelRepository.saveAndFlush(channel);
     }

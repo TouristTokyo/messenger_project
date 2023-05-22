@@ -1,7 +1,6 @@
-package ru.vsu.cs.api.dto;
+package ru.vsu.cs.api.dto.message;
 
 import lombok.Data;
-import ru.vsu.cs.api.models.Channel;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.User;
 
@@ -9,9 +8,9 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Data
-public class ChannelMessageDto {
+public class ChatMessageDto {
     private BigInteger id;
-    private Channel channel;
+    private Chat chat;
     private String data;
     private LocalDateTime date;
     private User author;
