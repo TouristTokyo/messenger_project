@@ -1,4 +1,4 @@
-package ru.vsu.cs.api.dto;
+package ru.vsu.cs.api.dto.message;
 
 import lombok.Data;
 

@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.cs.api.dto.ChatMessageCreationDto;
-import ru.vsu.cs.api.dto.ChatMessageDto;
+import ru.vsu.cs.api.dto.message.ChatMessageCreationDto;
+import ru.vsu.cs.api.dto.message.ChatMessageDto;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.Message;
 import ru.vsu.cs.api.models.User;
@@ -65,10 +65,6 @@ public class ChatController {
     @GetMapping("/usernames")
     public ResponseEntity<List<ChatMessageDto>> getChatByUsernames(@RequestParam("first_user") String firstUser,
                                                                    @RequestParam("second_user") String secondUser) {
-        if (firstUser == null || secondUser == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         User currentUser = userService.getUserByName(firstUser);
         User otherUser = userService.getUserByName(secondUser);
 

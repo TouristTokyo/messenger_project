@@ -5,9 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.ChannelCreationDto;
-import ru.vsu.cs.api.dto.ChannelMessageCreationDto;
-import ru.vsu.cs.api.dto.ChannelMessageDto;
+import ru.vsu.cs.api.dto.message.ChannelMessageCreationDto;
+import ru.vsu.cs.api.dto.message.ChannelMessageDto;
 import ru.vsu.cs.api.dto.ChannelResponseDto;
+import ru.vsu.cs.api.dto.search.ChannelSearchDto;
 import ru.vsu.cs.api.models.*;
 import ru.vsu.cs.api.services.*;
 import ru.vsu.cs.api.utils.ErrorResponse;
@@ -37,6 +38,11 @@ public class ChannelController {
         this.userService = userService;
         this.roleService = roleService;
         this.messageService = messageService;
+    }
+
+    @GetMapping
+    public List<ChannelSearchDto> getChannels() {
+        return channelService.getAll().stream().map(Mapper::convertToChannelDto).toList();
     }
 
     @PostMapping("/create")
@@ -69,9 +75,6 @@ public class ChannelController {
     @PostMapping("/join")
     public ResponseEntity<HttpStatus> joinToChannel(@RequestParam("username") String username,
                                                     @RequestParam("channel_name") String channelName) {
-        if (username == null || channelName == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         User user = userService.getUserByName(username);
         Channel channel = channelService.getChannelByName(channelName);
@@ -114,6 +117,9 @@ public class ChannelController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") BigInteger id) {
+        List<Member> members = memberService.getMembersByChannel(channelService.getChannelById(id));
+        members.forEach(member -> roleService.delete(member.getRole().getId()));
+
         channelService.delete(id);
 
         return ResponseEntity.ok(HttpStatus.OK);
