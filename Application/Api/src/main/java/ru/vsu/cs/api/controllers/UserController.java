@@ -72,6 +72,12 @@ public class UserController {
         ), HttpStatus.OK);
     }
 
+    @GetMapping("/email")
+    public BigInteger getUserId(@RequestParam("email") String email) {
+        return userService.getUserByEmail(email).getId();
+    }
+
+
     @PutMapping(value = "/{id}/update/image", consumes = {"multipart/form-data"})
     public ResponseEntity<HttpStatus> updateImage(@PathVariable("id") BigInteger id,
                                                   @RequestParam("file") MultipartFile multipartFile) {
