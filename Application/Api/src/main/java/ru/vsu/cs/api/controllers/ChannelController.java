@@ -69,9 +69,6 @@ public class ChannelController {
     @PostMapping("/join")
     public ResponseEntity<HttpStatus> joinToChannel(@RequestParam("username") String username,
                                                     @RequestParam("channel_name") String channelName) {
-        if (username == null || channelName == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
 
         User user = userService.getUserByName(username);
         Channel channel = channelService.getChannelByName(channelName);

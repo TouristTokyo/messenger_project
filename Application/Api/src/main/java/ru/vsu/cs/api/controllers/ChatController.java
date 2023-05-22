@@ -65,10 +65,6 @@ public class ChatController {
     @GetMapping("/usernames")
     public ResponseEntity<List<ChatMessageDto>> getChatByUsernames(@RequestParam("first_user") String firstUser,
                                                                    @RequestParam("second_user") String secondUser) {
-        if (firstUser == null || secondUser == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         User currentUser = userService.getUserByName(firstUser);
         User otherUser = userService.getUserByName(secondUser);
 
