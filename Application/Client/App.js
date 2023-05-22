@@ -218,7 +218,7 @@ const screens = [
   {
     name: 'Settings',
     component: SettingsScreen,
-    options: ({ navigation }) => ({
+    options: ({ navigation, route }) => ({
       title: "",
       headerLeft: () => (
         <TouchableHighlight onPress={() => navigation.navigate('MainAuth')}>
@@ -328,7 +328,7 @@ const screens = [
   {
     name: 'Channel',
     component: ChannelScreen,
-    options: ({ navigation }) => ({
+    options: ({ navigation, route }) => ({
       title: "",
       headerLeft: () => (
         <TouchableHighlight onPress={() => navigation.navigate('MainAuth')}>

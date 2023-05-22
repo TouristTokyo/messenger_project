@@ -14,6 +14,8 @@ import MessageInput from '../components/inputs/messageInput/messageInput';
 import { ImageContext } from '../context/ImageContext';
 import AuthContext from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { setProfileNickname, getProfileNickname } from '../context/AsyncStorageUtil';
 
 export default function ChatScreen({ navigation }) {
   const styles = useStyles();
@@ -21,9 +23,68 @@ export default function ChatScreen({ navigation }) {
   const [inputText, setInputText] = useState({
     nickname: '',
   });
+  const { user} = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
   const { selectedImage } = useContext(ImageContext);
   const [messages, setMessages] = useState([]);
+  const username = 'admin';
+  const password = 'root';
+  const [userText, setUserText] = useState('');
+  const handleCreateChannel = async () => {
+    try {
+      const response = await fetch('http://localhost:8080/api/channels/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+        },
+        body: JSON.stringify({
+          username: userText,
+          channelName: inputText.nickname,
+        }),
+      });
+  
+      if (response.ok) {
+        const channelResponse = await response.json();
+        setShowPopup(false);
+        // Channel creation successful
+        alert('Channel created');
+  
+        // Update user.channels in the AuthContext
+        const updatedUser = {
+          ...user,
+          channels: [...user.channels, channelResponse],
+        };
+  
+        // Store the updated user data in localStorage
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+  
+        // Update user data in the AuthContext
+        updateUser(updatedUser);
+      } else {
+        // Handle error response
+        alert('Failed to create channel');
+      }
+    } catch (error) {
+      alert('Error creating channel:', error);
+    }
+  };
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchProfileNickname();
+    }, [])
+  );
+
+  const fetchProfileNickname = async () => {
+    try {
+      const nickname = await getProfileNickname();
+      if (nickname && nickname !== userText) {
+        setUserText(nickname);
+      }
+    } catch (error) {
+      console.log('Error retrieving profile nickname:', error);
+    }
+  };
 
   useEffect(() => {
     loadChatMessages();
@@ -36,7 +97,7 @@ export default function ChatScreen({ navigation }) {
   const handleSend = (message) => {
     setMessages((prevMessages) => [...prevMessages, message]);
   };
-
+  const imageSource = selectedImage || (user && user.image);
   const isFormValid = inputText.nickname;
   const buttons = [
     {
@@ -101,8 +162,8 @@ export default function ChatScreen({ navigation }) {
         ))}
       </View>
       <View style={styles.profileContainer}>
-        <ShowAvatar imageUrl={selectedImage} profile={true} />
-        <Text style={{ color: '#000000', fontSize: 48, textAlign: 'center', marginBottom: 13 }}>Username</Text>
+        <ShowAvatar imageUrl={imageSource} profile={true} />
+        <Text style={{ color: '#000000', fontSize: 48, textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{userText ? userText : user.name}</Text>
         {buttons.map((data, index) => (
           <View style={{ width: '70%' }} key={index}>
             <BorderButton data={data} />
@@ -139,11 +200,9 @@ export default function ChatScreen({ navigation }) {
               flex={true}
             />
           </View>
-          <TouchableOpacity onPress={() => setShowPopup(false)}>
-            <View>
-              <HeaderButton title={'Создать'} onPress={() => console.log()} disabled={!isFormValid} />
+          <View>
+              <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
             </View>
-          </TouchableOpacity>
         </View>
       </Modal>
     </View>

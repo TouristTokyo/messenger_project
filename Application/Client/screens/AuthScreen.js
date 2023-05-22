@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Button, TouchableHighlight } from 'react-native-web';
+import { View, Text, TouchableHighlight } from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
@@ -14,21 +14,48 @@ function AuthScreen({ navigation }) {
   const isFormValid = inputText.email && inputText.password;
 
   const { login } = useContext(AuthContext);
+ 
 
+  const username = 'admin';
+  const password = 'root';
 
   const handleLogin = () => {
-    // Perform any additional validation or data processing before logging in
-    const userData = {
+    // Create the request body
+    const requestBody = {
       email: inputText.email,
       password: inputText.password
     };
-
-    // Call the login function from the AuthContext
-    login(userData);
-    console.log(userData);
-    
+  
+    // Send the API request
+    fetch('http://localhost:8080/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${btoa(`${username}:${password}`)}`
+      },
+      body: JSON.stringify(requestBody)
+    })
+      .then(response => {
+        // Handle the response
+        if (response.ok) {
+          // Login successful
+          // Assuming the response contains user data or token, you can pass it to the login function
+          response.json().then(data => {
+            login(data); // Pass the user data or token to the login function from AuthContext
+          });
+        } else {
+          // Login failed
+          response.json().then(errorData => {
+          const errorMessage = errorData.message || 'Login failed';
+          alert(errorMessage);
+        });
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
-
+  
   return (
     <View style={styles.containerMain}>
       <View style={styles.textContainer}>
@@ -36,18 +63,18 @@ function AuthScreen({ navigation }) {
           <View style={{ marginBottom: 13 }}>
             <DataInput
               value={inputText.email}
-              setValue={(text) => setInputText({ ...inputText, email: text })}
-              placeholder={"Почта"}
-              type={"email"}
+              setValue={text => setInputText({ ...inputText, email: text })}
+              placeholder="Почта"
+              type="email"
               flex={false}
             />
           </View>
           <View style={{ marginBottom: 13 }}>
             <DataInput
               value={inputText.password}
-              setValue={(text) => setInputText({ ...inputText, password: text })}
-              placeholder={"Пароль"}
-              type={"password"}
+              setValue={text => setInputText({ ...inputText, password: text })}
+              placeholder="Пароль"
+              type="password"
               flex={false}
             />
           </View>
@@ -60,13 +87,16 @@ function AuthScreen({ navigation }) {
 
         <View>
           <HeaderButton
-            title={"Войти"}
-            onPress={handleLogin} // Call the handleLogin function when the button is pressed
+            title="Войти"
+            onPress={handleLogin}
             disabled={!isFormValid}
           />
         </View>
         <View style={{ marginBottom: 13 }}>
-          <HeaderButton title={"Зарегистрироваться"} onPress={() => navigation.navigate('Reg')} />
+          <HeaderButton
+            title="Зарегистрироваться"
+            onPress={() => navigation.navigate('Reg')}
+          />
         </View>
       </View>
     </View>

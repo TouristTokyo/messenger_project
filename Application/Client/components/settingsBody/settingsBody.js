@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     View,
     StyleSheet,
@@ -13,21 +13,41 @@ import AdminSvg from "../../assets/icons/adminSvg";
 import AdminFocusSvg from "../../assets/icons/adminFocusSvg";
 import HeaderButton from "../buttons/headerButton";
 import DataInput from "../inputs/textInput/textInput";
+import AuthContext from "../../context/AuthContext";
+import axios from 'axios';
 
-export default function SettingsBody({ role, username, onPress, containerStyle }) {
+
+export default function SettingsBody({ data }) {
+    const { role, name, onPress, containerStyle, creator, channelId } = data;
     const [isHovered, setIsHovered] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
+    const { user } = useContext(AuthContext);
     const [inputText, setInputText] = useState({
         nickname: '',
         role: role, // add state for role input value
     });
     const [isAdmin, setIsAdmin] = useState(false); // add state for AdminSvg icon
-
-    const handleDelete = () => {
-        setShowPopup(false);
-    };
+    const username = 'admin';
+    const password = 'root';
+    const handleDelete = async () => {
+        try {
+          const url = `http://localhost:8080/api/channels/${channelId.id}/leave?username=${name}`;
+          const response = await axios.delete(url, {
+            auth: {
+              username: username,
+              password: password
+            }
+          });
+          console.log('Delete request sent successfully');
+          console.log(response.data); // Optional: Log the response data
+        } catch (error) {
+          console.error('Error sending delete request:', error);
+        }
+      };
+      
 
     const isFormValid = inputText.role;
+
 
     const handleAdminClick = () => {
         setIsAdmin(!isAdmin); // toggle AdminSvg icon
@@ -37,11 +57,41 @@ export default function SettingsBody({ role, username, onPress, containerStyle }
         setInputText({ ...inputText, role: role }); // update role input value
     };
 
-    const handleSaveChanges = () => {
-        // code to save changes goes here
-        onPress(inputText.role);
-        // hide modal
-    };
+    const handleSaveChanges = async () => {
+        const url = 'http://localhost:8080/api/roles/create';
+      
+        const requestBody = {
+          name: inputText.role,
+          isAdmin: isAdmin,
+          username: name,
+          channelName: channelId.name
+        };
+      
+        try {
+            
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Basic ${btoa(`${username}:${password}`)}` // Replace with your own username and password
+            },
+            body: JSON.stringify(requestBody)
+          });
+      
+          // Check if the request was successful
+          if (response.ok) {
+            console.log('Role created successfully');
+          } else {
+            console.log('Failed to create role');
+            console.log(channelId.name);
+          }
+        } catch (error) {
+          console.error('Error creating role:', error);
+        }
+      
+        setShowPopup(false);
+      };
+      
 
     return (
         <TouchableOpacity
@@ -54,15 +104,22 @@ export default function SettingsBody({ role, username, onPress, containerStyle }
             onMouseLeave={() => setIsHovered(false)}
         >
             <View style={styles.content}>
-                <TouchableOpacity onPress={handleDelete}>
-                    <DeleteSvg />
-                </TouchableOpacity>
-                <Text style={styles.username}>{username}</Text>
+                {!creator && (
+                    <TouchableOpacity onPress={handleDelete}>
+                        <DeleteSvg />
+                    </TouchableOpacity>
+                )}
+
+                <Text style={styles.username}>{name}</Text>
                 <Text style={styles.role}>{inputText.role}</Text>
-                <TouchableOpacity onPress={() => setShowPopup(true)}>
-                    <ChangeSvg />
-                </TouchableOpacity>
+
+                {!creator  && (
+                    <TouchableOpacity onPress={() => setShowPopup(true)}>
+                        <ChangeSvg />
+                    </TouchableOpacity>
+                )}
             </View>
+
 
             <Modal visible={showPopup} transparent={true}>
                 <View style={styles.popupContainer}>
@@ -70,7 +127,7 @@ export default function SettingsBody({ role, username, onPress, containerStyle }
                     <View style={styles.inputContainer}>
                         <DataInput
                             value={inputText.role}
-                            setValue={handleRoleChange}
+                            setValue={(text) => setInputText({ ...inputText, role: text })}
                             placeholder={""}
                             type={"nickname"}
                             flex={true}
@@ -79,11 +136,11 @@ export default function SettingsBody({ role, username, onPress, containerStyle }
                             {isAdmin ? <AdminFocusSvg /> : <AdminSvg />}
                         </TouchableOpacity>
                     </View>
-                        <View >
-                            <TouchableOpacity  onPress={() => setShowPopup(false)}>
-                            <HeaderButton title={"Назначить"}  onPress={() => setShowPopup(false)} disabled={!isFormValid} />
-                            </TouchableOpacity>
-                        </View>
+                    <View >
+                        <TouchableOpacity onPress={() => setShowPopup(false)}>
+                            <HeaderButton title={"Назначить"} onPress={handleSaveChanges} disabled={!isFormValid} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </Modal>
         </TouchableOpacity>
@@ -96,7 +153,7 @@ const styles = StyleSheet.create({
         borderRadius: 26,
         paddingVertical: 12,
         paddingHorizontal: 16,
-        
+
     },
     text: {
         fontFamily: 'Montserrat-Regular',
@@ -122,12 +179,12 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: "#0076B9",
         marginLeft: 40,
-       marginRight: 40
+        marginRight: 40
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-      },
+    },
     popupContainer: {
         backgroundColor: '#E7DEDE',
         borderRadius: 35,

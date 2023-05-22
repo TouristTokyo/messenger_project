@@ -13,7 +13,6 @@ function GreetingsScreen({ navigation }) {
     navigation.navigate('MainAuth');
     return null;
   }
-
   return (
     <View style={styles.container}>
       <LogoSvg />

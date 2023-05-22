@@ -12,32 +12,58 @@ import { ImageContext } from '../context/ImageContext';
 import AuthContext from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DataInput from '../components/inputs/textInput/textInput';
+import { useFocusEffect } from '@react-navigation/native';
+import { setProfileNickname, getProfileNickname } from '../context/AsyncStorageUtil';
+import axios from 'axios';
 
-export default function ChannelScreen({ navigation }) {
+export default function ChannelScreen({ navigation, route }) {
     const styles = useStyles();
+    const { channelId } = route.params;
     const [showPopup, setShowPopup] = useState(false);
     const [role, setRole] = useState('Admin');
     const [inputText, setInputText] = useState({
         nickname: '',
     });
     const { logout } = useContext(AuthContext);
+    const { user, updateUser } = useContext(AuthContext);
     const [messages, setMessages] = useState([]);
     const { selectedImage } = useContext(ImageContext);
     const [isMember, setIsMember] = useState(false);
+    const [isDisable, setIsDisable] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [showSettings, setShowSettings] = useState(true);
+    const [userText, setUserText] = useState('');
+    const username = 'admin';
+    const password = 'root';
+    const [channelData, setChannelData] = useState([]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchProfileNickname();
+            fetchChannelData();
+        }, [])
+    );
+
+    const fetchProfileNickname = async () => {
+        try {
+            const nickname = await getProfileNickname();
+            if (nickname && nickname !== userText) {
+                setUserText(nickname);
+            }
+        } catch (error) {
+            console.log('Error retrieving profile nickname:', error);
+        }
+    };
+
 
     useEffect(() => {
         loadChatMessages();
-      }, []);
-    
-      useEffect(() => {
-        saveChatMessages();
-      }, [messages]);
-    
+        console.log(channelId);
+    }, []);
 
     useEffect(() => {
-        loadChannelState();
-    }, []);
+        saveChatMessages();
+    }, [messages]);
 
     useEffect(() => {
         saveChannelState();
@@ -45,6 +71,9 @@ export default function ChannelScreen({ navigation }) {
 
     const handleSend = (message, role) => {
         setMessages((prevMessages) => [...prevMessages, message]);
+
+        // Call the sendMessage function to send the message to the API
+        sendMessage(message);
     };
 
     const isFormValid = inputText.nickname;
@@ -76,8 +105,60 @@ export default function ChannelScreen({ navigation }) {
         },
     ];
 
-    const handleJoinLeave = () => {
-        setIsMember((prev) => !prev);
+    const handleJoinLeave = async () => {
+        try {
+            const name = userText || user.name;
+            const channelName = channelData.name;
+            const apiUrl = isMember
+                ? `http://localhost:8080/api/channels/${channelId}/leave?username=${name}`
+                : `http://localhost:8080/api/channels/join?username=${username}&channel_name=${channelName}`;
+
+            const response = await fetch(apiUrl, {
+                method: isMember ? 'DELETE' : 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+                },
+            });
+
+            if (response.ok) {
+                setIsMember((prevIsMember) => !prevIsMember);
+                alert(isMember ? 'You left the channel' : 'You joined the channel');
+                window.location.reload();
+            } else {
+                // Handle error response
+                alert(isMember ? 'Failed to leave the channel' : 'Failed to join the channel');
+            }
+        } catch (error) {
+            alert('Error joining/leaving the channel:', error);
+        }
+    };
+
+    const sendMessage = async (message) => {
+        try {
+            const requestBody = {
+                currentUsername: userText,
+                message: message,
+                channelName: channelData.name
+            };
+
+            const response = await axios.post('http://localhost:8080/api/channels/add_message', requestBody, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+                },
+            });
+
+            if (response.ok) {
+                console.log('Message sent successfully');
+                // Handle any additional logic or UI updates after sending the message
+            } else {
+                console.log('Failed to send message');
+                // Handle the error response
+            }
+        } catch (error) {
+            console.error('Error sending message:', error);
+        }
     };
 
     const saveChannelState = async () => {
@@ -92,18 +173,7 @@ export default function ChannelScreen({ navigation }) {
         }
     };
 
-    const loadChannelState = async () => {
-        try {
-            const savedChannelState = await AsyncStorage.getItem('channelState');
-            if (savedChannelState) {
-                const { isMember: savedIsMember, showSettings: savedShowSettings } = JSON.parse(savedChannelState);
-                setIsMember(savedIsMember);
-                setShowSettings(savedShowSettings);
-            }
-        } catch (error) {
-            console.error('Error while loading channel state:', error);
-        }
-    };
+   
     const saveChatMessages = async () => {
         try {
             await AsyncStorage.setItem('chatMessages', JSON.stringify(messages));
@@ -111,7 +181,7 @@ export default function ChannelScreen({ navigation }) {
             console.error('Error while saving chat messages:', error);
         }
     };
-
+    const imageSource = selectedImage || (user && user.image);
     const loadChatMessages = async () => {
         try {
             const savedMessages = await AsyncStorage.getItem('chatMessages');
@@ -122,24 +192,97 @@ export default function ChannelScreen({ navigation }) {
             console.error('Error while loading chat messages:', error);
         }
     };
+    const handleCreateChannel = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/channels/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+                },
+                body: JSON.stringify({
+                    username: userText,
+                    channelName: inputText.nickname,
+                }),
+            });
+
+            if (response.ok) {
+                const channelResponse = await response.json();
+                setShowPopup(false);
+                // Channel creation successful
+                alert('Channel created');
+
+                // Update user.channels in the AuthContext
+                const updatedUser = {
+                    ...user,
+                    channels: [...user.channels, channelResponse],
+                };
+
+                // Store the updated user data in localStorage
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+
+                // Update user data in the AuthContext
+                updateUser(updatedUser);
+            } else {
+                // Handle error response
+                alert('Failed to create channel');
+            }
+        } catch (error) {
+            alert('Error creating channel:', error);
+        }
+    };
+
+    const fetchChannelData = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+                },
+            });
+
+            if (response.ok) {
+                const channelData = await response.json();
+
+                // Check if the user is the channel creator
+                const isCreator = user?.id === channelData.creator?.id;
+                const member = user.channels?.some((channel) => channel.id === channelData.id);
+                const admin = user.channels.id === channelData.id && user.channels.role.isAdmin
+                setIsAdmin(admin)
+                // Update isMember and showSettings based on the condition
+                setIsMember(member);
+                setShowSettings(isCreator);
+                setIsDisable(isCreator);
+                setChannelData(channelData);
+            } else {
+                // Handle error response
+                console.log('Failed to fetch channel data');
+            }
+        } catch (error) {
+            console.log('Error fetching channel data:', error);
+        }
+    };
+
+
     return (
         <View style={styles.containerMain}>
             <View style={styles.barChanContainer}>
-                <Text style={styles.barText}>Channels name</Text>
+                <Text style={styles.barText}>{channelData.name}</Text>
                 <View>
-                    <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} />
+                    <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} disabled={isDisable} />
                 </View>
                 {isMember && showSettings && (
                     <View style={{ marginRight: 20 }}>
-                        <TouchableHighlight onPress={({ }) => navigation.navigate('Settings')}>
+                        <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.id })}>
                             <SettingsSvg />
                         </TouchableHighlight>
                     </View>
                 )}
             </View>
             <View style={styles.profileContainer}>
-                <ShowAvatar imageUrl={selectedImage} profile={true} />
-                <Text style={{ color: '#000000', fontSize: 48, textAlign: 'center', marginBottom: 13 }}>Username</Text>
+                <ShowAvatar imageUrl={imageSource} profile={true} />
+                <Text style={{ color: '#000000', fontSize: 48, textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{userText ? userText : user.name}</Text>
                 {buttons.map((data, index) => (
                     <View style={{ width: '70%' }} key={index}>
                         <BorderButton key={index} data={data} />
@@ -151,14 +294,12 @@ export default function ChannelScreen({ navigation }) {
                     {messageBodies.map((data, index) => (
                         <MessageBody key={index} data={data} />
                     ))}
-                    {messages.map((message, index) => (
-                        <MessageBody key={index} data={message} />
-                    ))}
+                    
                 </ScrollView>
             </View>
             {isMember && (
                 <View style={styles.sendContainer}>
-                    <MessageInput onSend={handleSend} role={role} />
+                    <MessageInput onSend={handleSend} role={true} />
                 </View>
             )}
             <View style={styles.bottomLeft}>
@@ -178,11 +319,9 @@ export default function ChannelScreen({ navigation }) {
                             flex={true}
                         />
                     </View>
-                    <TouchableOpacity onPress={() => setShowPopup(false)}>
-                        <View>
-                            <HeaderButton title={'Создать'} onPress={() => console.log()} disabled={!isFormValid} />
-                        </View>
-                    </TouchableOpacity>
+                    <View>
+                        <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
+                    </View>
                 </View>
             </Modal>
         </View>

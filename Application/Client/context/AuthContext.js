@@ -1,6 +1,8 @@
 import React, { createContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -28,13 +30,14 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(true);
     setUser(userData);
     try {
+      await AsyncStorage.clear(); // Clear existing data before setting new data
       await AsyncStorage.setItem('isLoggedIn', 'true');
       await AsyncStorage.setItem('user', JSON.stringify(userData));
-      // localStorage.setItem('currentScreen', screen); // Remove this line
     } catch (error) {
       console.error('Error during login:', error);
     }
   };
+
 
   const logout = async () => {
     setIsLoggedIn(false);
@@ -42,11 +45,16 @@ export const AuthProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem('isLoggedIn');
       await AsyncStorage.removeItem('user');
-     
       navigation.navigate("Auth"); // Assuming you have a navigation object available
     } catch (error) {
       console.error('Error during logout:', error);
     }
+  };
+
+
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+
   };
 
   const authContextValue = {
@@ -54,7 +62,7 @@ export const AuthProvider = ({ children }) => {
     user,
     login,
     logout,
-   
+    updateUser
   };
 
   return (
@@ -65,3 +73,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthContext;
+

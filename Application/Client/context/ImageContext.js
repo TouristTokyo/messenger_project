@@ -10,6 +10,7 @@ export const ImageProvider = ({ children }) => {
     if (storedImage) {
       setSelectedImage(JSON.parse(storedImage));
     }
+    
   }, []);
 
   const updateSelectedImage = (image) => {

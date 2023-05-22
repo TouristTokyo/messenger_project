@@ -1,26 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TouchableHighlight } from 'react-native-web';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, Button, TouchableHighlight, Alert } from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
 import BackSvg from '../assets/icons/backSvg';
+import AuthContext from '../context/AuthContext';
+import { setEmail } from '../context/AsyncStorageUtil';
 
 function ChangeEmailScreen({ navigation }) {
   const styles = useStyles();
   const [inputText, setInputText] = useState({
-    newPassword: '',
     email: '',
-    confirmPassword: '',
-    code: ''
+    code: '',
   });
+  const [receivedCode, setReceivedCode] = useState('');
 
-  // Функция, которая проверяет, заполнены ли все поля и равны ли поля новый пароль и подтвердить пароль
+  const { user, updateUser } = useContext(AuthContext);
+  const username = 'admin';
+  const password = 'root';
+
   const isButtonDisabled = () => {
-    return !inputText.newPassword || !inputText.email || !inputText.confirmPassword || !inputText.code || inputText.newPassword !== inputText.confirmPassword;
+    return !inputText.email || !inputText.code || inputText.code != receivedCode;
+  };
+
+  const isDisabled = () => {
+    return !inputText.email;
+  };
+
+  const getCode = () => {
+    const email = encodeURIComponent(inputText.email);
+    const apiUrl = `http://localhost:8080/api/send_email?email=${email}`;
+
+    fetch(apiUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setReceivedCode(data);
+        if (data) {
+          alert('Code has been sent to your email');
+          console.log(data);
+        } else {
+          alert('Failed to get code');
+          console.log(data);
+        }
+      })
+      .catch((error) => {
+        console.error('Error getting code:', error);
+        alert('Failed to get code');
+      });
+  };
+
+  const changeEmail = async () => {
+  try {
+    const userId = user?.id;
+    const email = encodeURIComponent(inputText.email);
+    const apiUrl = `http://localhost:8080/api/users/${userId}/update/email?email=${email}`;
+
+    const response = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+      },
+    });
+
+    if (response.ok) {
+      alert('Email updated successfully');
+      // Use setEmail to update the email value
+      setEmail(inputText.email);
+    } else {
+      alert('Failed to update email');
+    }
+  } catch (error) {
+    console.error('Error updating email:', error);
+    alert('Failed to update email');
   }
-  const isDisabled = ()=> {
-    return !inputText.email; 
-  }
+};
+
 
   return (
     <View style={styles.containerMain}>
@@ -46,11 +106,19 @@ function ChangeEmailScreen({ navigation }) {
           </View>
         </View>
 
-        <View >
-          <HeaderButton title={"Изменить почту"} onPress={() => navigation.navigate('Profile')} disabled={isButtonDisabled()} />
+        <View>
+          <HeaderButton
+            title={"Изменить почту"}
+            onPress={changeEmail}
+            disabled={isButtonDisabled()}
+          />
         </View>
         <View style={{ marginBottom: 13 }}>
-          <HeaderButton title={"Получить код"} onPress={() => console.log()} disabled = {isDisabled()}/>
+          <HeaderButton
+            title={"Получить код"}
+            onPress={getCode}
+            disabled={isDisabled()}
+          />
         </View>
       </View>
       <View style={styles.topLeft}>
