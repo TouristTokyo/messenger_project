@@ -114,6 +114,9 @@ public class ChannelController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") BigInteger id) {
+        List<Member> members = memberService.getMembersByChannel(channelService.getChannelById(id));
+        members.forEach(member -> roleService.delete(member.getRole().getId()));
+
         channelService.delete(id);
 
         return ResponseEntity.ok(HttpStatus.OK);
