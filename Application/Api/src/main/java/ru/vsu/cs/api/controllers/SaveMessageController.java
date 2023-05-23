@@ -37,7 +37,7 @@ public class SaveMessageController {
     }
 
     @PostMapping("/save")
-    @Operation(summary = "Сохранить сообщение")
+    @Operation(summary = "Сохранение сообщения")
     public ResponseEntity<HttpStatus> saveMessage(@RequestBody SavedMessageDto savedMessageDto) {
         User user = userService.getUserByName(savedMessageDto.getUsername());
 
@@ -47,12 +47,14 @@ public class SaveMessageController {
 
 
     @DeleteMapping("/delete_all")
+    @Operation(summary = "Удаление всех сохраннёных сообщений у пользователя")
     public ResponseEntity<HttpStatus> deleteAllMessage(@RequestParam("user_id") BigInteger userId) {
         savedMessageService.deleteAllByUser(userService.getById(userId));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
+    @Operation(summary = "Удаление конкретного сохранённого сообщения")
     public ResponseEntity<HttpStatus> deleteMessage(@RequestParam("user_id") BigInteger userId,
                                                     @RequestParam("message_id") BigInteger messageId) {
         savedMessageService.delete(messageService.getMessage(messageId), userService.getById(userId));

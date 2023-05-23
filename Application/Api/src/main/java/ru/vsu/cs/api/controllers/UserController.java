@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @GetMapping("/email")
-    @Operation(summary = "Получения id пользователя по его email (почте)")
+    @Operation(summary = "Получение id пользователя по его email (почте)")
     public BigInteger getUserId(@RequestParam("email") String email) {
         return userService.getUserByEmail(email).getId();
     }
