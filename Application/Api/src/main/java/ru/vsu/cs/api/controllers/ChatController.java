@@ -1,11 +1,13 @@
 package ru.vsu.cs.api.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.vsu.cs.api.dto.ChatMessageCreationDto;
-import ru.vsu.cs.api.dto.ChatMessageDto;
+import ru.vsu.cs.api.dto.message.ChatMessageCreationDto;
+import ru.vsu.cs.api.dto.message.ChatMessageDto;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.Message;
 import ru.vsu.cs.api.models.User;
@@ -25,6 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/chats")
 @CrossOrigin
+@Tag(name = "Чаты", description = "Методы для работы с чатами")
 public class ChatController {
     private final UserService userService;
     private final ChatService chatService;
@@ -38,6 +41,7 @@ public class ChatController {
     }
 
     @PostMapping("/add_message")
+    @Operation(summary = "Посылка сообщение в чат")
     public ResponseEntity<ChatMessageDto> addMessage(@RequestBody ChatMessageCreationDto chatMessageCreationDto) {
         User currentUser = userService.getUserByName(chatMessageCreationDto.getCurrentUsername());
         User otherUser = userService.getUserByName(chatMessageCreationDto.getOtherUsername());
@@ -50,12 +54,14 @@ public class ChatController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Operation(summary = "Удаление чата")
     public ResponseEntity<HttpStatus> deleteChat(@PathVariable("id") BigInteger id) {
         chatService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Получение чата по id")
     public List<ChatMessageDto> getChatById(@PathVariable("id") BigInteger id) {
         List<Message> messages = messageService.getMessagesByChat(chatService.getById(id));
 
@@ -63,12 +69,9 @@ public class ChatController {
     }
 
     @GetMapping("/usernames")
+    @Operation(summary = "Получение чата по именам (никнеймам) пользователей")
     public ResponseEntity<List<ChatMessageDto>> getChatByUsernames(@RequestParam("first_user") String firstUser,
                                                                    @RequestParam("second_user") String secondUser) {
-        if (firstUser == null || secondUser == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
         User currentUser = userService.getUserByName(firstUser);
         User otherUser = userService.getUserByName(secondUser);
 

@@ -1,5 +1,7 @@
 package ru.vsu.cs.api.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin
+@Tag(name = "Аутентификация", description = "Методы для входа и регистрации")
 public class AuthorizeController {
     private final UserService userService;
     private final SavedMessageService savedMessageService;
@@ -37,6 +40,7 @@ public class AuthorizeController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Вход в аккаунт")
     public ResponseEntity<UserResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
         User user = userService.login(userLoginDto.getEmail(), userLoginDto.getPassword());
 
@@ -54,6 +58,7 @@ public class AuthorizeController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Регистрация")
     public ResponseEntity<HttpStatus> register(@RequestBody UserCreationDto userCreationDto) {
         userService.save(Mapper.convertToUser(userCreationDto));
         return ResponseEntity.ok(HttpStatus.OK);

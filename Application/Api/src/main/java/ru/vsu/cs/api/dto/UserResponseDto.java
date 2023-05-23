@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import ru.vsu.cs.api.models.Channel;
 import ru.vsu.cs.api.models.Chat;
@@ -9,6 +10,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Data
+@Schema(description = "Полная информация о пользователе")
 public class UserResponseDto {
     private BigInteger id;
     private String name;

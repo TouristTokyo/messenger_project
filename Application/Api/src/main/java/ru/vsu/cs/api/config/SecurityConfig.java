@@ -22,7 +22,8 @@ public class SecurityConfig {
         http.csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .anyRequest().authenticated()
+                .requestMatchers("/api/**").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic(Customizer.withDefaults());
 

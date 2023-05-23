@@ -1,5 +1,6 @@
-package ru.vsu.cs.api.dto;
+package ru.vsu.cs.api.dto.message;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.User;
@@ -8,6 +9,7 @@ import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Data
+@Schema(description = "Информация о сообщении в чате, которое отправил пользователь ")
 public class ChatMessageDto {
     private BigInteger id;
     private Chat chat;

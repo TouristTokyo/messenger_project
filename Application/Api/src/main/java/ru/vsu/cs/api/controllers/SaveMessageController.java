@@ -1,5 +1,7 @@
 package ru.vsu.cs.api.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/saved_message")
 @CrossOrigin
+@Tag(name = "Сохранённые сообщения", description = "Методы для работы с сообщениями")
 public class SaveMessageController {
     private final UserService userService;
     private final SavedMessageService savedMessageService;
@@ -34,12 +37,14 @@ public class SaveMessageController {
     }
 
     @PostMapping("/save")
+    @Operation(summary = "Сохранить сообщение")
     public ResponseEntity<HttpStatus> saveMessage(@RequestBody SavedMessageDto savedMessageDto) {
         User user = userService.getUserByName(savedMessageDto.getUsername());
 
         savedMessageService.save(new SavedMessage(messageService.getMessage(savedMessageDto.getMessageId()), user));
         return ResponseEntity.ok(HttpStatus.OK);
     }
+
 
     @DeleteMapping("/delete_all")
     public ResponseEntity<HttpStatus> deleteAllMessage(@RequestParam("user_id") BigInteger userId) {
