@@ -13,6 +13,7 @@ import ru.vsu.cs.api.services.MessageService;
 import ru.vsu.cs.api.services.SavedMessageService;
 import ru.vsu.cs.api.services.UserService;
 import ru.vsu.cs.api.utils.ErrorResponse;
+import ru.vsu.cs.api.utils.exceptions.MessageException;
 import ru.vsu.cs.api.utils.exceptions.UserException;
 
 import java.math.BigInteger;
@@ -44,15 +45,31 @@ public class SaveMessageController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
-    @Operation(summary = "Удалить сохранённое собщение")
-    public ResponseEntity<HttpStatus> deleteMessage(@PathVariable("id")BigInteger id){
-        savedMessageService.delete(id);
+
+    @DeleteMapping("/delete_all")
+    public ResponseEntity<HttpStatus> deleteAllMessage(@RequestParam("user_id") BigInteger userId) {
+        savedMessageService.deleteAllByUser(userService.getById(userId));
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<HttpStatus> deleteMessage(@RequestParam("user_id") BigInteger userId,
+                                                    @RequestParam("message_id") BigInteger messageId) {
+        savedMessageService.delete(messageService.getMessage(messageId), userService.getById(userId));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> userException(UserException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> messageException(MessageException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now()

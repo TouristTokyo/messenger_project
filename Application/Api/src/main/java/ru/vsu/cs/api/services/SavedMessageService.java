@@ -3,6 +3,7 @@ package ru.vsu.cs.api.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.vsu.cs.api.models.Message;
 import ru.vsu.cs.api.models.SavedMessage;
 import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.repositories.SavedMessageRepository;
@@ -30,7 +31,12 @@ public class SavedMessageService {
     }
 
     @Transactional
-    public void delete(BigInteger id) {
-        savedMessageRepository.deleteById(id);
+    public void deleteAllByUser(User user) {
+        savedMessageRepository.deleteAllByUser(user);
+    }
+
+    @Transactional
+    public void delete(Message message, User user) {
+        savedMessageRepository.deleteByMessageAndUser(message, user);
     }
 }
