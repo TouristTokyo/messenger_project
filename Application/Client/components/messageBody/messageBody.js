@@ -4,26 +4,46 @@ import ShowAvatar from '../Avatar/ShowAvatar/showAvatar';
 import ForwardSvg from '../../assets/icons/forwardSvg';
 import ForwardFocusSvg from '../../assets/icons/forwardFocusSvg';
 import { MessageContext } from '../../context/MessageContext';
+import AuthContext from '../../context/AuthContext';
 
 const MessageBody = ({ data, currentUser }) => {
-  const { imageUrl, nickname, role, message, own, channel, date } = data;
+  const { imageUrl, nickname, role, message, own, channel, date, unauth, ident  } = data;
   const [isFocused, setIsFocused] = useState(false);
   const dated = new Date(date);
   const time = dated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
+  const username = 'admin';
+  const password = 'root';
+  const {user} = useContext(AuthContext);
 
   const { addForwardedMessage } = useContext(MessageContext);
 
-  const handleForwardPress = () => {
+  const handleForwardPress = async () => {
     setIsFocused(prevState => !prevState);
-    addForwardedMessage({
-      imageUrl,
-      nickname,
-      role,
-      message,
-      own,
-      channel
-    });
+    const body = {
+      username: user.name,
+      messageId: ident
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/saved_message/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        // Forwarding successful
+        console.log('Message forwarded successfully');
+      } else {
+        // Forwarding failed
+        console.log('Failed to forward message');
+      }
+    } catch (error) {
+      console.log('Error forwarding message:', error);
+    }
   };
 
   const forwardIcon = isFocused ? <ForwardFocusSvg /> : <ForwardSvg />;
@@ -46,9 +66,11 @@ const MessageBody = ({ data, currentUser }) => {
         </View>
       )}
       <View style={messageBoxStyles}>
-        <TouchableOpacity onPress={handleForwardPress}>
-          <View style={own ? styles.ownForward : styles.forward}>{forwardIcon}</View>
-        </TouchableOpacity>
+        {!unauth && (
+          <TouchableOpacity onPress={handleForwardPress}>
+            <View style={own ? styles.ownForward : styles.forward}>{forwardIcon}</View>
+          </TouchableOpacity>
+        )}
         <Text style={styles.nickname}>{nickname}</Text>
         {channel && <Text style={styles.role}>{role}</Text>}
         <Text style={styles.message}>{message}</Text>

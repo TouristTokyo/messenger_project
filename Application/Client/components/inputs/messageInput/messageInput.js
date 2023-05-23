@@ -4,41 +4,67 @@ import { useWindowDimensions } from 'react-native-web';
 
 import SendSvg from '../../../assets/icons/sendSvg';
 
-const MessageInput = ({  curuser, chanInf }) => {
+const MessageInput = ({  curuser, chanInf, channel }) => {
   const [message, setMessage] = useState('');
   const { width, height } = useWindowDimensions();
   const username = 'admin';
   const password = 'root';
   const handleSend = async () => {
     if (message) {
-      const requestBody = {
-        currentUsername: curuser,
-        message: message,
-        channelName: chanInf.name,
-      };
-  
       try {
-        const response = await fetch('http://localhost:8080/api/channels/add_message', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
-          },
-          body: JSON.stringify(requestBody),
-        });
-  
-        if (response.ok) {
-          console.log('Message sent successfully');
-          setMessage('');
+        if (channel) {
+          // Use existing API endpoint for channel messages
+          const requestBody = {
+            currentUsername: curuser,
+            message: message,
+            channelName: chanInf.name,
+          };
+    
+          const response = await fetch('http://localhost:8080/api/channels/add_message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+            },
+            body: JSON.stringify(requestBody),
+          });
+    
+          if (response.ok) {
+            console.log('Message sent successfully');
+            setMessage('');
+          } else {
+            console.log('Failed to send message');
+          }
         } else {
-          console.log('Failed to send message');
-          console.log(message);
+          // Use custom API endpoint for direct messages
+          const requestBody = {
+            currentUsername: curuser,
+            otherUsername: chanInf,
+            message: message,
+          };
+    
+          const response = await fetch('http://localhost:8080/api/chats/add_message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+            },
+            body: JSON.stringify(requestBody),
+          });
+    
+          if (response.ok) {
+            console.log('Message sent successfully');
+            setMessage('');
+          } else {
+            console.log('Failed to send message');
+          }
         }
       } catch (error) {
         console.error('Error sending message:', error);
       }
     }
   };
+  
   
 
   return (

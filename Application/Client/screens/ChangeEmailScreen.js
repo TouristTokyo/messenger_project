@@ -55,6 +55,11 @@ function ChangeEmailScreen({ navigation }) {
   };
 
   const changeEmail = async () => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(inputText.email)) {
+      alert('Invalid email format');
+      return;
+    }
   try {
     const userId = user?.id;
     const email = encodeURIComponent(inputText.email);

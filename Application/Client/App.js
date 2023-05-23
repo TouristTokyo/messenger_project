@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import GreetingsScreen from './screens/GreetingsScreen';
@@ -28,73 +28,90 @@ export default function App( ) {
 const Stack = createStackNavigator();
 const [searchValue, setSearchValue] = useState('');
 const [searchResults, setSearchResults] = useState([]);
-const resultsUnauth = [
-  {
-    
-    name: 'Rock Bottom',
-    onPress: () => navigation.navigate('ChannelUnauth'),
-  },
-  {
-    
-    name: 'Rock Upper',
-    onPress: () => navigation.navigate('ChannelUnauth'),
-  },
-  {
-    name: 'Rock Under',
-    onPress: () => navigation.navigate('ChannelUnauth'),
-  },]
-  const results = [
-    {
-      
-      name: 'Rock Bottom',
-      onPress: ({ navigation }) => navigation.navigate('Channel'),
-    },
-    {
-      
-      name: 'Rock Upper',
-      onPress: ({ navigation }) => navigation.navigate('Channel'),
-    },
-    {
-      name: 'Rock Under',
-      onPress: ({ navigation }) => navigation.navigate('Channel'),
-    },
-    {
-      avatar: { uri: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg' },
-      name: 'Rock W',
-      onPress: ({ navigation }) => navigation.navigate('Chat'),
-    },
-    {
-      avatar: { uri: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg' },
-      name: 'Rock A',
-      onPress: ({ navigation }) => navigation.navigate('Chat'),
-    },
-    {
-      avatar: { uri: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg' },
-      name: 'Rock s',
-      onPress: ({ navigation }) => navigation.navigate('Chat'),
-    },
-    {
-      avatar: { uri: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg' },
-      name: 'Rock j',
-      onPress: ({ navigation }) => navigation.navigate('Chat'),
-    },
-    {
-      avatar: { uri: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg' },
-      name: 'Rock b',
-      onPress: ({ navigation }) => navigation.navigate('Chat'),
-    },
-    {
-      avatar: { uri: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg' },
-      name: 'Rock m',
-      onPress: ({ navigation }) => navigation.navigate('Chat'),
-    },
-    {
-      avatar: { uri: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg' },
-      name: 'Mama',
-      onPress: ({ navigation }) => navigation.navigate('Chat'),
-    },
+const username = 'admin';
+const password = 'root';
+const [resultsUnauth, setResultsUnauth] = useState([]);
+const [results, setResults] = useState([]);
 
-  ];
+
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      // Fetch channel data
+      const channelResponse = await fetch('http://localhost:8080/api/channels', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+        },
+      });
+
+      if (channelResponse.ok) {
+        const channelData = await channelResponse.json();
+        const formattedResults = [];
+        const unauthResults = [];
+
+        for (let i = 0; i < channelData.length; i++) {
+          const channel = channelData[i];
+
+          // Add channel object to the formattedResults array
+          formattedResults.push({
+            name: channel.name,
+            onPress: ({ navigation }) =>
+            navigation.navigate('Channel', { channelId: channel.id }),
+            avatarUrl: null
+          });
+
+          // Add channel object to the unauthResults array
+          unauthResults.push({
+            name: channel.name,
+            onPress: ({ navigation }) =>
+            navigation.navigate('ChannelUnauth', { channelId: channel.id }),
+            avatarUrl: null
+          });
+        }
+
+        // Fetch user data
+        const userResponse = await fetch('http://localhost:8080/api/users', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+          },
+        });
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+
+          // Merge user data into formattedResults array
+          for (let i = 0; i < userData.length; i++) {
+            const user = userData[i];
+            formattedResults.push({
+              name: user.name,
+              onPress: ({ navigation }) =>
+              navigation.navigate('Chat', { chatUser: user }),
+              avatarUrl: user.image,
+            });
+          }
+        } else {
+          console.log('Failed to fetch user data');
+        }
+
+        setResults(formattedResults);
+        setResultsUnauth(unauthResults);
+      } else {
+        console.log('Failed to fetch channel data');
+      }
+    } catch (error) {
+      console.log('Error fetching data:', error);
+    }
+  };
+
+  fetchData();
+}, []);
+
+
   
 
 
@@ -175,7 +192,7 @@ const screens = [
   {
     name: 'ChannelUnauth',
     component: ChannelUnauthScreen,
-    options: ({ navigation }) => ({
+    options: ({ navigation, route }) => ({
       title: "",
       headerLeft: () => (
         <TouchableHighlight onPress={() => navigation.navigate('MainUnauth')}>

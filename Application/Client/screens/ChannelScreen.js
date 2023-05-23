@@ -106,22 +106,7 @@ export default function ChannelScreen({ navigation, route }) {
         },
     ];
 
-    const messageBodies = [
-        {
-            imageUrl: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg',
-            nickname: 'John Doe',
-            role: 'Avatar',
-            channel: true,
-            message: 'Hellffffffffffffffffffffffffffffffffffffffffffffffffffffffffo world!',
-        },
-        {
-            own: true,
-            nickname: 'John Doe',
-            role: 'Amon',
-            channel: true,
-            message: 'Hellffffffffffffffffffffffffffffffffffffffffffffffffffffffffo world!',
-        },
-    ];
+
 
     const handleJoinLeave = async () => {
         try {
@@ -129,7 +114,7 @@ export default function ChannelScreen({ navigation, route }) {
             const channelName = channelData.name;
             const apiUrl = isMember
                 ? `http://localhost:8080/api/channels/${channelId}/leave?username=${name}`
-                : `http://localhost:8080/api/channels/join?username=${username}&channel_name=${channelName}`;
+                : `http://localhost:8080/api/channels/join?username=${name}&channel_name=${channelName}`;
 
             const response = await fetch(apiUrl, {
                 method: isMember ? 'DELETE' : 'POST',
@@ -257,9 +242,7 @@ export default function ChannelScreen({ navigation, route }) {
                             setIsAdmin(role.isAdmin);
                         }
                     }
-                } else {
-                    console.log("Current user not found in the members list");
-                }
+                } 
                 // Update isMember and showSettings based on the condition
                 setIsMember(member);
 
@@ -319,6 +302,8 @@ export default function ChannelScreen({ navigation, route }) {
                                     date: message.date,
                                     own: message.sender?.name === user.name,
                                     channel: true,
+                                    unauth: false,
+                                    ident: message.id
                                 }}
                                 currentUser={user}
                             />
@@ -329,7 +314,7 @@ export default function ChannelScreen({ navigation, route }) {
             </View>
             {isMember && (
                 <View style={styles.sendContainer}>
-                    <MessageInput curuser={userText ? userText : user.name} chanInf={channelData} />
+                    <MessageInput channel = {true} curuser={userText ? userText : user.name} chanInf={channelData} />
                 </View>
             )}
             <View style={styles.bottomLeft}>

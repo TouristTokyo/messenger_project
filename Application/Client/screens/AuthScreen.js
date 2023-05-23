@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TouchableHighlight } from 'react-native-web';
+import { View, Text, TouchableHighlight, Alert } from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
@@ -20,6 +20,12 @@ function AuthScreen({ navigation }) {
   const password = 'root';
 
   const handleLogin = () => {
+    // Validate the email format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(inputText.email)) {
+      alert('Invalid email format');
+      return;
+    }
     // Create the request body
     const requestBody = {
       email: inputText.email,
@@ -46,9 +52,9 @@ function AuthScreen({ navigation }) {
         } else {
           // Login failed
           response.json().then(errorData => {
-          const errorMessage = errorData.message || 'Login failed';
-          alert(errorMessage);
-        });
+            const errorMessage = errorData.message || 'Login failed';
+            Alert.alert(errorMessage);
+          });
         }
       })
       .catch(error => {

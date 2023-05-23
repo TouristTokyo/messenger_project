@@ -31,7 +31,11 @@ function ChangePasswordScreen({ navigation }) {
     if (inputText.newPassword !== inputText.confirmPassword) {
       return alert('New password does not match the confirmation one');
     }
-    
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(inputText.password)&& !passwordRegex.test(inputText.newPassword)) {
+      alert('Invalid password: at least 8 characters long, should contain at least one uppercase letter, at least one lowercase letter,at least one digit, may contain special characters');
+      return;
+    }
     const id = user?.id;
     const queryParams = new URLSearchParams({
       last_password: inputText.password,
