@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @Table(name = "chats")
 @Data
 @NoArgsConstructor
-
+@Schema(description = "Информация о чате")
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

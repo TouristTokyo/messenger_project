@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import java.math.BigInteger;
 @Table(name = "members")
 @Data
 @NoArgsConstructor
+@Schema(description = "Информация о участнике канала")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

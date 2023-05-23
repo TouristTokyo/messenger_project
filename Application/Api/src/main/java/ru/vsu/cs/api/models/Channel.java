@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.models;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.List;
 @Table(name = "channels")
 @Data
 @NoArgsConstructor
+@Schema(description = "Информация о канале")
 public class Channel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
