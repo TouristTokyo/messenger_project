@@ -47,7 +47,7 @@ public class ChatController {
     }
 
     @PostMapping("/add_message")
-    @Operation(summary = "Посылка сообщение в чат")
+    @Operation(summary = "Отправка сообщения в чат")
     public ResponseEntity<ChatMessageDto> addMessage(@RequestBody ChatMessageCreationDto chatMessageCreationDto) {
         User currentUser = userService.getUserByName(chatMessageCreationDto.getCurrentUsername());
         User otherUser = userService.getUserByName(chatMessageCreationDto.getOtherUsername());

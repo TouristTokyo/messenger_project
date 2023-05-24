@@ -67,7 +67,7 @@ public class ChannelController {
     }
 
     @PostMapping("/add_message")
-    @Operation(summary = "Посылка сообщения в канал")
+    @Operation(summary = "Отправка сообщения в канал")
     public ResponseEntity<ChannelMessageDto> addMessage(
             @RequestBody ChannelMessageCreationDto channelMessageCreationDto) {
         Channel channel = channelService.getChannelByName(channelMessageCreationDto.getChannelName());
@@ -116,7 +116,7 @@ public class ChannelController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Полученеи канала по id")
+    @Operation(summary = "Получение канала по id")
     public ChannelResponseDto getChannel(@PathVariable("id") BigInteger id) {
         Channel channel = channelService.getChannelById(id);
         List<Member> members = memberService.getMembersByChannel(channel);
