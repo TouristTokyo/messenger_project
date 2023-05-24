@@ -1,5 +1,7 @@
 package ru.vsu.cs.api.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/roles")
 @CrossOrigin
+@Tag(name = "Роли", description = "Методы для работы с ролями")
 public class RoleController {
     private final MemberService memberService;
     private final RoleService roleService;
@@ -36,6 +39,7 @@ public class RoleController {
     }
 
     @PostMapping("/create")
+    @Operation(summary = "Создание/Обновление роли")
     public ResponseEntity<HttpStatus> create(@RequestBody RoleCreationDto roleCreationDto) {
         User user = userService.getUserByName(roleCreationDto.getUsername());
         Channel channel = channelService.getChannelByName(roleCreationDto.getChannelName());

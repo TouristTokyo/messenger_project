@@ -22,12 +22,15 @@ public class SecurityConfig {
         http.csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .anyRequest().authenticated()
+                .requestMatchers("/api/channels", "/api/chats", "/api/login", "/api/register").permitAll()
+                .requestMatchers("/api/**").authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
+
 
     @Bean
     public UserDetailsService userDetailsService() {

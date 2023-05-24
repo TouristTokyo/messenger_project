@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class MessageService {
     private final MessageRepository messageRepository;
 
@@ -38,6 +40,7 @@ public class MessageService {
     public Message getMessage(BigInteger id) {
         Message message = messageRepository.findById(id).orElse(null);
         if(message == null){
+            log.warn("Not found message with id: "+ id);
             throw new MessageException("Not found message with id: "+ id);
         }
         return message;
