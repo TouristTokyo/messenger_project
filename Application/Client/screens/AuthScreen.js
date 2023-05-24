@@ -14,22 +14,22 @@ function AuthScreen({ navigation }) {
   const isFormValid = inputText.email && inputText.password;
 
   const { login } = useContext(AuthContext);
- 
+
 
   const username = 'admin';
   const password = 'root';
 
   const handleLogin = () => {
     // Validate the email format
-    
+
     // Create the request body
     const requestBody = {
       email: inputText.email,
       password: inputText.password
     };
-  
+
     // Send the API request
-    fetch('http://localhost:8080/api/login', {
+    fetch('https://messengerproject-production.up.railway.app/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ function AuthScreen({ navigation }) {
           // Login failed
           response.json().then(errorData => {
             const errorMessage = errorData.message || 'Login failed';
-            Alert.alert(errorMessage);
+            alert(errorMessage);
           });
         }
       })
@@ -57,7 +57,7 @@ function AuthScreen({ navigation }) {
         console.error('Error:', error);
       });
   };
-  
+
   return (
     <View style={styles.containerMain}>
       <View style={styles.textContainer}>
@@ -83,8 +83,13 @@ function AuthScreen({ navigation }) {
         </View>
         <View style={{ marginTop: 13, marginRight: 13 }}>
           <TouchableHighlight onPress={() => navigation.navigate('Forgot')}>
-            <Text>Забыли пароль?</Text>
+            <Text style = {{fontFamily: 'Montserrat-Regular'}}>Забыли пароль?</Text>
           </TouchableHighlight>
+          <View style={{
+              borderBottomWidth: 1,
+              borderBottomColor: 'black',
+              width: '100%',
+            }} />
         </View>
 
         <View>

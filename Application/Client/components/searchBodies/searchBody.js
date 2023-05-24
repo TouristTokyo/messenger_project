@@ -12,7 +12,7 @@ export default function SearchBody({ data }) {
   const styles = useStyles();
   const deleteChat = () => {
     
-    fetch(`http://localhost:8080/api/chats/delete/${id}`, {
+    fetch(`https://messengerproject-production.up.railway.app/api/chats/delete/${id}`, {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json',

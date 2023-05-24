@@ -55,7 +55,7 @@ export default function ChangeAvatar({ children, ...data }) {
     formData.append('file', blob, 'file.jpg');
   
     const userId = user?.id;
-    const apiUrl = `http://localhost:8080/api/users/${userId}/update/image`;
+    const apiUrl = `https://messengerproject-production.up.railway.app/api/users/${userId}/update/image`;
   
     try {
       const response = await axios.put(apiUrl, formData, {

@@ -43,7 +43,7 @@ function ChangePasswordScreen({ navigation }) {
     });
   
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${id}/update/password?${queryParams.toString()}`, {
+      const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${id}/update/password?${queryParams.toString()}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

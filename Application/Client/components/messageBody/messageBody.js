@@ -26,7 +26,7 @@ const MessageBody = ({ data, currentUser }) => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/saved_message/save', {
+      const response = await fetch('https://messengerproject-production.up.railway.app/api/saved_message/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

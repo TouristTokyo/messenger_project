@@ -47,7 +47,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
     const fetchData = async () => {
       try {
         // Fetch channel data
-        const channelResponse = await fetch('http://localhost:8080/api/channels', {
+        const channelResponse = await fetch('https://messengerproject-production.up.railway.app/api/channels', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
           }
   
           // Fetch user data
-          const userResponse = await fetch('http://localhost:8080/api/users', {
+          const userResponse = await fetch('https://messengerproject-production.up.railway.app/api/users', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

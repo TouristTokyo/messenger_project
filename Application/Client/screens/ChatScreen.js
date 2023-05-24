@@ -34,7 +34,7 @@ export default function ChatScreen({ navigation, route }) {
   const [userText, setUserText] = useState('');
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/channels/create', {
+      const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ export default function ChatScreen({ navigation, route }) {
   const fetchChatData = async () => {
     const firstUser = user.name;
     const secondUser = chatUser.name;
-    const url = `http://localhost:8080/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
+    const url = `https://messengerproject-production.up.railway.app/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
   
     try {
       const response = await fetch(url, {

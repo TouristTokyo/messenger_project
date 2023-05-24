@@ -29,7 +29,7 @@ function ChangeEmailScreen({ navigation }) {
 
   const getCode = () => {
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `http://localhost:8080/api/send_email?email=${email}`;
+    const apiUrl = `https://messengerproject-production.up.railway.app/api/send_email?email=${email}`;
 
     fetch(apiUrl, {
       method: 'GET',
@@ -42,10 +42,10 @@ function ChangeEmailScreen({ navigation }) {
         setReceivedCode(data);
         if (data) {
           alert('Code has been sent to your email');
-          console.log(data);
+         
         } else {
           alert('Failed to get code');
-          console.log(data);
+          
         }
       })
       .catch((error) => {
@@ -63,7 +63,7 @@ function ChangeEmailScreen({ navigation }) {
   try {
     const userId = user?.id;
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `http://localhost:8080/api/users/${userId}/update/email?email=${email}`;
+    const apiUrl = `https://messengerproject-production.up.railway.app/api/users/${userId}/update/email?email=${email}`;
 
     const response = await fetch(apiUrl, {
       method: 'PUT',

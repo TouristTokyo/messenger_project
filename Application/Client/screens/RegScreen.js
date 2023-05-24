@@ -36,7 +36,7 @@ function RegScreen({ navigation }) {
       password: inputText.password
     };
 
-    fetch('http://localhost:8080/api/register', {
+    fetch('https://messengerproject-production.up.railway.app/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

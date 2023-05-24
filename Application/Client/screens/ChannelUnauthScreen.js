@@ -47,7 +47,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
 
     const fetchChannelData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
+            const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

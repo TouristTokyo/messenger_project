@@ -30,7 +30,7 @@ export default function MainAuthScreen({ navigation }) {
   const password = 'root';
   const updateUserCallback = useCallback(updatedUser => updateUser(updatedUser), [updateUser]);
   const { selectedImage } = useContext(ImageContext);
-  const { forwardedMessages, clearForwardedMessages } = useContext(MessageContext);
+
 
 
   useFocusEffect(
@@ -42,7 +42,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+      const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export default function MainAuthScreen({ navigation }) {
   };
   const handleClearForwardedMessages = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/saved_message/delete_all?user_id=${user?.id}`, {
+      const response = await fetch(`https://messengerproject-production.up.railway.app/api/saved_message/delete_all?user_id=${user?.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/channels/create', {
+      const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -227,7 +227,7 @@ export default function MainAuthScreen({ navigation }) {
                       ? message.chat.userSecond.name
                       : message.chat.userFirst.name
                     : message.channel.name,
-
+                     id: message.id
                   }}
                 />
               </View>
