@@ -122,7 +122,7 @@ public class UserService {
     @Transactional
     public void updatePassword(BigInteger id, String lastPassword, String newPassword) {
         User user = getById(id);
-        if (!passwordEncoder.matches(lastPassword, user.getPassword())) {
+        if (lastPassword !=null && !passwordEncoder.matches(lastPassword, user.getPassword())) {
             log.warn("Incorrect current password: " + lastPassword);
             throw new UserException("Incorrect current password");
         }
