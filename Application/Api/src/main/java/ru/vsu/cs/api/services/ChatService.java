@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class ChatService {
     private final ChatRepository chatRepository;
 
@@ -34,7 +36,8 @@ public class ChatService {
     public Chat getByUsernames(User currentUser, User otherUser) {
         Chat chat = chatRepository.findByUsernames(currentUser.getId(), otherUser.getId()).orElse(null);
         if (chat == null) {
-            throw new ChatException("Not found chat: " + otherUser.getName());
+            log.warn("Not found chat for users: " + currentUser.getName() + " and " + otherUser.getName());
+            throw new ChatException("Not found chat for users: " + currentUser.getName() + " and " + otherUser.getName());
         }
         return chat;
     }
@@ -42,6 +45,7 @@ public class ChatService {
     public Chat getById(BigInteger id) {
         Chat chat = chatRepository.findById(id).orElse(null);
         if (chat == null) {
+            log.warn("Not found chat with id: " + id);
             throw new ChatException("Not found chat with id: " + id);
         }
         return chat;

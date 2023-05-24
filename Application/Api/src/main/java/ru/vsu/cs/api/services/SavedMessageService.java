@@ -8,7 +8,6 @@ import ru.vsu.cs.api.models.SavedMessage;
 import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.repositories.SavedMessageRepository;
 
-import java.math.BigInteger;
 import java.util.List;
 
 @Service
