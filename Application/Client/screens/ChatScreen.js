@@ -41,7 +41,7 @@ export default function ChatScreen({ navigation, route }) {
           'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
         },
         body: JSON.stringify({
-          username: userText,
+          username: user.name,
           channelName: inputText.nickname,
         }),
       });
@@ -51,18 +51,7 @@ export default function ChatScreen({ navigation, route }) {
         setShowPopup(false);
         // Channel creation successful
         alert('Channel created');
-
-        // Update user.channels in the AuthContext
-        const updatedUser = {
-          ...user,
-          channels: [...user.channels, channelResponse],
-        };
-
-        // Store the updated user data in localStorage
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-
-        // Update user data in the AuthContext
-        updateUser(updatedUser);
+        window.location.reload();
       } else {
         // Handle error response
         alert('Failed to create channel');
@@ -71,18 +60,37 @@ export default function ChatScreen({ navigation, route }) {
       alert('Error creating channel:', error);
     }
   };
+  const [shouldFetchChatData, setShouldFetchChatData] = useState(true);
+
   useFocusEffect(
     React.useCallback(() => {
       fetchProfileNickname();
-      fetchChatData();
-    }, [chatData])
+      setShouldFetchChatData(true); // Trigger fetching when the component is focused
+    }, [])
   );
-  const fetchChatData = async () => {
-    try {
-      const firstUser = user.name;
-      const secondUser = chatUser.name;
-      const url = `http://localhost:8080/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
   
+  useEffect(() => {
+    if (shouldFetchChatData) {
+      fetchChatData()
+        .then(() => setShouldFetchChatData(false))
+        .catch((error) => console.log('Error fetching chat data:', error));
+    }
+  }, [shouldFetchChatData]);
+  
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setShouldFetchChatData(true); // Trigger fetching at regular intervals
+    }, 5000); // Adjust the interval duration as needed (e.g., every 5 seconds)
+  
+    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+  }, []);
+  
+  const fetchChatData = async () => {
+    const firstUser = user.name;
+    const secondUser = chatUser.name;
+    const url = `http://localhost:8080/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
+  
+    try {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -93,18 +101,22 @@ export default function ChatScreen({ navigation, route }) {
   
       if (response.ok) {
         const chatData = await response.json();
-      
         setChatData(chatData);
       } else {
-        // Handle error response
-        console.log('Failed to fetch chat data');
-        console.log(chatUser);
+        throw new Error('Failed to fetch chat data');
       }
     } catch (error) {
-      console.log('Error fetching chat data:', error);
+      throw new Error('Error fetching chat data:', error);
     }
   };
   
+  const handleMessageSent = () => {
+    setShouldFetchChatData(true); // Trigger fetching when a message is sent
+  };
+  
+  
+ 
+
   const fetchProfileNickname = async () => {
     try {
       const nickname = await getProfileNickname();
@@ -138,7 +150,7 @@ export default function ChatScreen({ navigation, route }) {
     },
   ];
 
-  
+
 
   const saveChatMessages = async () => {
     try {
@@ -162,12 +174,13 @@ export default function ChatScreen({ navigation, route }) {
   return (
     <View style={styles.containerMain}>
       <View style={styles.barContainer}>
-                <SearchBody
-                  data={{
-                    avatarUrl: chatUser.image,
-                    username: chatUser.name,
-                  }}
-                />
+        <SearchBody
+          data={{
+            avatarUrl: chatUser.image,
+            username: chatUser.name,
+            onPress: fetchChatData
+          }}
+        />
       </View>
       <View style={styles.profileContainer}>
         <ShowAvatar imageUrl={imageSource} profile={true} />
@@ -180,28 +193,28 @@ export default function ChatScreen({ navigation, route }) {
       </View>
       <View style={styles.historyContainer}>
         <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-        {chatData?.map((message) => {
-                        return (
-                            <MessageBody
-                                key={message.id}
-                                data={{
-                                    imageUrl:  message.author?.image,
-                                    nickname:  message.author?.name,
-                                    message: message.data,
-                                    date: message.date,
-                                    own: message.author?.name === user.name,
-                                    channel: false,
-                                    unauth: false,
-                                    ident: message.id
-                                }}
-                                currentUser={user}
-                            />
-                        );
-                    })}
+          {chatData?.map((message) => {
+            return (
+              <MessageBody
+                key={message.id}
+                data={{
+                  imageUrl: message.author?.image,
+                  nickname: message.author?.name,
+                  message: message.data,
+                  date: message.date,
+                  own: message.author?.name === user.name,
+                  channel: false,
+                  unauth: false,
+                  ident: message.id
+                }}
+                currentUser={user}
+              />
+            );
+          })}
         </ScrollView>
       </View>
       <View style={styles.sendContainer}>
-        <MessageInput channel = {false} curuser={userText ? userText : user.name} chanInf={chatUser.name} />
+        <MessageInput channel={false} curuser={userText ? userText : user.name} chanInf={chatUser.name} onMessageSent={handleMessageSent}/>
       </View>
       <View style={styles.bottomLeft}>
         <TouchableHighlight onPress={() => setShowPopup(true)}>

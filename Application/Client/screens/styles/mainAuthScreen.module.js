@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native-web';
 import React, { useEffect, useState } from 'react';
 
+
 export default function useStyles() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);

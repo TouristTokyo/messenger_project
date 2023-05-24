@@ -22,8 +22,25 @@ import ChannelUnauthScreen from './screens/ChannelUnauthScreen';
 import { ImageProvider } from './context/ImageContext';
 import { AuthProvider } from './context/AuthContext';
 import {MessageProvider} from './context/MessageContext';
+import * as Font from 'expo-font';
 
+const loadFonts = async () => {
+  await Font.loadAsync({
+    'Montserrat-Regular': require('./assets/fonts/Montserrat-Regular.ttf'),
+    'Montserrat-Italic': require('./assets/fonts/Montserrat-Italic.ttf'),
+    'Montserrat-Bold': require('./assets/fonts/Montserrat-Bold.ttf'),
+  });
+};
 
+// Load fonts before rendering the app
+loadFonts()
+  .then(() => {
+    // Fonts are loaded, render your app
+    renderApp();
+  })
+  .catch((error) => {
+    console.error('Error loading fonts:', error);
+  });
 export default function App( ) {
 const Stack = createStackNavigator();
 const [searchValue, setSearchValue] = useState('');

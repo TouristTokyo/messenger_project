@@ -21,11 +21,7 @@ function AuthScreen({ navigation }) {
 
   const handleLogin = () => {
     // Validate the email format
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(inputText.email)) {
-      alert('Invalid email format');
-      return;
-    }
+    
     // Create the request body
     const requestBody = {
       email: inputText.email,

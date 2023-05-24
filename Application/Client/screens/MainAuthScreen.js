@@ -52,7 +52,7 @@ export default function MainAuthScreen({ navigation }) {
 
       if (response.ok) {
         const userData = await response.json();
-        
+        console.log(userData);
         updateUserCallback(userData);
       } else {
         console.log('Failed to fetch user data');
@@ -163,6 +163,8 @@ export default function MainAuthScreen({ navigation }) {
                     avatarUrl: chat.userFirst.image,
                     username: chat.userFirst.name,
                     onPress: () => navigation.navigate('Chat', { chatUser: chat.userFirst }),
+                    main: true,
+                    id: chat.id
                   }}
                 />
               );
@@ -174,6 +176,8 @@ export default function MainAuthScreen({ navigation }) {
                     avatarUrl: chat.userSecond.image,
                     username: chat.userSecond.name,
                     onPress: () => navigation.navigate('Chat', { chatUser: chat.userSecond }),
+                    main: true,
+                    id: chat.id
                   }}
                 />
               );
@@ -218,7 +222,11 @@ export default function MainAuthScreen({ navigation }) {
                     message: message.data,
 
                     own: message.sender?.name === user.name,
-
+                    from: message.chat
+                    ? message.sender?.name === user.name
+                      ? message.chat.userSecond.name
+                      : message.chat.userFirst.name
+                    : message.channel.name,
 
                   }}
                 />

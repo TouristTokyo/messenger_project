@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native-web';
 import { useWindowDimensions } from 'react-native-web';
-
+import useStyles from './messageInput.module';
 import SendSvg from '../../../assets/icons/sendSvg';
 
-const MessageInput = ({  curuser, chanInf, channel }) => {
+const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
   const [message, setMessage] = useState('');
   const { width, height } = useWindowDimensions();
+  const styles = useStyles();
   const username = 'admin';
   const password = 'root';
   const handleSend = async () => {
@@ -32,6 +33,7 @@ const MessageInput = ({  curuser, chanInf, channel }) => {
           if (response.ok) {
             console.log('Message sent successfully');
             setMessage('');
+            onMessageSent(); // Invoke the callback to trigger chat data fetching
           } else {
             console.log('Failed to send message');
           }
@@ -55,6 +57,7 @@ const MessageInput = ({  curuser, chanInf, channel }) => {
           if (response.ok) {
             console.log('Message sent successfully');
             setMessage('');
+            onMessageSent(); // Invoke the callback to trigger chat data fetching
           } else {
             console.log('Failed to send message');
           }
@@ -65,8 +68,6 @@ const MessageInput = ({  curuser, chanInf, channel }) => {
     }
   };
   
-  
-
   return (
     <View style={styles.container}>
       <TextInput
@@ -81,33 +82,5 @@ const MessageInput = ({  curuser, chanInf, channel }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-  input: {
-    flex: 1,
-    height: 44,
-    fontSize: 16,
-    paddingLeft: 40,
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF',
-    color: '#000000',
-    boxShadow: '2px 2px 2px rgba(0, 0, 0, 1)',
-    fontFamily: 'Montserrat-Regular',
-    alignSelf: 'flex-start',
-    marginRight: 30
-  },
-  sendButton: {
-    alignSelf: 'flex-end',
-    marginLeft: 30,
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default MessageInput;
