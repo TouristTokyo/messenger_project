@@ -4,6 +4,7 @@ import ru.vsu.cs.api.dto.*;
 import ru.vsu.cs.api.dto.message.ChannelMessageDto;
 import ru.vsu.cs.api.dto.message.ChatMessageDto;
 import ru.vsu.cs.api.dto.search.ChannelSearchDto;
+import ru.vsu.cs.api.dto.search.ChatSearchDto;
 import ru.vsu.cs.api.models.*;
 
 import java.util.List;
@@ -87,5 +88,14 @@ public class Mapper {
         channelSearchDto.setName(channel.getName());
 
         return channelSearchDto;
+    }
+
+    public static ChatSearchDto convertToChatSearchDto(User user){
+        ChatSearchDto chatSearchDto = new ChatSearchDto();
+
+        chatSearchDto.setName(user.getName());
+        chatSearchDto.setImage(user.getImage());
+
+        return chatSearchDto;
     }
 }

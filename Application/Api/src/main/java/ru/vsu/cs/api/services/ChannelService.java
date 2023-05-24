@@ -1,10 +1,10 @@
 package ru.vsu.cs.api.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.vsu.cs.api.models.Channel;
-import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.repositories.ChannelRepository;
 import ru.vsu.cs.api.utils.exceptions.ChannelException;
 import ru.vsu.cs.api.utils.exceptions.UserException;
@@ -14,6 +14,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class ChannelService {
     private final ChannelRepository channelRepository;
 
@@ -29,6 +30,7 @@ public class ChannelService {
     @Transactional
     public Channel create(Channel channel) {
         if (channelRepository.findByName(channel.getName()).isPresent()) {
+            log.warn("Exist channel with name: " + channel.getName());
             throw new ChannelException("Exist channel with name: " + channel.getName());
         }
         return channelRepository.saveAndFlush(channel);
@@ -42,6 +44,7 @@ public class ChannelService {
     public Channel getChannelById(BigInteger id) {
         Channel channel = channelRepository.findById(id).orElse(null);
         if (channel == null) {
+            log.warn("Not found channel with id: " + id);
             throw new ChannelException("Not found channel with id: " + id);
         }
         return channel;
@@ -50,6 +53,7 @@ public class ChannelService {
     public Channel getChannelByName(String name) {
         Channel channel = channelRepository.findByName(name).orElse(null);
         if (channel == null) {
+            log.warn("Not found channel with name: " + name);
             throw new ChannelException("Not found channel with name: " + name);
         }
         return channel;
@@ -61,6 +65,7 @@ public class ChannelService {
         Channel channel = getChannelById(id);
 
         if (foundChannel != null && !foundChannel.getId().equals(id)) {
+            log.warn("Exist channel with name: " + name);
             throw new UserException("Exist channel with name: " + name);
         }
 

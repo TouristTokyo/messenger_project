@@ -1,5 +1,7 @@
 package ru.vsu.cs.api.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import ru.vsu.cs.api.services.MessageService;
 import ru.vsu.cs.api.services.SavedMessageService;
 import ru.vsu.cs.api.services.UserService;
 import ru.vsu.cs.api.utils.ErrorResponse;
+import ru.vsu.cs.api.utils.exceptions.MessageException;
 import ru.vsu.cs.api.utils.exceptions.UserException;
 
 import java.math.BigInteger;
@@ -19,6 +22,7 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/saved_message")
 @CrossOrigin
+@Tag(name = "Сохранённые сообщения", description = "Методы для работы с сообщениями")
 public class SaveMessageController {
     private final UserService userService;
     private final SavedMessageService savedMessageService;
@@ -33,6 +37,7 @@ public class SaveMessageController {
     }
 
     @PostMapping("/save")
+    @Operation(summary = "Сохранение сообщения")
     public ResponseEntity<HttpStatus> saveMessage(@RequestBody SavedMessageDto savedMessageDto) {
         User user = userService.getUserByName(savedMessageDto.getUsername());
 
@@ -40,14 +45,33 @@ public class SaveMessageController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<HttpStatus> deleteMessage(@PathVariable("id")BigInteger id){
-        savedMessageService.delete(id);
+
+    @DeleteMapping("/delete_all")
+    @Operation(summary = "Удаление всех сохраннёных сообщений у пользователя")
+    public ResponseEntity<HttpStatus> deleteAllMessage(@RequestParam("user_id") BigInteger userId) {
+        savedMessageService.deleteAllByUser(userService.getById(userId));
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
+    @Operation(summary = "Удаление конкретного сохранённого сообщения")
+    public ResponseEntity<HttpStatus> deleteMessage(@RequestParam("user_id") BigInteger userId,
+                                                    @RequestParam("message_id") BigInteger messageId) {
+        savedMessageService.delete(messageService.getMessage(messageId), userService.getById(userId));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> userException(UserException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> messageException(MessageException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now()

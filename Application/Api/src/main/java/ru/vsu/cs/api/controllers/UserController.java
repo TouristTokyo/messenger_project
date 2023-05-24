@@ -1,5 +1,7 @@
 package ru.vsu.cs.api.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +28,12 @@ import java.util.List;
 @RequestMapping("/api/users")
 @CrossOrigin
 @ControllerAdvice
+@Tag(name = "Пользователи", description = "Методы для работы с пользователями")
 public class UserController {
 
     private final UserService userService;
     private final SavedMessageService savedMessageService;
     private final MemberService memberService;
-
     private final ChatService chatService;
 
     @Autowired
@@ -43,6 +45,7 @@ public class UserController {
     }
 
     @GetMapping
+    @Operation(summary = "Получение всех пользователей")
     public List<UserResponseDto> getUsers() {
         List<User> users = userService.getUsers();
         List<UserResponseDto> response = new ArrayList<>();
@@ -62,6 +65,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Получение пользователя по id")
     public ResponseEntity<UserResponseDto> getProfile(@PathVariable("id") BigInteger id) {
         User user = userService.getById(id);
 
@@ -73,12 +77,14 @@ public class UserController {
     }
 
     @GetMapping("/email")
+    @Operation(summary = "Получение id пользователя по его email (почте)")
     public BigInteger getUserId(@RequestParam("email") String email) {
         return userService.getUserByEmail(email).getId();
     }
 
 
     @PutMapping(value = "/{id}/update/image", consumes = {"multipart/form-data"})
+    @Operation(summary = "Обновление фотографии акканута (аватара) пользователя")
     public ResponseEntity<HttpStatus> updateImage(@PathVariable("id") BigInteger id,
                                                   @RequestParam("file") MultipartFile multipartFile) {
         try {
@@ -90,6 +96,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}/update/email")
+    @Operation(summary = "Обновление email (почты) у пользователя")
     public ResponseEntity<HttpStatus> updateEmail(@PathVariable("id") BigInteger id,
                                                   @RequestParam("email") String email) {
         userService.updateEmail(id, email);
@@ -97,6 +104,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}/update/name")
+    @Operation(summary = "Обновление имени (никнейма) у пользователя")
     public ResponseEntity<HttpStatus> updateName(@PathVariable("id") BigInteger id,
                                                  @RequestParam("name") String name) {
         userService.updateName(id, name);
@@ -104,6 +112,7 @@ public class UserController {
     }
 
     @PutMapping(value = "/{id}/update/password")
+    @Operation(summary = "Обновление пароля у пользователя")
     public ResponseEntity<HttpStatus> updatePassword(@PathVariable("id") BigInteger id,
                                                      @RequestParam("last_password") String lastPassword,
                                                      @RequestParam("new_password") String newPassword) {
@@ -112,12 +121,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}/delete_image")
+    @Operation(summary = "Удаление фотографии (аватара)")
     public ResponseEntity<HttpStatus> deleteImage(@PathVariable("id") BigInteger id) {
         userService.updateImage(id, null);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/delete")
+    @Operation(summary = "Удаление аккаунта")
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") BigInteger id) {
         userService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);

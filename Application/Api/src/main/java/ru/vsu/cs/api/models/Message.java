@@ -1,6 +1,7 @@
 package ru.vsu.cs.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "messages")
 @Data
 @NoArgsConstructor
+@Schema(description = "Информация о сообщении")
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
