@@ -7,15 +7,13 @@ import PlusSvg from '../../../assets/icons/plusSvg';
 import { ImageContext } from '../../../context/ImageContext';
 import AuthContext from '../../../context/AuthContext';
 
-export default function ShowAvatar({ imageUrl, profile }) {
+export default function ShowAvatar({ imageUrl, profile, }) {
   const styles = useStyles({ profile });
   const { selectedImage } = useContext(ImageContext);
   const { user } = useContext(AuthContext); // Use `useContext` instead of `useState`
 
   const renderAvatar = () => {
-    if (selectedImage) {
-      return <Image style={styles.image} source={{ uri: selectedImage }} />;
-    } else if (imageUrl && imageUrl.startsWith('data:image')) {
+    if (imageUrl && imageUrl.startsWith('data:image')) {
       return <Image style={styles.image} source={{ uri: imageUrl }} />;
     } else if (imageUrl) {
       return <Image style={styles.image} source={{ uri: `data:image/jpeg;base64,${imageUrl}` }} />;

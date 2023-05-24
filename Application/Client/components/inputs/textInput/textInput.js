@@ -10,7 +10,7 @@ export default function DataInput({ value, setValue, type, flex, ...data }) {
       inputMask = {
         secureTextEntry: true,
         autoCompleteType: "password",
-        maxLength: 12,
+        maxLength: 26,
       };
       break;
     case "nickname":

@@ -1,90 +1,72 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native-web';
+import React, { useContext, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native-web';
 import ShowAvatar from '../Avatar/ShowAvatar/showAvatar';
+import useStyles from './forwardMessage.module';
+import AuthContext from '../../context/AuthContext';
 
 const ForwardMessage = ({ data }) => {
-  const {imageUrl, nickname, message, own } = data
+  const { imageUrl, nickname, message, own, from, id } = data;
+  const styles = useStyles();
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const {user} = useContext(AuthContext);
+  const username = 'admin';
+  const password = 'root';
+  const handleDeletePress = () => {
+   
+    const user_id = user.id; 
+    const message_id = id; 
+
+    fetch(`https://messengerproject-production.up.railway.app/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${btoa(`${username}:${password}`)}`
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          // Delete request failed, handle accordingly
+          console.log('Failed to delete message');
+        }
+      })
+      .catch((error) => {
+        console.log('Error deleting message:', error);
+      });
+  };
+
+  const handleMessageBoxPress = () => {
+    setShowDeleteButton(!showDeleteButton);
+  };
 
   return (
     <View style={styles.container}>
       {own ? null : (
         <ShowAvatar imageUrl={imageUrl} profile={false} style={styles.avatar} />
       )}
-      <View
+      <TouchableOpacity
         style={[
           styles.messageBox,
           own && styles.ownMessageBox,
         ]}
+        onPress={handleMessageBoxPress}
       >
+        {showDeleteButton && (
+          <TouchableOpacity  onPress={handleDeletePress}>
+            <Text style={{ fontFamily: 'Montserrat-Italic' }}>Удалить</Text>
+          </TouchableOpacity>
+        )}
         <Text style={[styles.nickname, own && styles.ownNickname]}>
           {nickname}
         </Text>
         <Text style={[styles.message, own && styles.ownMessage]}>{message}</Text>
-      </View>
+        <Text style={{ fontFamily: 'Montserrat-Italic' }}>
+          Forwarded from: {from}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-  avatar: {
-    alignSelf: 'flex-start',
-  },
-  messageBox: {
-    marginLeft: 15,
-    flex: 1,
-    backgroundColor: '#E7DEDE',
-    borderLeftWidth: 5,
-    borderLeftColor: '#0076B9',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginBottom: 10,
-    maxWidth: '40%',
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  ownMessageBox: {
-    backgroundColor: 'rgba(0, 118, 185, 0.35)',
-    borderLeftColor: '#0076B9',
-    borderLeftWidth: 5,
-    marginLeft: 15,
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginBottom: 10,
-    maxWidth: '40%',
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  nickname: {
-    fontSize: 24,
-    fontFamily: 'Montserrat-Regular',
-    color: 'black',
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  ownNickname: {
-    fontSize: 24,
-    fontFamily: 'Montserrat-Regular',
-    color: 'black',
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  message: {
-    fontSize: 19,
-    fontFamily: 'Montserrat-Regular',
-    color: 'black',
-    flexWrap: 'wrap',
-  },
-  ownMessage: {
-    fontSize: 19,
-    fontFamily: 'Montserrat-Regular',
-    color: 'black',
-    flexWrap: 'wrap',
-  },
-});
 
 export default ForwardMessage;

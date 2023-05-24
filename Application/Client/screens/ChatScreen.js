@@ -17,50 +17,41 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import { setProfileNickname, getProfileNickname } from '../context/AsyncStorageUtil';
 
-export default function ChatScreen({ navigation }) {
+export default function ChatScreen({ navigation, route }) {
+  const { chatUser } = route.params;
   const styles = useStyles();
   const [showPopup, setShowPopup] = useState(false);
   const [inputText, setInputText] = useState({
     nickname: '',
   });
-  const { user} = useContext(AuthContext);
+  const { user, updateUser } = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
   const { selectedImage } = useContext(ImageContext);
   const [messages, setMessages] = useState([]);
+  const [chatData, setChatData] = useState([]);
   const username = 'admin';
   const password = 'root';
   const [userText, setUserText] = useState('');
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/channels/create', {
+      const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
         },
         body: JSON.stringify({
-          username: userText,
+          username: user.name,
           channelName: inputText.nickname,
         }),
       });
-  
+
       if (response.ok) {
         const channelResponse = await response.json();
         setShowPopup(false);
         // Channel creation successful
         alert('Channel created');
-  
-        // Update user.channels in the AuthContext
-        const updatedUser = {
-          ...user,
-          channels: [...user.channels, channelResponse],
-        };
-  
-        // Store the updated user data in localStorage
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-  
-        // Update user data in the AuthContext
-        updateUser(updatedUser);
+        window.location.reload();
       } else {
         // Handle error response
         alert('Failed to create channel');
@@ -69,11 +60,62 @@ export default function ChatScreen({ navigation }) {
       alert('Error creating channel:', error);
     }
   };
+  const [shouldFetchChatData, setShouldFetchChatData] = useState(true);
+
   useFocusEffect(
     React.useCallback(() => {
       fetchProfileNickname();
+      setShouldFetchChatData(true); // Trigger fetching when the component is focused
     }, [])
   );
+  
+  useEffect(() => {
+    if (shouldFetchChatData) {
+      fetchChatData()
+        .then(() => setShouldFetchChatData(false))
+        .catch((error) => console.log('Error fetching chat data:', error));
+    }
+  }, [shouldFetchChatData]);
+  
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setShouldFetchChatData(true); // Trigger fetching at regular intervals
+    }, 5000); // Adjust the interval duration as needed (e.g., every 5 seconds)
+  
+    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+  }, []);
+  
+  const fetchChatData = async () => {
+    const firstUser = user.name;
+    const secondUser = chatUser.name;
+    const url = `https://messengerproject-production.up.railway.app/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
+  
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+        },
+      });
+  
+      if (response.ok) {
+        const chatData = await response.json();
+        setChatData(chatData);
+      } else {
+        throw new Error('Failed to fetch chat data');
+      }
+    } catch (error) {
+      throw new Error('Error fetching chat data:', error);
+    }
+  };
+  
+  const handleMessageSent = () => {
+    setShouldFetchChatData(true); // Trigger fetching when a message is sent
+  };
+  
+  
+ 
 
   const fetchProfileNickname = async () => {
     try {
@@ -94,14 +136,12 @@ export default function ChatScreen({ navigation }) {
     saveChatMessages();
   }, [messages]);
 
-  const handleSend = (message) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
-  };
+
   const imageSource = selectedImage || (user && user.image);
   const isFormValid = inputText.nickname;
   const buttons = [
     {
-      onPress: ({}) => navigation.navigate('Profile'),
+      onPress: ({ }) => navigation.navigate('Profile'),
       text: 'Мой аккаунт',
     },
     {
@@ -110,30 +150,7 @@ export default function ChatScreen({ navigation }) {
     },
   ];
 
-  const messageBodies = [
-    {
-      imageUrl: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg',
-      nickname: 'John Doe1',
-      channel: false,
-      message:
-        'Hellffffffffffffffffffffffffffffffffffffffffffffffffffffffgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggffo world!',
-    },
-    {
-      own: true,
-      nickname: 'John Doe',
-      channel: false,
-      message: 'Hellffffffffffffffffffffffffffffffffffffffffffffffffffffffffo world!',
-    },
-  ];
 
-  const bar = [
-    {
-      avatarUrl: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg',
-      username: 'John Doe',
-      onPress: () => console.log('pressed'),
-      containerStyle: { flex: 1 },
-    },
-  ];
 
   const saveChatMessages = async () => {
     try {
@@ -157,9 +174,13 @@ export default function ChatScreen({ navigation }) {
   return (
     <View style={styles.containerMain}>
       <View style={styles.barContainer}>
-        {bar.map((data, index) => (
-          <SearchBody key={index} data={data} />
-        ))}
+        <SearchBody
+          data={{
+            avatarUrl: chatUser.image,
+            username: chatUser.name,
+            onPress: fetchChatData
+          }}
+        />
       </View>
       <View style={styles.profileContainer}>
         <ShowAvatar imageUrl={imageSource} profile={true} />
@@ -172,16 +193,28 @@ export default function ChatScreen({ navigation }) {
       </View>
       <View style={styles.historyContainer}>
         <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-          {messageBodies.map((data, index) => (
-            <MessageBody key={index} data={data} />
-          ))}
-          {messages.map((message, index) => (
-            <MessageBody key={index} data={message} />
-          ))}
+          {chatData?.map((message) => {
+            return (
+              <MessageBody
+                key={message.id}
+                data={{
+                  imageUrl: message.author?.image,
+                  nickname: message.author?.name,
+                  message: message.data,
+                  date: message.date,
+                  own: message.author?.name === user.name,
+                  channel: false,
+                  unauth: false,
+                  ident: message.id
+                }}
+                currentUser={user}
+              />
+            );
+          })}
         </ScrollView>
       </View>
       <View style={styles.sendContainer}>
-        <MessageInput onSend={handleSend} />
+        <MessageInput channel={false} curuser={userText ? userText : user.name} chanInf={chatUser.name} onMessageSent={handleMessageSent}/>
       </View>
       <View style={styles.bottomLeft}>
         <TouchableHighlight onPress={() => setShowPopup(true)}>
@@ -201,8 +234,8 @@ export default function ChatScreen({ navigation }) {
             />
           </View>
           <View>
-              <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
-            </View>
+            <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
+          </View>
         </View>
       </Modal>
     </View>

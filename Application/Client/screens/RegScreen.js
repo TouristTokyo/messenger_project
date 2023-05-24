@@ -18,13 +18,25 @@ function RegScreen({ navigation }) {
   const isFormValid = inputText.name && inputText.password && inputText.email;
 
   const handleRegistration = () => {
+
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(inputText.email)) {
+      alert('Invalid email format');
+      return;
+    }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(inputText.password)) {
+      alert('Invalid password: at least 8 characters long, should contain at least one uppercase letter, at least one lowercase letter,at least one digit, may contain special characters');
+      return;
+    }
+
     const requestBody = {
       name: inputText.name,
       email: inputText.email,
       password: inputText.password
     };
 
-    fetch('http://localhost:8080/api/register', {
+    fetch('https://messengerproject-production.up.railway.app/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

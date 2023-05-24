@@ -117,7 +117,7 @@ export default function ProfileScreen({ navigation }) {
     try {
       const id = user?.id; // Assuming the user object has an 'id' property
       if (id) {
-        const response = await fetch(`http://localhost:8080/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
+        const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

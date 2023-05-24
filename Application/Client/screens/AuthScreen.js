@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TouchableHighlight } from 'react-native-web';
+import { View, Text, TouchableHighlight, Alert } from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
@@ -14,20 +14,22 @@ function AuthScreen({ navigation }) {
   const isFormValid = inputText.email && inputText.password;
 
   const { login } = useContext(AuthContext);
- 
+
 
   const username = 'admin';
   const password = 'root';
 
   const handleLogin = () => {
+    // Validate the email format
+
     // Create the request body
     const requestBody = {
       email: inputText.email,
       password: inputText.password
     };
-  
+
     // Send the API request
-    fetch('http://localhost:8080/api/login', {
+    fetch('https://messengerproject-production.up.railway.app/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,16 +48,16 @@ function AuthScreen({ navigation }) {
         } else {
           // Login failed
           response.json().then(errorData => {
-          const errorMessage = errorData.message || 'Login failed';
-          alert(errorMessage);
-        });
+            const errorMessage = errorData.message || 'Login failed';
+            alert(errorMessage);
+          });
         }
       })
       .catch(error => {
         console.error('Error:', error);
       });
   };
-  
+
   return (
     <View style={styles.containerMain}>
       <View style={styles.textContainer}>
@@ -81,8 +83,13 @@ function AuthScreen({ navigation }) {
         </View>
         <View style={{ marginTop: 13, marginRight: 13 }}>
           <TouchableHighlight onPress={() => navigation.navigate('Forgot')}>
-            <Text>Забыли пароль?</Text>
+            <Text style = {{fontFamily: 'Montserrat-Regular'}}>Забыли пароль?</Text>
           </TouchableHighlight>
+          <View style={{
+              borderBottomWidth: 1,
+              borderBottomColor: 'black',
+              width: '100%',
+            }} />
         </View>
 
         <View>

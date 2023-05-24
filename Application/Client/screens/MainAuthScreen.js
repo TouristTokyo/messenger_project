@@ -30,8 +30,8 @@ export default function MainAuthScreen({ navigation }) {
   const password = 'root';
   const updateUserCallback = useCallback(updatedUser => updateUser(updatedUser), [updateUser]);
   const { selectedImage } = useContext(ImageContext);
-  const { forwardedMessages, clearForwardedMessages } = useContext(MessageContext);
-  
+
+
 
   useFocusEffect(
     React.useCallback(() => {
@@ -42,7 +42,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+      const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -52,6 +52,7 @@ export default function MainAuthScreen({ navigation }) {
 
       if (response.ok) {
         const userData = await response.json();
+        console.log(userData);
         updateUserCallback(userData);
       } else {
         console.log('Failed to fetch user data');
@@ -70,22 +71,29 @@ export default function MainAuthScreen({ navigation }) {
       console.log('Error retrieving profile nickname:', error);
     }
   };
+  const handleClearForwardedMessages = async () => {
+    try {
+      const response = await fetch(`https://messengerproject-production.up.railway.app/api/saved_message/delete_all?user_id=${user?.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+        },
+      });
+  
+      if (response.ok) {
+        console.log(`Messages deleted successfully`);
+        window.location.reload();
+      } else {
+        console.log(`Failed to delete messages`);
 
+      }
+    } catch (error) {
+      console.log('Error deleting messages:', error);
+    }
+  };
   
 
-  const history = [
-    {
-      avatarUrl: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg',
-      username: "John Doe",
-      onPress: ({ }) => navigation.navigate('Chat'),
-      containerStyle: { flex: 1 }
-    },
-    {
-      username: "Channel 1",
-      onPress: ({ }) => navigation.navigate('Channel'),
-      containerStyle: { flex: 1 },
-    },
-  ];
   const isFormValid = inputText.nickname;
   const buttons = [
     {
@@ -100,7 +108,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/channels/create', {
+      const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +119,7 @@ export default function MainAuthScreen({ navigation }) {
           channelName: inputText.nickname,
         }),
       });
-  
+
       if (response.ok) {
         const channelResponse = await response.json();
         setShowPopup(false);
@@ -128,7 +136,7 @@ export default function MainAuthScreen({ navigation }) {
   };
 
 
- 
+
   const imageSource = user.image;
 
 
@@ -137,7 +145,7 @@ export default function MainAuthScreen({ navigation }) {
     <View style={styles.containerMain}>
       <View style={styles.messageContainer}>
         <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-        {user.channels.map((channel) => (
+          {user.channels.map((channel) => (
             <SearchBody
               key={channel.id}
               data={{
@@ -146,6 +154,35 @@ export default function MainAuthScreen({ navigation }) {
               }}
             />
           ))}
+          {user.chats.map((chat) => {
+            if (chat.userSecond.name === user.name) {
+              return (
+                <SearchBody
+                  key={chat.id}
+                  data={{
+                    avatarUrl: chat.userFirst.image,
+                    username: chat.userFirst.name,
+                    onPress: () => navigation.navigate('Chat', { chatUser: chat.userFirst }),
+                    main: true,
+                    id: chat.id
+                  }}
+                />
+              );
+            } else {
+              return (
+                <SearchBody
+                  key={chat.id}
+                  data={{
+                    avatarUrl: chat.userSecond.image,
+                    username: chat.userSecond.name,
+                    onPress: () => navigation.navigate('Chat', { chatUser: chat.userSecond }),
+                    main: true,
+                    id: chat.id
+                  }}
+                />
+              );
+            }
+          })}
         </ScrollView>
       </View>
       <View style={styles.profileContainer}>
@@ -164,19 +201,38 @@ export default function MainAuthScreen({ navigation }) {
         ))}
       </View>
       <View style={styles.forwardContainer}>
-        {forwardedMessages.length > 0 && (
+        {user?.savedMessages?.length > 0 && (
           <View style={{ right: 50, position: 'absolute', zIndex: 1 }}>
-            <TouchableHighlight onPress={clearForwardedMessages}>
+            <TouchableHighlight onPress={handleClearForwardedMessages}>
               <DeleteSvg />
             </TouchableHighlight>
           </View>
         )}
         <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-          {forwardedMessages.map((data, index) => (
-            <View style={{ marginBottom: 13 }} key={index}>
-              <ForwardMessage data={data} />
-            </View>
-          ))}
+
+          {user?.savedMessages?.map((message) => {
+            return (
+              <View style={{ marginBottom: 13 }}>
+                <ForwardMessage
+                  key={message.id}
+                  data={{
+                    imageUrl: message.sender?.image,
+                    nickname: message.sender?.name,
+
+                    message: message.data,
+
+                    own: message.sender?.name === user.name,
+                    from: message.chat
+                    ? message.sender?.name === user.name
+                      ? message.chat.userSecond.name
+                      : message.chat.userFirst.name
+                    : message.channel.name,
+                     id: message.id
+                  }}
+                />
+              </View>
+            );
+          })}
         </ScrollView>
       </View>
       <View style={styles.bottomLeft}>
@@ -196,9 +252,9 @@ export default function MainAuthScreen({ navigation }) {
               flex={true}
             />
           </View>
-            <View>
-              <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
-            </View>
+          <View>
+            <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
+          </View>
         </View>
       </Modal>
     </View>

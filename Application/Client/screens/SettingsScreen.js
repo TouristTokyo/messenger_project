@@ -36,7 +36,7 @@ export default function SettingsScreen({ navigation, route }) {
   });
   const fetchChannelData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
+      const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export default function SettingsScreen({ navigation, route }) {
   
   const handleDeleteChannel = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/channels/delete/${channelId}`, {
+      const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/delete/${channelId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ export default function SettingsScreen({ navigation, route }) {
       setIsEditingNickname(false);
       try {
         // Make the API request to update the nickname
-        const response = await fetch(`http://localhost:8080/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
+        const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

@@ -1,9 +1,10 @@
 import React from 'react';
 import { StyleSheet, TouchableHighlight, Text } from 'react-native-web';
+import useStyles from './borderButton.module';
 
 export default function BorderButton({ data }) {
     const {onPress, text} = data;
-    
+    const styles = useStyles();
   return (
     <TouchableHighlight
       style={styles.button}
@@ -13,21 +14,3 @@ export default function BorderButton({ data }) {
     </TouchableHighlight>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#000000',
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    
-    
-  },
-  text: {
-    fontFamily: 'Montserrat-Regular',
-    fontSize: 36,
-    color: '#000000',
-    textAlign: 'center',
-  },
-});

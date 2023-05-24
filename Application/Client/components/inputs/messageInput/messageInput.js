@@ -1,38 +1,66 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native-web';
 import { useWindowDimensions } from 'react-native-web';
-
+import useStyles from './messageInput.module';
 import SendSvg from '../../../assets/icons/sendSvg';
 
-const MessageInput = ({  curuser, chanInf }) => {
+const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
   const [message, setMessage] = useState('');
   const { width, height } = useWindowDimensions();
+  const styles = useStyles();
   const username = 'admin';
   const password = 'root';
   const handleSend = async () => {
     if (message) {
-      const requestBody = {
-        currentUsername: curuser,
-        message: message,
-        channelName: chanInf.name,
-      };
-  
       try {
-        const response = await fetch('http://localhost:8080/api/channels/add_message', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
-          },
-          body: JSON.stringify(requestBody),
-        });
-  
-        if (response.ok) {
-          console.log('Message sent successfully');
-          setMessage('');
+        if (channel) {
+          // Use existing API endpoint for channel messages
+          const requestBody = {
+            currentUsername: curuser,
+            message: message,
+            channelName: chanInf.name,
+          };
+    
+          const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/add_message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+            },
+            body: JSON.stringify(requestBody),
+          });
+    
+          if (response.ok) {
+            console.log('Message sent successfully');
+            setMessage('');
+            onMessageSent(); // Invoke the callback to trigger chat data fetching
+          } else {
+            console.log('Failed to send message');
+          }
         } else {
-          console.log('Failed to send message');
-          console.log(message);
+          // Use custom API endpoint for direct messages
+          const requestBody = {
+            currentUsername: curuser,
+            otherUsername: chanInf,
+            message: message,
+          };
+    
+          const response = await fetch('https://messengerproject-production.up.railway.app/api/chats/add_message', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+            },
+            body: JSON.stringify(requestBody),
+          });
+    
+          if (response.ok) {
+            console.log('Message sent successfully');
+            setMessage('');
+            onMessageSent(); // Invoke the callback to trigger chat data fetching
+          } else {
+            console.log('Failed to send message');
+          }
         }
       } catch (error) {
         console.error('Error sending message:', error);
@@ -40,7 +68,6 @@ const MessageInput = ({  curuser, chanInf }) => {
     }
   };
   
-
   return (
     <View style={styles.container}>
       <TextInput
@@ -55,33 +82,5 @@ const MessageInput = ({  curuser, chanInf }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-  input: {
-    flex: 1,
-    height: 44,
-    fontSize: 16,
-    paddingLeft: 40,
-    borderRadius: 10,
-    backgroundColor: '#FFFFFF',
-    color: '#000000',
-    boxShadow: '2px 2px 2px rgba(0, 0, 0, 1)',
-    fontFamily: 'Montserrat-Regular',
-    alignSelf: 'flex-start',
-    marginRight: 30
-  },
-  sendButton: {
-    alignSelf: 'flex-end',
-    marginLeft: 30,
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export default MessageInput;

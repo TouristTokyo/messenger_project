@@ -4,26 +4,47 @@ import ShowAvatar from '../Avatar/ShowAvatar/showAvatar';
 import ForwardSvg from '../../assets/icons/forwardSvg';
 import ForwardFocusSvg from '../../assets/icons/forwardFocusSvg';
 import { MessageContext } from '../../context/MessageContext';
+import AuthContext from '../../context/AuthContext';
+import useStyles from './messageBody.module';
 
 const MessageBody = ({ data, currentUser }) => {
-  const { imageUrl, nickname, role, message, own, channel, date } = data;
+  const { imageUrl, nickname, role, message, own, channel, date, unauth, ident  } = data;
   const [isFocused, setIsFocused] = useState(false);
   const dated = new Date(date);
   const time = dated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-
+  const username = 'admin';
+  const password = 'root';
+  const {user} = useContext(AuthContext);
+  const styles = useStyles();
   const { addForwardedMessage } = useContext(MessageContext);
 
-  const handleForwardPress = () => {
+  const handleForwardPress = async () => {
     setIsFocused(prevState => !prevState);
-    addForwardedMessage({
-      imageUrl,
-      nickname,
-      role,
-      message,
-      own,
-      channel
-    });
+    const body = {
+      username: user.name,
+      messageId: ident
+    };
+
+    try {
+      const response = await fetch('https://messengerproject-production.up.railway.app/api/saved_message/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (response.ok) {
+        // Forwarding successful
+        console.log('Message forwarded successfully');
+      } else {
+        // Forwarding failed
+        console.log('Failed to forward message');
+      }
+    } catch (error) {
+      console.log('Error forwarding message:', error);
+    }
   };
 
   const forwardIcon = isFocused ? <ForwardFocusSvg /> : <ForwardSvg />;
@@ -46,9 +67,11 @@ const MessageBody = ({ data, currentUser }) => {
         </View>
       )}
       <View style={messageBoxStyles}>
-        <TouchableOpacity onPress={handleForwardPress}>
-          <View style={own ? styles.ownForward : styles.forward}>{forwardIcon}</View>
-        </TouchableOpacity>
+        {!unauth && (
+          <TouchableOpacity onPress={handleForwardPress}>
+            <View style={own ? styles.ownForward : styles.forward}>{forwardIcon}</View>
+          </TouchableOpacity>
+        )}
         <Text style={styles.nickname}>{nickname}</Text>
         {channel && <Text style={styles.role}>{role}</Text>}
         <Text style={styles.message}>{message}</Text>
@@ -58,82 +81,6 @@ const MessageBody = ({ data, currentUser }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    marginBottom: 10,
-    maxWidth: '100%',
-  },
-  ownContainer: {
-    flexDirection: 'row-reverse',
-    alignItems: 'flex-end',
-    marginBottom: 10,
-    maxWidth: '100%',
-  },
-  avatar: {
-    alignSelf: 'flex-start',
-  },
-  messageBox: {
-    backgroundColor: '#E7DEDE',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    maxWidth: '60%',
-  },
-  box: {
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    borderTopLeftRadius: 10,
-  },
-  ownMessageBox: {
-    backgroundColor: 'rgba(0, 118, 185, 0.35)',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    maxWidth: '60%',
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    borderTopLeftRadius: 10,
-  },
-  forward: {
-    alignSelf: 'flex-end',
-    marginBottom: 5,
-  },
-  ownForward: {
-    alignSelf: 'flex-start',
-    marginBottom: 5,
-  },
-  nickname: {
-    fontSize: 24,
-    fontFamily: 'Montserrat-Bold',
-    fontWeight: 'bold',
-    color: 'black',
-    marginBottom: 5,
-  },
-  role: {
-    fontSize: 24,
-    fontFamily: 'Montserrat-Regular',
-    color: '#0076B9',
-    marginBottom: 5,
-  },
-  message: {
-    fontSize: 19,
-    fontFamily: 'Montserrat-Regular',
-    color: 'black',
-    flexWrap: 'wrap',
-    marginBottom: 5,
-  },
-  time: {
-    fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
-    color: 'black',
-    alignSelf: 'flex-end',
-  },
-  ownTime: {
-    fontSize: 14,
-    fontFamily: 'Montserrat-Regular',
-    color: 'black',
-    alignSelf: 'flex-start',
-  },
-});
+
 
 export default MessageBody;

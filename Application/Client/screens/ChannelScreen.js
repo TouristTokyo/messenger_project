@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DataInput from '../components/inputs/textInput/textInput';
 import { useFocusEffect } from '@react-navigation/native';
 import { setProfileNickname, getProfileNickname } from '../context/AsyncStorageUtil';
-import axios from 'axios';
+
 
 export default function ChannelScreen({ navigation, route }) {
     const styles = useStyles();
@@ -36,37 +36,85 @@ export default function ChannelScreen({ navigation, route }) {
     const username = 'admin';
     const password = 'root';
     const [channelData, setChannelData] = useState([]);
-    const [shouldUseFocusEffect, setShouldUseFocusEffect] = useState(false);
+    
 
-    useEffect(() => {
-        setShouldUseFocusEffect(false); // Reset the flag
-    }, [channelData.messages]);
-    useFocusEffect(
-        React.useCallback(() => {
-            fetchProfileNickname();
-            fetchChannelData();
-        }, [channelData.messages])
-    );
+    const [shouldFetchChannelData, setShouldFetchChannelData] = useState(true);
 
-    const scrollViewRef = useRef(null);
-    const [isAtBottom, setIsAtBottom] = useState(true);
+    const fetchChannelData = async () => {
+        try {
+            const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+                },
+            });
 
-    useEffect(() => {
-        if (channelData?.messages?.length > 0 && isAtBottom) {
-            scrollViewRef.current.scrollToEnd({ animated: true });
+            if (response.ok) {
+                const channelData = await response.json();
+
+
+
+                // Check if the user is the channel creator
+                const isCreator = user?.id === channelData.creator?.id;
+                const member = user.channels?.some((channel) => channel.id === channelData.id);
+                const currentUser = channelData.members.find(member => member.user.id === user.id);
+
+                if (currentUser) {
+                    // Access the role object of the current user
+                    const { role } = currentUser;
+
+                    if (role) {
+                        // User has a role, handle it accordingly
+
+
+                        if (role.isAdmin !== undefined) {
+                            // User has an isAdmin property
+
+                            setIsAdmin(role.isAdmin);
+                        }
+                    }
+                }
+                // Update isMember and showSettings based on the condition
+                setIsMember(member);
+
+                setIsDisable(isCreator);
+                setChannelData(channelData);
+            } else {
+                throw new Error('Failed to fetch channel data');
+            }
+        } catch (error) {
+            throw new Error('Error fetching channel data:', error);
         }
-    }, [channelData?.messages, isAtBottom]);
-
-    const handleContentSizeChange = () => {
-        const isScrolledToBottom =
-            scrollViewRef.current &&
-            scrollViewRef.current.contentOffset &&
-            scrollViewRef.current.contentOffset.y + scrollViewRef.current.layoutMeasurement.height >=
-            scrollViewRef.current.contentSize.height;
-
-        setIsAtBottom(isScrolledToBottom);
     };
 
+    useFocusEffect(
+        React.useCallback(() => {
+          fetchProfileNickname();
+          setShouldFetchChannelData(true); // Trigger fetching when the component is focused
+        }, [])
+      );
+      
+      useEffect(() => {
+        if (shouldFetchChannelData) {
+          fetchChannelData()
+            .then(() => setShouldFetchChannelData(false))
+            .catch((error) => console.log('Error fetching chat data:', error));
+        }
+      }, [shouldFetchChannelData]);
+      
+      useEffect(() => {
+        const intervalId = setInterval(() => {
+          setShouldFetchChannelData(true); // Trigger fetching at regular intervals
+        }, 5000); // Adjust the interval duration as needed (e.g., every 5 seconds)
+      
+        return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+      }, []);
+    
+      const handleMessageSent = () => {
+        setShouldFetchChannelData(true); // Trigger fetching when a message is sent
+      };
+      
     const fetchProfileNickname = async () => {
         try {
             const nickname = await getProfileNickname();
@@ -106,30 +154,15 @@ export default function ChannelScreen({ navigation, route }) {
         },
     ];
 
-    const messageBodies = [
-        {
-            imageUrl: 'https://i.ibb.co/6NC7Pms/photo-2023-05-05-23-08-50.jpg',
-            nickname: 'John Doe',
-            role: 'Avatar',
-            channel: true,
-            message: 'Hellffffffffffffffffffffffffffffffffffffffffffffffffffffffffo world!',
-        },
-        {
-            own: true,
-            nickname: 'John Doe',
-            role: 'Amon',
-            channel: true,
-            message: 'Hellffffffffffffffffffffffffffffffffffffffffffffffffffffffffo world!',
-        },
-    ];
+
 
     const handleJoinLeave = async () => {
         try {
             const name = userText || user.name;
             const channelName = channelData.name;
             const apiUrl = isMember
-                ? `http://localhost:8080/api/channels/${channelId}/leave?username=${name}`
-                : `http://localhost:8080/api/channels/join?username=${username}&channel_name=${channelName}`;
+                ? `https://messengerproject-production.up.railway.app/api/channels/${channelId}/leave?username=${name}`
+                : `https://messengerproject-production.up.railway.app/api/channels/join?username=${name}&channel_name=${channelName}`;
 
             const response = await fetch(apiUrl, {
                 method: isMember ? 'DELETE' : 'POST',
@@ -187,14 +220,14 @@ export default function ChannelScreen({ navigation, route }) {
     };
     const handleCreateChannel = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/channels/create', {
+            const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
                 },
                 body: JSON.stringify({
-                    username: userText,
+                    username: user.name,
                     channelName: inputText.nickname,
                 }),
             });
@@ -204,18 +237,7 @@ export default function ChannelScreen({ navigation, route }) {
                 setShowPopup(false);
                 // Channel creation successful
                 alert('Channel created');
-
-                // Update user.channels in the AuthContext
-                const updatedUser = {
-                    ...user,
-                    channels: [...user.channels, channelResponse],
-                };
-
-                // Store the updated user data in localStorage
-                localStorage.setItem('user', JSON.stringify(updatedUser));
-
-                // Update user data in the AuthContext
-                updateUser(updatedUser);
+                window.location.reload();
             } else {
                 // Handle error response
                 alert('Failed to create channel');
@@ -225,54 +247,7 @@ export default function ChannelScreen({ navigation, route }) {
         }
     };
 
-    const fetchChannelData = async () => {
-        try {
-            const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
-                },
-            });
 
-            if (response.ok) {
-                const channelData = await response.json();
-
-                // Check if the user is the channel creator
-                const isCreator = user?.id === channelData.creator?.id;
-                const member = user.channels?.some((channel) => channel.id === channelData.id);
-                const currentUser = channelData.members.find(member => member.user.id === user.id);
-
-                if (currentUser) {
-                    // Access the role object of the current user
-                    const { role } = currentUser;
-
-                    if (role) {
-                        // User has a role, handle it accordingly
-
-
-                        if (role.isAdmin !== undefined) {
-                            // User has an isAdmin property
-
-                            setIsAdmin(role.isAdmin);
-                        }
-                    }
-                } else {
-                    console.log("Current user not found in the members list");
-                }
-                // Update isMember and showSettings based on the condition
-                setIsMember(member);
-
-                setIsDisable(isCreator);
-                setChannelData(channelData);
-            } else {
-                // Handle error response
-                console.log('Failed to fetch channel data');
-            }
-        } catch (error) {
-            console.log('Error fetching channel data:', error);
-        }
-    };
 
 
     return (
@@ -300,7 +275,7 @@ export default function ChannelScreen({ navigation, route }) {
                 ))}
             </View>
             <View style={styles.historyContainer}>
-                <ScrollView ref={scrollViewRef} onContentSizeChange={handleContentSizeChange}
+                <ScrollView 
                     style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
                     {channelData?.messages?.map((message) => {
                         const senderId = message.sender?.id;
@@ -319,6 +294,8 @@ export default function ChannelScreen({ navigation, route }) {
                                     date: message.date,
                                     own: message.sender?.name === user.name,
                                     channel: true,
+                                    unauth: false,
+                                    ident: message.id
                                 }}
                                 currentUser={user}
                             />
@@ -329,7 +306,7 @@ export default function ChannelScreen({ navigation, route }) {
             </View>
             {isMember && (
                 <View style={styles.sendContainer}>
-                    <MessageInput curuser={userText ? userText : user.name} chanInf={channelData} />
+                    <MessageInput channel={true} curuser={userText ? userText : user.name} chanInf={channelData} onMessageSent={handleMessageSent} />
                 </View>
             )}
             <View style={styles.bottomLeft}>
