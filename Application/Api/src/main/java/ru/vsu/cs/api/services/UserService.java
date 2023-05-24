@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -26,6 +28,7 @@ public class UserService {
     public User getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
+            log.warn("Not found user with email: " + email);
             throw new UserException("Not found user with email: " + email);
         }
         return user;
@@ -36,6 +39,7 @@ public class UserService {
         if (passwordEncoder.matches(password, user.getPassword())) {
             return user;
         } else {
+            log.warn("Not found user with password: " + password);
             throw new UserException("Not found user with password: " + password);
         }
     }
@@ -43,6 +47,7 @@ public class UserService {
     public User getUserByName(String name) {
         User user = userRepository.findByName(name).orElse(null);
         if (user == null) {
+            log.warn("Not found user with name: " + name);
             throw new UserException("Not found user with name: " + name);
         }
         return user;
@@ -51,6 +56,7 @@ public class UserService {
     public User getById(BigInteger id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
+            log.warn("Not found user with id: " + id);
             throw new UserException("Not found user with id: " + id);
         }
         return user;
@@ -63,13 +69,16 @@ public class UserService {
     @Transactional
     public void save(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            log.warn("Exist user with email: " + user.getEmail());
             throw new UserException("Exist user with email: " + user.getEmail());
         }
         if (userRepository.findByName(user.getName()).isPresent()) {
+            log.warn("Exist user with nickname: " + user.getName());
             throw new UserException("Exist user with nickname: " + user.getName());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        log.info("User [" + user.getName() + ", " + user.getEmail() + "] registered successfully");
     }
 
     @Transactional
@@ -86,6 +95,7 @@ public class UserService {
         User user = getById(id);
 
         if (foundUserByEmail != null && !foundUserByEmail.getId().equals(id)) {
+            log.warn("Exist user with email: " + email);
             throw new UserException("Exist user with email: " + email);
         }
 
@@ -100,6 +110,7 @@ public class UserService {
         User user = getById(id);
 
         if (foundUserByName != null && !foundUserByName.getId().equals(id)) {
+            log.warn("Exist user with nickname: " + name);
             throw new UserException("Exist user with nickname: " + name);
         }
 
@@ -111,7 +122,8 @@ public class UserService {
     @Transactional
     public void updatePassword(BigInteger id, String lastPassword, String newPassword) {
         User user = getById(id);
-        if(!passwordEncoder.matches(lastPassword, user.getPassword())){
+        if (!passwordEncoder.matches(lastPassword, user.getPassword())) {
+            log.warn("Incorrect current password: " + lastPassword);
             throw new UserException("Incorrect current password");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
