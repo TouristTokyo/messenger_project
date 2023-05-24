@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.message.ChatMessageCreationDto;
 import ru.vsu.cs.api.dto.message.ChatMessageDto;
+import ru.vsu.cs.api.dto.search.ChatSearchDto;
 import ru.vsu.cs.api.models.Chat;
 import ru.vsu.cs.api.models.Message;
 import ru.vsu.cs.api.models.User;
@@ -38,6 +39,11 @@ public class ChatController {
         this.userService = userService;
         this.chatService = chatService;
         this.messageService = messageService;
+    }
+
+    @GetMapping()
+    public List<ChatSearchDto> getChats() {
+        return userService.getUsers().stream().map(Mapper::convertToChatSearchDto).toList();
     }
 
     @PostMapping("/add_message")
