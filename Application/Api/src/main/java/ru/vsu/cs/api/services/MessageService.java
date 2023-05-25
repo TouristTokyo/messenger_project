@@ -26,22 +26,23 @@ public class MessageService {
 
     @Transactional
     public Message save(Message message) {
+        log.info(message.getSender().getName() + " sent message");
         return messageRepository.saveAndFlush(message);
     }
 
-    public List<Message> getMessagesByChat(Chat chat){
+    public List<Message> getMessagesByChat(Chat chat) {
         return messageRepository.findByChat(chat);
     }
 
-    public List<Message> getMessagesByChannel(Channel channel){
+    public List<Message> getMessagesByChannel(Channel channel) {
         return messageRepository.findByChannel(channel);
     }
 
     public Message getMessage(BigInteger id) {
         Message message = messageRepository.findById(id).orElse(null);
-        if(message == null){
-            log.warn("Not found message with id: "+ id);
-            throw new MessageException("Not found message with id: "+ id);
+        if (message == null) {
+            log.warn("Not found message with id: " + id);
+            throw new MessageException("Не найденно сообщения с данным id: " + id);
         }
         return message;
     }
