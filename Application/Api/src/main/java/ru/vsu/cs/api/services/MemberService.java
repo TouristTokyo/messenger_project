@@ -38,7 +38,7 @@ public class MemberService {
         if (member == null) {
             log.warn("Not found member with name (" + user.getName() + ") for channel with name ( "
                     + channel.getName() + ")");
-            throw new MemberException("Not found member with name (" + user.getName() + ") for channel with name ( "
+            throw new MemberException("Не существует участника (" + user.getName() + ") в канале ( "
                     + channel.getName() + ")");
         }
 
@@ -47,6 +47,7 @@ public class MemberService {
 
     @Transactional
     public void save(Member member) {
+        log.info(member.getUser().getName() + " join to " + member.getChannel().getName());
         memberRepository.save(member);
     }
 
