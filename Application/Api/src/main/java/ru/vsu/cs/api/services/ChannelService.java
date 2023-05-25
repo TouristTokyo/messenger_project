@@ -31,8 +31,9 @@ public class ChannelService {
     public Channel create(Channel channel) {
         if (channelRepository.findByName(channel.getName()).isPresent()) {
             log.warn("Exist channel with name: " + channel.getName());
-            throw new ChannelException("Exist channel with name: " + channel.getName());
+            throw new ChannelException("Канал с таким именем уже существует: " + channel.getName());
         }
+        log.info("Channel (" + channel.getName() + ") create successfully");
         return channelRepository.saveAndFlush(channel);
     }
 
@@ -45,7 +46,7 @@ public class ChannelService {
         Channel channel = channelRepository.findById(id).orElse(null);
         if (channel == null) {
             log.warn("Not found channel with id: " + id);
-            throw new ChannelException("Not found channel with id: " + id);
+            throw new ChannelException("Канал с таким id не был найден: " + id);
         }
         return channel;
     }
@@ -54,7 +55,7 @@ public class ChannelService {
         Channel channel = channelRepository.findByName(name).orElse(null);
         if (channel == null) {
             log.warn("Not found channel with name: " + name);
-            throw new ChannelException("Not found channel with name: " + name);
+            throw new ChannelException("Канал с таким именем не был найден: " + name);
         }
         return channel;
     }
@@ -66,8 +67,10 @@ public class ChannelService {
 
         if (foundChannel != null && !foundChannel.getId().equals(id)) {
             log.warn("Exist channel with name: " + name);
-            throw new UserException("Exist channel with name: " + name);
+            throw new UserException("Канал с таким именем уже существует: " + name);
         }
+
+        log.info("Updated channel name: " + channel.getName() + " --> " + name);
 
         channel.setName(name);
         channelRepository.save(channel);

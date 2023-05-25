@@ -30,6 +30,7 @@ public class ChatService {
         if (foundChat != null) {
             return foundChat;
         }
+        log.info("Chat (" + chat.getUserFirst().getName() + "<-->" + chat.getUserSecond().getName() + ") create successfully");
         return chatRepository.saveAndFlush(chat);
     }
 
@@ -37,7 +38,7 @@ public class ChatService {
         Chat chat = chatRepository.findByUsernames(currentUser.getId(), otherUser.getId()).orElse(null);
         if (chat == null) {
             log.warn("Not found chat for users: " + currentUser.getName() + " and " + otherUser.getName());
-            throw new ChatException("Not found chat for users: " + currentUser.getName() + " and " + otherUser.getName());
+            throw new ChatException("Не найден чат между такими пользователями: " + currentUser.getName() + " и " + otherUser.getName());
         }
         return chat;
     }
@@ -46,7 +47,7 @@ public class ChatService {
         Chat chat = chatRepository.findById(id).orElse(null);
         if (chat == null) {
             log.warn("Not found chat with id: " + id);
-            throw new ChatException("Not found chat with id: " + id);
+            throw new ChatException("Не существует чата с таким id: " + id);
         }
         return chat;
     }
