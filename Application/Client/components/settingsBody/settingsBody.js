@@ -25,25 +25,23 @@ export default function SettingsBody({ data }) {
     const { user } = useContext(AuthContext);
     const [inputText, setInputText] = useState({
         nickname: '',
-        role: role, // add state for role input value
+        role: role, 
     });
     const styles = useStyles();
-    const [isAdmin, setIsAdmin] = useState(false); // add state for AdminSvg icon
+    const [isAdmin, setIsAdmin] = useState(false); 
     const username = 'admin';
     const password = 'root';
     const handleDelete = async () => {
         try {
-          const url = `https://messengerproject-production.up.railway.app/api/channels/${channelId.id}/leave?username=${name}`;
+          const url = `http://localhost:8080/api/channels/${channelId.id}/leave?username=${name}`;
           const response = await axios.delete(url, {
             auth: {
               username: username,
               password: password
             }
           });
-          console.log('Delete request sent successfully');
-          console.log(response.data); // Optional: Log the response data
         } catch (error) {
-          console.error('Error sending delete request:', error);
+          alert('Ошибка при попытки удаления пользователя:', error);
         }
       };
       
@@ -52,21 +50,21 @@ export default function SettingsBody({ data }) {
 
 
     const handleAdminClick = () => {
-        setIsAdmin(!isAdmin); // toggle AdminSvg icon
+        setIsAdmin(!isAdmin);
     };
 
     const handleRoleChange = (role) => {
-        setInputText({ ...inputText, role: role }); // update role input value
+        setInputText({ ...inputText, role: role }); 
     };
     const currentUser = channelId.members.find(member => member.user.id === user.id);
     const handleSaveChanges = async () => {
-        const url = 'https://messengerproject-production.up.railway.app/api/roles/create';
+        const url = 'http://localhost:8080/api/roles/create';
       
         const requestBody = {
           name: inputText.role,
           isAdmin: isAdmin,
           username: name,
-          channelName: channelId.name
+          channelName: channelId.channel.name
         };
       
         try {
@@ -75,20 +73,17 @@ export default function SettingsBody({ data }) {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              Authorization: `Basic ${btoa(`${username}:${password}`)}` // Replace with your own username and password
+              Authorization: `Basic ${btoa(`${username}:${password}`)}` 
             },
             body: JSON.stringify(requestBody)
           });
-      
-          // Check if the request was successful
           if (response.ok) {
-            console.log('Role created successfully');
+
           } else {
-            console.log('Failed to create role');
-            console.log(channelId.name);
+            alert('Не удалось создать роль');
           }
         } catch (error) {
-          console.error('Error creating role:', error);
+          alert('Ошибка при создании роли:', error);
         }
       
         setShowPopup(false);

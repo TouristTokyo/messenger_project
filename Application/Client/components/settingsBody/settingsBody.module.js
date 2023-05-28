@@ -50,14 +50,14 @@ export default function useStyles() {
             shadowRadius: 3.84,
             elevation: 7,
             position: 'absolute',
-            top: '50%', // set top to 50%
-            left: '50%', // set left to 50%
-            transform: [{ translateX: '-50%' }, { translateY: '-50%' }], // adjust position based on element size
+            top: '50%', 
+            left: '50%', 
+            transform: [{ translateX: '-50%' }, { translateY: '-50%' }], 
             width: '30%',
             height: '30%',
             justifyContent: 'center',
             alignItems: 'center',
-            flexDirection: 'column', // add this line to make items centered in a column
+            flexDirection: 'column', 
         },
     });
 }

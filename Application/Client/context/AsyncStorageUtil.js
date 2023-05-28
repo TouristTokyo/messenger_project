@@ -4,7 +4,7 @@ export async function setProfileNickname(nickname) {
   try {
     await AsyncStorage.setItem('profile_nickname', nickname);
   } catch (error) {
-    console.log('Error saving nickname:', error);
+    console.log('Ошибка при сохранении никнейма:', error);
   }
 }
 
@@ -13,7 +13,7 @@ export async function getProfileNickname() {
     const nickname = await AsyncStorage.getItem('profile_nickname');
     return nickname;
   } catch (error) {
-    console.log('Error retrieving nickname:', error);
+    console.log('Ошибка при подгрузке никнейма:', error);
     return null;
   }
 }
@@ -22,7 +22,7 @@ export async function setEmail(email) {
   try {
     await AsyncStorage.setItem('profile_email', email);
   } catch (error) {
-    console.log('Error saving email:', error);
+    console.log('Ошибка при сохранении почты:', error);
   }
 }
 
@@ -31,7 +31,7 @@ export async function getEmail() {
     const email = await AsyncStorage.getItem('profile_email');
     return email;
   } catch (error) {
-    console.log('Error retrieving email:', error);
+    console.log('Ошибка при подгрузке почты:', error);
     return null;
   }
 }

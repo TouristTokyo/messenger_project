@@ -26,7 +26,7 @@ export default function useStyles() {
       alignItems: 'center',
     },
     headerButton: {
-      marginTop: 30, // задаем отступ сверху для кнопки
+      marginTop: 30, 
     },
     channNameContainer: {
       flexDirection: 'row',
@@ -90,8 +90,8 @@ export default function useStyles() {
       height: '40%',
       overflow: 'hidden',
       position: 'absolute',
-      top: 40, // set top to 20px
-      right: 80, // set right to 20px
+      top: 40, 
+      right: 80,
       shadowColor: '#000',
       shadowOffset: { width: 2, height: 2 },
       shadowOpacity: 0.25,
@@ -105,8 +105,8 @@ export default function useStyles() {
       height: '10%',
       overflow: 'hidden',
       position: 'absolute',
-      top: 40, // set top to 20px
-      right: 80, // set right to 20px
+      top: 40, 
+      right: 80, 
       shadowColor: '#000',
       shadowOffset: { width: 2, height: 2 },
       shadowOpacity: 0.25,
@@ -129,7 +129,7 @@ export default function useStyles() {
       elevation: 7,
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center', // align items vertically to the center
+      alignItems: 'center',
     },
     barText: {
       fontFamily: 'Montserrat-Regular',
@@ -170,8 +170,8 @@ export default function useStyles() {
       height: '45%',
       overflow: 'hidden',
       position: 'absolute',
-      bottom: 40, // set top to 20px
-      right: 80, // set right to 20px
+      bottom: 40,
+      right: 80, 
       shadowColor: '#000',
       shadowOffset: { width: 2, height: 2 },
       shadowOpacity: 0.25,
@@ -187,9 +187,9 @@ export default function useStyles() {
       height: '70%',
       overflow: 'hidden',
       position: 'absolute',
-      top: '50%', // center vertically
-      right: 225, // move more to the right
-      transform: [{ translateY: '-50%' }], // center vertically
+      top: '50%', 
+      right: 225,
+      transform: [{ translateY: '-50%' }], 
       shadowColor: '#000',
       shadowOffset: { width: 2, height: 2 },
       shadowOpacity: 0.25,
@@ -203,8 +203,8 @@ export default function useStyles() {
       height: '50%',
       overflow: 'hidden',
       position: 'absolute',
-      top: 40, // set top to 20px
-      left: 80, // set right to 20px
+      top: 40, 
+      left: 80, 
       shadowColor: '#000',
       shadowOffset: { width: 2, height: 2 },
       shadowOpacity: 0.25,
@@ -249,14 +249,14 @@ export default function useStyles() {
       shadowRadius: 3.84,
       elevation: 7,
       position: 'absolute',
-      top: '50%', // set top to 50%
-      left: '50%', // set left to 50%
-      transform: [{ translateX: '-50%' }, { translateY: '-50%' }], // adjust position based on element size
+      top: '50%', 
+      left: '50%', 
+      transform: [{ translateX: '-50%' }, { translateY: '-50%' }], 
       width: '20%',
       height: '20%',
       justifyContent: 'center',
       alignItems: 'center',
-      flexDirection: 'column', // add this line to make items centered in a column
+      flexDirection: 'column',
     },
     text: {
       fontFamily: 'Montserrat-Regular',

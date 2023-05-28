@@ -29,7 +29,7 @@ function ChangeEmailScreen({ navigation }) {
 
   const getCode = () => {
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `https://messengerproject-production.up.railway.app/api/send_email?email=${email}`;
+    const apiUrl = `http://localhost:8080/api/send_email?email=${email}`;
 
     fetch(apiUrl, {
       method: 'GET',
@@ -41,29 +41,28 @@ function ChangeEmailScreen({ navigation }) {
       .then((data) => {
         setReceivedCode(data);
         if (data) {
-          alert('Code has been sent to your email');
+          alert('Код подтверждения был отправлен на указанную почту!');
          
         } else {
-          alert('Failed to get code');
+          alert('Не удалось отправить код');
           
         }
       })
       .catch((error) => {
-        console.error('Error getting code:', error);
-        alert('Failed to get code');
+        alert('Ошибка при подключении к серверу:', error);
       });
   };
 
   const changeEmail = async () => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(inputText.email)) {
-      alert('Invalid email format');
+      alert('Не правильный формат почты');
       return;
     }
   try {
     const userId = user?.id;
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `https://messengerproject-production.up.railway.app/api/users/${userId}/update/email?email=${email}`;
+    const apiUrl = `http://localhost:8080/api/users/${userId}/update/email?email=${email}`;
 
     const response = await fetch(apiUrl, {
       method: 'PUT',
@@ -74,15 +73,13 @@ function ChangeEmailScreen({ navigation }) {
     });
 
     if (response.ok) {
-      alert('Email updated successfully');
-      // Use setEmail to update the email value
+      alert('Почта успешно обновлена');
       setEmail(inputText.email);
     } else {
-      alert('Failed to update email');
+      alert('Не удалось обновить почту');
     }
   } catch (error) {
-    console.error('Error updating email:', error);
-    alert('Failed to update email');
+    alert('Ошибка при подключении к серверу:', error);
   }
 };
 

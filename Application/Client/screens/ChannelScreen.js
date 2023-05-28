@@ -36,13 +36,14 @@ export default function ChannelScreen({ navigation, route }) {
     const username = 'admin';
     const password = 'root';
     const [channelData, setChannelData] = useState([]);
-    
+    const [channelText, setChannelText] = useState('');
+
 
     const [shouldFetchChannelData, setShouldFetchChannelData] = useState(true);
 
     const fetchChannelData = async () => {
         try {
-            const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}`, {
+            const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,69 +53,57 @@ export default function ChannelScreen({ navigation, route }) {
 
             if (response.ok) {
                 const channelData = await response.json();
-
-
-
-                // Check if the user is the channel creator
                 const isCreator = user?.id === channelData.creator?.id;
-                const member = user.channels?.some((channel) => channel.id === channelData.id);
+                const member = channelData.members.find(member => member.user.id === user.id);
                 const currentUser = channelData.members.find(member => member.user.id === user.id);
 
                 if (currentUser) {
-                    // Access the role object of the current user
                     const { role } = currentUser;
-
                     if (role) {
-                        // User has a role, handle it accordingly
-
-
-                        if (role.isAdmin !== undefined) {
-                            // User has an isAdmin property
-
-                            setIsAdmin(role.isAdmin);
+                        if (role.admin !== undefined) {
+                            setIsAdmin(role.admin);
                         }
                     }
                 }
-                // Update isMember and showSettings based on the condition
                 setIsMember(member);
-
                 setIsDisable(isCreator);
                 setChannelData(channelData);
+                setChannelText(channelData.channel.name)
+                console.log(currentUser)
             } else {
-                throw new Error('Failed to fetch channel data');
             }
         } catch (error) {
-            throw new Error('Error fetching channel data:', error);
+            alert('Ошибка при подключении к серверу:', error);
         }
     };
 
     useFocusEffect(
         React.useCallback(() => {
-          fetchProfileNickname();
-          setShouldFetchChannelData(true); // Trigger fetching when the component is focused
+            fetchProfileNickname();
+            setShouldFetchChannelData(true);
         }, [])
-      );
-      
-      useEffect(() => {
+    );
+
+    useEffect(() => {
         if (shouldFetchChannelData) {
-          fetchChannelData()
-            .then(() => setShouldFetchChannelData(false))
-            .catch((error) => console.log('Error fetching chat data:', error));
+            fetchChannelData()
+                .then(() => setShouldFetchChannelData(false))
+                .catch((error) => alert('Не удалось подгрузить данные о канале:', error));
         }
-      }, [shouldFetchChannelData]);
-      
-      useEffect(() => {
+    }, [shouldFetchChannelData]);
+
+    useEffect(() => {
         const intervalId = setInterval(() => {
-          setShouldFetchChannelData(true); // Trigger fetching at regular intervals
-        }, 5000); // Adjust the interval duration as needed (e.g., every 5 seconds)
-      
-        return () => clearInterval(intervalId); // Cleanup the interval on component unmount
-      }, []);
-    
-      const handleMessageSent = () => {
-        setShouldFetchChannelData(true); // Trigger fetching when a message is sent
-      };
-      
+            setShouldFetchChannelData(true);
+        }, 5000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    const handleMessageSent = () => {
+        setShouldFetchChannelData(true);
+    };
+
     const fetchProfileNickname = async () => {
         try {
             const nickname = await getProfileNickname();
@@ -122,7 +111,7 @@ export default function ChannelScreen({ navigation, route }) {
                 setUserText(nickname);
             }
         } catch (error) {
-            console.log('Error retrieving profile nickname:', error);
+            console.log('Ошибка при подгрузке никнейма:', error);
         }
     };
 
@@ -149,7 +138,7 @@ export default function ChannelScreen({ navigation, route }) {
             text: 'Мой аккаунт',
         },
         {
-            onPress: () => logout(),
+            onPress: handleLogout,
             text: 'Выйти',
         },
     ];
@@ -159,10 +148,10 @@ export default function ChannelScreen({ navigation, route }) {
     const handleJoinLeave = async () => {
         try {
             const name = userText || user.name;
-            const channelName = channelData.name;
+            const channelName = channelText;
             const apiUrl = isMember
-                ? `https://messengerproject-production.up.railway.app/api/channels/${channelId}/leave?username=${name}`
-                : `https://messengerproject-production.up.railway.app/api/channels/join?username=${name}&channel_name=${channelName}`;
+                ? `http://localhost:8080/api/channels/${channelId}/leave?username=${name}`
+                : `http://localhost:8080/api/channels/join?username=${name}&channel_name=${channelName}`;
 
             const response = await fetch(apiUrl, {
                 method: isMember ? 'DELETE' : 'POST',
@@ -174,18 +163,21 @@ export default function ChannelScreen({ navigation, route }) {
 
             if (response.ok) {
                 setIsMember((prevIsMember) => !prevIsMember);
-                alert(isMember ? 'You left the channel' : 'You joined the channel');
+                alert(isMember ? 'Вы покинули канал' : 'Вы присоединились к каналу');
                 window.location.reload();
             } else {
-                // Handle error response
-                alert(isMember ? 'Failed to leave the channel' : 'Failed to join the channel');
+                alert(isMember ? 'Не удалось покинуть канал' : 'Не удалось присоединиться к каналу');
             }
         } catch (error) {
-            alert('Error joining/leaving the channel:', error);
+            alert('Ошибка при подключении к серверу:', error);
         }
     };
 
 
+    const handleLogout = () => {
+        logout();
+        window.location.reload();
+      }
 
     const saveChannelState = async () => {
         try {
@@ -195,7 +187,7 @@ export default function ChannelScreen({ navigation, route }) {
             };
             await AsyncStorage.setItem('channelState', JSON.stringify(channelState));
         } catch (error) {
-            console.error('Error while saving channel state:', error);
+            console.error('Не удалось сохранить состояние канала:', error);
         }
     };
 
@@ -204,7 +196,7 @@ export default function ChannelScreen({ navigation, route }) {
         try {
             await AsyncStorage.setItem('chatMessages', JSON.stringify(messages));
         } catch (error) {
-            console.error('Error while saving chat messages:', error);
+            console.error('Не удалось сохранить сообщения:', error);
         }
     };
     const imageSource = selectedImage || (user && user.image);
@@ -215,12 +207,12 @@ export default function ChannelScreen({ navigation, route }) {
                 setMessages(JSON.parse(savedMessages));
             }
         } catch (error) {
-            console.error('Error while loading chat messages:', error);
+            console.error('Не удалось подгрузить сообщения:', error);
         }
     };
     const handleCreateChannel = async () => {
         try {
-            const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
+            const response = await fetch('http://localhost:8080/api/channels/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -233,17 +225,14 @@ export default function ChannelScreen({ navigation, route }) {
             });
 
             if (response.ok) {
-                const channelResponse = await response.json();
                 setShowPopup(false);
-                // Channel creation successful
-                alert('Channel created');
+                alert('Канал создан');
                 window.location.reload();
             } else {
-                // Handle error response
-                alert('Failed to create channel');
+                alert('Не удалось создать канал');
             }
         } catch (error) {
-            alert('Error creating channel:', error);
+            alert('Ошибка при подключении к серверу:', error);
         }
     };
 
@@ -253,13 +242,13 @@ export default function ChannelScreen({ navigation, route }) {
     return (
         <View style={styles.containerMain}>
             <View style={styles.barChanContainer}>
-                <Text style={styles.barText}>{channelData.name}</Text>
+                <Text style={styles.barText}>{channelText}</Text>
                 <View>
                     <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} disabled={isDisable} />
                 </View>
                 {isMember && isAdmin && (
                     <View style={{ marginRight: 20 }}>
-                        <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.id })}>
+                        <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.channel.id })}>
                             <SettingsSvg />
                         </TouchableHighlight>
                     </View>
@@ -275,7 +264,7 @@ export default function ChannelScreen({ navigation, route }) {
                 ))}
             </View>
             <View style={styles.historyContainer}>
-                <ScrollView 
+                <ScrollView
                     style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
                     {channelData?.messages?.map((message) => {
                         const senderId = message.sender?.id;
@@ -326,9 +315,9 @@ export default function ChannelScreen({ navigation, route }) {
                             flex={true}
                         />
                     </View>
-                    <View>
+                    <TouchableHighlight onPress={() => setShowPopup(false)}>
                         <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
-                    </View>
+                    </TouchableHighlight>
                 </View>
             </Modal>
         </View>

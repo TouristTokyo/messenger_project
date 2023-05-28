@@ -29,14 +29,14 @@ export default function SettingsScreen({ navigation, route }) {
   useFocusEffect(
     React.useCallback(() => {
       fetchChannelData();
-    }, [channelData.members])
+    }, [])
   );
   const [inputText, setInputText] = useState({
     nickname: channelData.name || 'a',
   });
   const fetchChannelData = async () => {
     try {
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}`, {
+      const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -50,15 +50,16 @@ export default function SettingsScreen({ navigation, route }) {
         setChannelData(channelData);
         setInputText((prevInputText) => ({
           ...prevInputText,
-          nickname: channelData.name || 'a',
+          nickname: channelData.channel.name || 'a',
         }));
         const isCreator = user?.id === channelData.creator?.id;
         setIsAdmin(isCreator);
       } else {
-        console.log('Failed to fetch channel data');
+        alert('Не удалось получить данные о канале, возможно он больше не существует');
+
       }
     } catch (error) {
-      console.log('Error fetching channel data:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
 
@@ -66,7 +67,7 @@ export default function SettingsScreen({ navigation, route }) {
   
   const handleDeleteChannel = async () => {
     try {
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/delete/${channelId}`, {
+      const response = await fetch(`http://localhost:8080/api/channels/delete/${channelId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -75,15 +76,13 @@ export default function SettingsScreen({ navigation, route }) {
       });
   
       if (response.ok) {
-        // Channel deletion successful
-        alert('Channel deleted');
-        navigation.navigate('MainAuth'); // Redirect to MainAuthScreen
+        alert('Чат удален');
+        navigation.navigate('MainAuth'); 
       } else {
-        // Handle error response
-        alert('Failed to delete channel');
+        alert('Не удалось удалить чат');
       }
     } catch (error) {
-      alert('Error deleting channel:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   
@@ -93,17 +92,15 @@ export default function SettingsScreen({ navigation, route }) {
     try {
       await AsyncStorage.setItem('role', newRole);
     } catch (error) {
-      console.log('Error saving role:', error);
+      console.log('Ошибка сохранения роли:', error);
     }
   };
 
   const handleAddButtonClick = async () => {
     if (isEditingNickname) {
-      // Save changes and exit edit mode
       setIsEditingNickname(false);
       try {
-        // Make the API request to update the nickname
-        const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
+        const response = await fetch(`http://localhost:8080/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -113,11 +110,8 @@ export default function SettingsScreen({ navigation, route }) {
   
         if (response.ok) {
           const channelResponse = await response.json();
-
-        // Update user.channels in the AuthContext
-        const updatedChannels = user.channels.map((channel) => {
+          const updatedChannels = user.channels.map((channel) => {
           if (channel.id === channelResponse.id) {
-            // Update the channel name
             return { ...channel, name: channelResponse.name };
           }
           return channel;
@@ -127,30 +121,18 @@ export default function SettingsScreen({ navigation, route }) {
           ...user,
           channels: updatedChannels,
         };
-
-        // Store the updated user data in localStorage
         localStorage.setItem('user', JSON.stringify(updatedUser));
 
         } else {
-          console.log('Failed to update Channel name');
+          alert('Не удалось обновить имя канала');
         }
       } catch (error) {
-        console.log('Error updating Channel name:', error);
+        alert('Ошибка при подключении к серверу:', error);
       }
     } else {
-      // Enter edit mode
       setIsEditingNickname(true);
     }
   };
-  
-
-  const members = [
-    {
-      role: role,
-      username: "John Doe",
-      onRoleChange: handleRoleChange
-    }
-  ];
 
   return (
     <View style={styles.containerSettings}>
@@ -179,7 +161,7 @@ export default function SettingsScreen({ navigation, route }) {
                 name: channel.user.name,
                 role: channel.role.name,
                 onRoleChange: handleRoleChange,
-                creator: channel.role.isCreator,
+                creator: channel.role.creator,
                 channelId: channelData
               }}
               

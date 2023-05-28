@@ -20,7 +20,7 @@ export default function useStyles() {
       backgroundColor: "#FFFFFF",
       color: "#000000",
       boxShadow: "2px 2px 2px rgba(0, 0, 0, 1)",
-      width: "80%", // Add this line to set input width to 80%
+      width: "80%", 
     },
   });
 }

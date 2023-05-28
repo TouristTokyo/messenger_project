@@ -35,11 +35,11 @@ function ForgotScreen({ navigation }) {
   const getCode = () => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(inputText.email)) {
-      alert('Invalid email format');
+      alert('Не верный формат почты');
       return;
     }
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `https://messengerproject-production.up.railway.app/api/send_email?email=${email}`;
+    const apiUrl = `http://localhost:8080/api/send_email?email=${email}`;
 
     fetch(apiUrl, {
       method: 'GET',
@@ -51,21 +51,20 @@ function ForgotScreen({ navigation }) {
       .then((data) => {
         setReceivedCode(data);
         if (data) {
-          alert('Code has been sent to your email');
+          alert('Код подтверждения был отправлен на указанную почту!');
         } else {
-          alert('Failed to get code');
+          alert('Не удалось отправить код подтверждения');
          
         }
       })
       .catch((error) => {
-        console.error('Error getting code:', error);
-        alert('Failed to get code');
+        alert('Ошибка при подключении к серверу:', error);
       });
   };
   
   const getUserById = async (email) => {
     try {
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/email?email=${email}`, {
+      const response = await fetch(`http://localhost:8080/api/users/email?email=${email}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
@@ -75,11 +74,10 @@ function ForgotScreen({ navigation }) {
         const userData = await response.json();
       return userData;
       } else {
-        alert('User not found');
+        alert('Пользователь с указанной почтой не найден');
       }
     } catch (error) {
-      console.error('Error getting user by email:', error);
-      throw error;
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   
@@ -88,7 +86,7 @@ function ForgotScreen({ navigation }) {
       const queryParams = new URLSearchParams({
         new_password: inputText.newPassword,
       });
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${userId}/update/password?${queryParams.toString()}`, {
+      const response = await fetch(`http://localhost:8080/api/users/${userId}/update/password?${queryParams.toString()}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -99,7 +97,7 @@ function ForgotScreen({ navigation }) {
         }),
       });
       if (response.ok) {
-        alert('Password updated successfully');
+        alert('Пароль успешно обновлен');
       } else {
         response.json().then(errorData => {
           const errorMessage = errorData.message ;
@@ -107,34 +105,27 @@ function ForgotScreen({ navigation }) {
         });
       }
     } catch (error) {
-      console.error('Error updating password:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   
   const handleResetPassword = async () => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(inputText.newPassword)) {
-      alert('Invalid password: at least 8 characters long, should contain at least one uppercase letter, at least one lowercase letter,at least one digit, may contain special characters');
+      alert('Неправильный формат пароля: минимум 8 символов в длину, должен содержать минимум одну заглавную и строчную букву, минимум одну цифру, также может содержать специальный символы( !@#$%^&*)');
       return;
     }
     try {
-    
-      // Step 2: Get user by email
       const userId = await getUserById(inputText.email);
-
-    // Step 3: Update password
     if (userId) {
       await updatePassword(userId);
-      alert('Password updated successfully');
+      alert('Пароль успешно обновлен');
     } else {
-      alert('User not found');
+      alert('Пользователь с указанной почтой не найден');
     }
-  
-      // Step 4: Navigate to the Auth screen or show a success message
       navigation.navigate('Auth');
     } catch (error) {
-      // Handle any errors here, e.g., show an error message to the user
-      alert('Error resetting password:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   

@@ -46,8 +46,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch channel data
-        const channelResponse = await fetch('https://messengerproject-production.up.railway.app/api/channels', {
+        const channelResponse = await fetch('http://localhost:8080/api/channels', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -63,14 +62,14 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
           for (let i = 0; i < channelData.length; i++) {
             const channel = channelData[i];
   
-            // Add channel object to the formattedResults array
+
             formattedResults.push({
               name: channel.name,
               onPress: () => handlePress(channel.id),
               avatarUrl: null
             });
   
-            // Add channel object to the unauthResults array
+
             unauthResults.push({
               name: channel.name,
               onPress: () => handlePressUnauth(channel.id),
@@ -78,8 +77,8 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
             });
           }
   
-          // Fetch user data
-          const userResponse = await fetch('https://messengerproject-production.up.railway.app/api/users', {
+
+          const userResponse = await fetch('http://localhost:8080/api/users', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -90,7 +89,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
           if (userResponse.ok) {
             const userData = await userResponse.json();
   
-            // Merge user data into formattedResults array
+
             for (let i = 0; i < userData.length; i++) {
               const user = userData[i];
   
@@ -101,16 +100,15 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
               });
             }
           } else {
-            console.log('Failed to fetch user data');
+            alert('Ошибка при подгрузке данных с сервера');
           }
   
           setResults(formattedResults);
           setResultsUnauth(unauthResults);
         } else {
-          console.log('Failed to fetch channel data');
+          alert('Ошибка при подгрузке данных с сервера');
         }
       } catch (error) {
-        console.log('Error fetching data:', error);
       }
     };
   

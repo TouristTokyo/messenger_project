@@ -14,10 +14,10 @@ export default function useStyles() {
       height: 60,
       fontFamily: 'Montserrat-Regular',
       fontSize: 48,
-      paddingLeft: "5%", // Adjust the padding to your liking
+      paddingLeft: "5%",
       backgroundColor: "#FFFFFF",
       color: "#000000",
-      width: "70%", // Adjust the width to your liking
+      width: "70%", 
     },
   });
 }

@@ -40,9 +40,14 @@ export default function MainAuthScreen({ navigation }) {
     }, [])
   );
 
+  const handleLogout = () => {
+    logout();
+    window.location.reload();
+  }
+
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${user.id}`, {
+      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -55,10 +60,10 @@ export default function MainAuthScreen({ navigation }) {
         console.log(userData);
         updateUserCallback(userData);
       } else {
-        console.log('Failed to fetch user data');
+        console.log('Не удалось подгрузить данные пользователя');
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   const fetchProfileNickname = async () => {
@@ -68,12 +73,11 @@ export default function MainAuthScreen({ navigation }) {
         setUserText(nickname);
       }
     } catch (error) {
-      console.log('Error retrieving profile nickname:', error);
     }
   };
   const handleClearForwardedMessages = async () => {
     try {
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/saved_message/delete_all?user_id=${user?.id}`, {
+      const response = await fetch(`http://localhost:8080/api/saved_message/delete_all?user_id=${user?.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -82,14 +86,14 @@ export default function MainAuthScreen({ navigation }) {
       });
   
       if (response.ok) {
-        console.log(`Messages deleted successfully`);
+        console.log(`Сообщения успешно удалены!`);
         window.location.reload();
       } else {
-        console.log(`Failed to delete messages`);
+        console.log(`Не удалось удалить сообщения!`);
 
       }
     } catch (error) {
-      console.log('Error deleting messages:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   
@@ -101,14 +105,14 @@ export default function MainAuthScreen({ navigation }) {
       text: 'Мой аккаунт'
     },
     {
-      onPress: () => logout(),
+      onPress: handleLogout,
       text: 'Выйти'
     }
   ];
 
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
+      const response = await fetch('http://localhost:8080/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,23 +127,15 @@ export default function MainAuthScreen({ navigation }) {
       if (response.ok) {
         const channelResponse = await response.json();
         setShowPopup(false);
-        // Channel creation successful
-        alert('Channel created');
+        alert('Канал создан');
         window.location.reload();
       } else {
-        // Handle error response
-        alert('Failed to create channel');
+        alert('Не удалось создать канал');
       }
     } catch (error) {
-      alert('Error creating channel:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
-
-
-
-  const imageSource = user.image;
-
-
 
   return (
     <View style={styles.containerMain}>
@@ -155,14 +151,14 @@ export default function MainAuthScreen({ navigation }) {
             />
           ))}
           {user.chats.map((chat) => {
-            if (chat.userSecond.name === user.name) {
+            if (chat.recipient.name === user.name) {
               return (
                 <SearchBody
                   key={chat.id}
                   data={{
-                    avatarUrl: chat.userFirst.image,
-                    username: chat.userFirst.name,
-                    onPress: () => navigation.navigate('Chat', { chatUser: chat.userFirst }),
+                    avatarUrl: chat.sender.image,
+                    username: chat.sender.name,
+                    onPress: () => navigation.navigate('Chat', { chatUser: chat.sender }),
                     main: true,
                     id: chat.id
                   }}
@@ -173,9 +169,9 @@ export default function MainAuthScreen({ navigation }) {
                 <SearchBody
                   key={chat.id}
                   data={{
-                    avatarUrl: chat.userSecond.image,
-                    username: chat.userSecond.name,
-                    onPress: () => navigation.navigate('Chat', { chatUser: chat.userSecond }),
+                    avatarUrl: chat.recipient.image,
+                    username: chat.recipient.name,
+                    onPress: () => navigation.navigate('Chat', { chatUser: chat.recipient }),
                     main: true,
                     id: chat.id
                   }}
@@ -224,8 +220,8 @@ export default function MainAuthScreen({ navigation }) {
                     own: message.sender?.name === user.name,
                     from: message.chat
                     ? message.sender?.name === user.name
-                      ? message.chat.userSecond.name
-                      : message.chat.userFirst.name
+                      ? message.chat.sender.name
+                      : message.chat.recipient.name
                     : message.channel.name,
                      id: message.id
                   }}
@@ -252,9 +248,9 @@ export default function MainAuthScreen({ navigation }) {
               flex={true}
             />
           </View>
-          <View>
+          <TouchableHighlight onPress={() => setShowPopup(false)}>
             <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
-          </View>
+            </TouchableHighlight>
         </View>
       </Modal>
     </View>

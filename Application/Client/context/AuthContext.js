@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageContext } from './ImageContext';
+import { useNavigation } from '@react-navigation/native';
 
 const AuthContext = createContext();
 
@@ -8,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const { updateSelectedImage } = useContext(ImageContext);
-
+ 
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -22,7 +23,7 @@ export const AuthProvider = ({ children }) => {
         setUser(JSON.parse(userData));
       }
     } catch (error) {
-      console.error('Error during checkLoginStatus:', error);
+      console.error('Ошибка при проверке статуса пользователя:', error);
     }
   };
 
@@ -30,24 +31,24 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(true);
     setUser(userData);
     try {
-      await AsyncStorage.clear(); // Clear existing data before setting new data
+      await AsyncStorage.clear(); 
       await AsyncStorage.setItem('isLoggedIn', 'true');
       await AsyncStorage.setItem('user', JSON.stringify(userData));
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('Ошибкра при входе:', error);
     }
   };
 
   const logout = async () => {
     setIsLoggedIn(false);
     setUser(null);
-    updateSelectedImage(null); // Clear the selected image
+    updateSelectedImage(null); 
     try {
       await AsyncStorage.removeItem('isLoggedIn');
       await AsyncStorage.removeItem('user');
-      navigation.navigate("Auth"); // Assuming you have a navigation object available
+   
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Ошибка при выходе:', error);
     }
   };
 

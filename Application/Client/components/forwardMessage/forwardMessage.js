@@ -16,7 +16,7 @@ const ForwardMessage = ({ data }) => {
     const user_id = user.id; 
     const message_id = id; 
 
-    fetch(`https://messengerproject-production.up.railway.app/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
+    fetch(`http://localhost:8080/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -27,12 +27,11 @@ const ForwardMessage = ({ data }) => {
         if (response.ok) {
           window.location.reload();
         } else {
-          // Delete request failed, handle accordingly
-          console.log('Failed to delete message');
+          alert('Не удалось удалить сообщение');
         }
       })
       .catch((error) => {
-        console.log('Error deleting message:', error);
+        alert('Ошибка при удалении сообщения:', error);
       });
   };
 

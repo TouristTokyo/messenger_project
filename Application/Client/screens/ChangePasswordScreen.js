@@ -17,7 +17,7 @@ function ChangePasswordScreen({ navigation }) {
   const username = 'admin';
   const password = 'root';
   const { user } = useContext(AuthContext);
-  const id = user?.id; // Assuming the user object has an 'id' property
+  const id = user?.id; 
 
   const isButtonDisabled = () => {
     return (
@@ -29,11 +29,11 @@ function ChangePasswordScreen({ navigation }) {
 
   const handleUpdatePassword = async () => {
     if (inputText.newPassword !== inputText.confirmPassword) {
-      return alert('New password does not match the confirmation one');
+      return alert('Новый пароль не совпадает с полем полем подтверждения');
     }
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(inputText.password)&& !passwordRegex.test(inputText.newPassword)) {
-      alert('Invalid password: at least 8 characters long, should contain at least one uppercase letter, at least one lowercase letter,at least one digit, may contain special characters');
+      alert('Неправильный формат пароля: минимум 8 символов в длину, должен содержать минимум одну заглавную и строчную букву, минимум одну цифру, также может содержать специальный символы( !@#$%^&*)');
       return;
     }
     const id = user?.id;
@@ -43,7 +43,7 @@ function ChangePasswordScreen({ navigation }) {
     });
   
     try {
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${id}/update/password?${queryParams.toString()}`, {
+      const response = await fetch(`http://localhost:8080/api/users/${id}/update/password?${queryParams.toString()}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -52,14 +52,12 @@ function ChangePasswordScreen({ navigation }) {
       });
   
       if (response.ok) {
-        // Password update successful
-        alert('Password updated');
+        alert('Пароль обновлен');
       } else {
-        // Handle error response
-        console.error('Failed to update password');
+        alert('Не удалось обновить пароль');
       }
     } catch (error) {
-      console.error('Error updating password:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   
