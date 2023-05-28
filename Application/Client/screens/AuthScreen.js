@@ -20,15 +20,12 @@ function AuthScreen({ navigation }) {
   const password = 'root';
 
   const handleLogin = () => {
-    // Validate the email format
 
-    // Create the request body
     const requestBody = {
       email: inputText.email,
       password: inputText.password
     };
 
-    // Send the API request
     fetch('http://localhost:8080/api/login', {
       method: 'POST',
       headers: {

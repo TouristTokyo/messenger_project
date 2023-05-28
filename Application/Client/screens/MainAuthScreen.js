@@ -40,6 +40,11 @@ export default function MainAuthScreen({ navigation }) {
     }, [])
   );
 
+  const handleLogout = () => {
+    logout();
+    window.location.reload();
+  }
+
   const fetchUserData = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
@@ -100,7 +105,7 @@ export default function MainAuthScreen({ navigation }) {
       text: 'Мой аккаунт'
     },
     {
-      onPress: () => logout(),
+      onPress: handleLogout,
       text: 'Выйти'
     }
   ];
@@ -146,14 +151,14 @@ export default function MainAuthScreen({ navigation }) {
             />
           ))}
           {user.chats.map((chat) => {
-            if (chat.userSecond.name === user.name) {
+            if (chat.recipient.name === user.name) {
               return (
                 <SearchBody
                   key={chat.id}
                   data={{
-                    avatarUrl: chat.userFirst.image,
-                    username: chat.userFirst.name,
-                    onPress: () => navigation.navigate('Chat', { chatUser: chat.userFirst }),
+                    avatarUrl: chat.sender.image,
+                    username: chat.sender.name,
+                    onPress: () => navigation.navigate('Chat', { chatUser: chat.sender }),
                     main: true,
                     id: chat.id
                   }}
@@ -164,9 +169,9 @@ export default function MainAuthScreen({ navigation }) {
                 <SearchBody
                   key={chat.id}
                   data={{
-                    avatarUrl: chat.userSecond.image,
-                    username: chat.userSecond.name,
-                    onPress: () => navigation.navigate('Chat', { chatUser: chat.userSecond }),
+                    avatarUrl: chat.recipient.image,
+                    username: chat.recipient.name,
+                    onPress: () => navigation.navigate('Chat', { chatUser: chat.recipient }),
                     main: true,
                     id: chat.id
                   }}
@@ -215,8 +220,8 @@ export default function MainAuthScreen({ navigation }) {
                     own: message.sender?.name === user.name,
                     from: message.chat
                     ? message.sender?.name === user.name
-                      ? message.chat.userSecond.name
-                      : message.chat.userFirst.name
+                      ? message.chat.sender.name
+                      : message.chat.recipient.name
                     : message.channel.name,
                      id: message.id
                   }}
@@ -243,9 +248,9 @@ export default function MainAuthScreen({ navigation }) {
               flex={true}
             />
           </View>
-          <View>
+          <TouchableHighlight onPress={() => setShowPopup(false)}>
             <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
-          </View>
+            </TouchableHighlight>
         </View>
       </Modal>
     </View>

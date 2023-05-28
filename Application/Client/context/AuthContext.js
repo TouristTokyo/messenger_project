@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState, useContext } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageContext } from './ImageContext';
+import { useNavigation } from '@react-navigation/native';
 
 const AuthContext = createContext();
 
@@ -8,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const { updateSelectedImage } = useContext(ImageContext);
-
+ 
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -45,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem('isLoggedIn');
       await AsyncStorage.removeItem('user');
-      window.location.reload();
+   
     } catch (error) {
       console.error('Ошибка при выходе:', error);
     }

@@ -8,13 +8,14 @@ export default function useStyles() {
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: "#FFFFFF",
-      zIndex: 0
+      zIndex: 0,
+      width: '90%'
     },
     icon: {
       position: "absolute",
       left: 10,
       zIndex: 1,
-      
+      transform: [{ scale: 0.5 }]
     },
     dismissIcon: {
       position: "absolute",

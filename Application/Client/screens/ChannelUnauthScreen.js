@@ -44,7 +44,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
 
         setIsAtBottom(isScrolledToBottom);
     };
-
+    const [channelText, setChannelText] = useState('');
     const fetchChannelData = async () => {
         try {
             const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
@@ -59,6 +59,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
                 const channelData = await response.json();
 
                 setChannelData(channelData);
+                setChannelText(channelData.channel.name)
             } else {
                 alert('Не удалось получить данные о канале, возможно он больше не существует');
             }
@@ -73,7 +74,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
     return (
         <View style={styles.containerMain}>
             <View style={styles.barChanContainer}>
-                <Text style={styles.barText}>{channelData.name}</Text>
+                <Text style={styles.barText}>{channelText}</Text>
                 <View>
                     <HeaderButton title={'Присоединиться'} onPress={() => navigation.navigate('Auth')} />
                 </View>

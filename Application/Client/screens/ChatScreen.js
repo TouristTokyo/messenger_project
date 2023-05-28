@@ -99,6 +99,7 @@ export default function ChatScreen({ navigation, route }) {
       if (response.ok) {
         const chatData = await response.json();
         setChatData(chatData);
+        console.log(chatData)
       } else {
         throw new Error('Ошибка при подгрузке чата, возможно его еще не существует');
       }
@@ -111,7 +112,10 @@ export default function ChatScreen({ navigation, route }) {
     setShouldFetchChatData(true); 
   };
   
-  
+  const handleLogout = () => {
+    logout();
+    window.location.reload();
+  }
  
 
   const fetchProfileNickname = async () => {
@@ -142,7 +146,7 @@ export default function ChatScreen({ navigation, route }) {
       text: 'Мой аккаунт',
     },
     {
-      onPress: () => logout(),
+      onPress: handleLogout,
       text: 'Выйти',
     },
   ];
@@ -195,11 +199,11 @@ export default function ChatScreen({ navigation, route }) {
               <MessageBody
                 key={message.id}
                 data={{
-                  imageUrl: message.author?.image,
-                  nickname: message.author?.name,
+                  imageUrl: message.sender?.image,
+                  nickname: message.sender.name,
                   message: message.data,
                   date: message.date,
-                  own: message.author?.name === user.name,
+                  own: message.sender?.name === user.name,
                   channel: false,
                   unauth: false,
                   ident: message.id

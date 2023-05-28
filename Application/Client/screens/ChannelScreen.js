@@ -36,7 +36,8 @@ export default function ChannelScreen({ navigation, route }) {
     const username = 'admin';
     const password = 'root';
     const [channelData, setChannelData] = useState([]);
-    
+    const [channelText, setChannelText] = useState('');
+
 
     const [shouldFetchChannelData, setShouldFetchChannelData] = useState(true);
 
@@ -53,22 +54,23 @@ export default function ChannelScreen({ navigation, route }) {
             if (response.ok) {
                 const channelData = await response.json();
                 const isCreator = user?.id === channelData.creator?.id;
-                const member = user.channels?.some((channel) => channel.id === channelData.id);
+                const member = channelData.members.find(member => member.user.id === user.id);
                 const currentUser = channelData.members.find(member => member.user.id === user.id);
 
                 if (currentUser) {
                     const { role } = currentUser;
                     if (role) {
-                        if (role.isAdmin !== undefined) {
-                            setIsAdmin(role.isAdmin);
+                        if (role.admin !== undefined) {
+                            setIsAdmin(role.admin);
                         }
                     }
                 }
                 setIsMember(member);
                 setIsDisable(isCreator);
                 setChannelData(channelData);
+                setChannelText(channelData.channel.name)
+                console.log(currentUser)
             } else {
-                alert('Не удалось получить данные о канале, возможно он больше не существует');
             }
         } catch (error) {
             alert('Ошибка при подключении к серверу:', error);
@@ -77,31 +79,31 @@ export default function ChannelScreen({ navigation, route }) {
 
     useFocusEffect(
         React.useCallback(() => {
-          fetchProfileNickname();
-          setShouldFetchChannelData(true); 
+            fetchProfileNickname();
+            setShouldFetchChannelData(true);
         }, [])
-      );
-      
-      useEffect(() => {
+    );
+
+    useEffect(() => {
         if (shouldFetchChannelData) {
-          fetchChannelData()
-            .then(() => setShouldFetchChannelData(false))
-            .catch((error) => alert('Не удалось подгрузить данные о канале:', error));
+            fetchChannelData()
+                .then(() => setShouldFetchChannelData(false))
+                .catch((error) => alert('Не удалось подгрузить данные о канале:', error));
         }
-      }, [shouldFetchChannelData]);
-      
-      useEffect(() => {
+    }, [shouldFetchChannelData]);
+
+    useEffect(() => {
         const intervalId = setInterval(() => {
-          setShouldFetchChannelData(true); 
-        }, 5000); 
-      
-        return () => clearInterval(intervalId); 
-      }, []);
-    
-      const handleMessageSent = () => {
-        setShouldFetchChannelData(true); 
-      };
-      
+            setShouldFetchChannelData(true);
+        }, 5000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    const handleMessageSent = () => {
+        setShouldFetchChannelData(true);
+    };
+
     const fetchProfileNickname = async () => {
         try {
             const nickname = await getProfileNickname();
@@ -136,7 +138,7 @@ export default function ChannelScreen({ navigation, route }) {
             text: 'Мой аккаунт',
         },
         {
-            onPress: () => logout(),
+            onPress: handleLogout,
             text: 'Выйти',
         },
     ];
@@ -146,7 +148,7 @@ export default function ChannelScreen({ navigation, route }) {
     const handleJoinLeave = async () => {
         try {
             const name = userText || user.name;
-            const channelName = channelData.name;
+            const channelName = channelText;
             const apiUrl = isMember
                 ? `http://localhost:8080/api/channels/${channelId}/leave?username=${name}`
                 : `http://localhost:8080/api/channels/join?username=${name}&channel_name=${channelName}`;
@@ -172,6 +174,10 @@ export default function ChannelScreen({ navigation, route }) {
     };
 
 
+    const handleLogout = () => {
+        logout();
+        window.location.reload();
+      }
 
     const saveChannelState = async () => {
         try {
@@ -236,13 +242,13 @@ export default function ChannelScreen({ navigation, route }) {
     return (
         <View style={styles.containerMain}>
             <View style={styles.barChanContainer}>
-                <Text style={styles.barText}>{channelData.name}</Text>
+                <Text style={styles.barText}>{channelText}</Text>
                 <View>
                     <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} disabled={isDisable} />
                 </View>
                 {isMember && isAdmin && (
                     <View style={{ marginRight: 20 }}>
-                        <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.id })}>
+                        <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.channel.id })}>
                             <SettingsSvg />
                         </TouchableHighlight>
                     </View>
@@ -258,7 +264,7 @@ export default function ChannelScreen({ navigation, route }) {
                 ))}
             </View>
             <View style={styles.historyContainer}>
-                <ScrollView 
+                <ScrollView
                     style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
                     {channelData?.messages?.map((message) => {
                         const senderId = message.sender?.id;
@@ -309,9 +315,9 @@ export default function ChannelScreen({ navigation, route }) {
                             flex={true}
                         />
                     </View>
-                    <View>
+                    <TouchableHighlight onPress={() => setShowPopup(false)}>
                         <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
-                    </View>
+                    </TouchableHighlight>
                 </View>
             </Modal>
         </View>

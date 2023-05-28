@@ -29,7 +29,7 @@ export default function SettingsScreen({ navigation, route }) {
   useFocusEffect(
     React.useCallback(() => {
       fetchChannelData();
-    }, [channelData.members])
+    }, [])
   );
   const [inputText, setInputText] = useState({
     nickname: channelData.name || 'a',
@@ -50,12 +50,13 @@ export default function SettingsScreen({ navigation, route }) {
         setChannelData(channelData);
         setInputText((prevInputText) => ({
           ...prevInputText,
-          nickname: channelData.name || 'a',
+          nickname: channelData.channel.name || 'a',
         }));
         const isCreator = user?.id === channelData.creator?.id;
         setIsAdmin(isCreator);
       } else {
         alert('Не удалось получить данные о канале, возможно он больше не существует');
+
       }
     } catch (error) {
       alert('Ошибка при подключении к серверу:', error);
@@ -160,7 +161,7 @@ export default function SettingsScreen({ navigation, route }) {
                 name: channel.user.name,
                 role: channel.role.name,
                 onRoleChange: handleRoleChange,
-                creator: channel.role.isCreator,
+                creator: channel.role.creator,
                 channelId: channelData
               }}
               

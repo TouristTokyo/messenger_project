@@ -64,7 +64,7 @@ export default function SettingsBody({ data }) {
           name: inputText.role,
           isAdmin: isAdmin,
           username: name,
-          channelName: channelId.name
+          channelName: channelId.channel.name
         };
       
         try {

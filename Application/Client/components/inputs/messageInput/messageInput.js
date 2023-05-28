@@ -17,7 +17,7 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
           const requestBody = {
             currentUsername: curuser,
             message: message,
-            channelName: chanInf.name,
+            channelName: chanInf.channel.name,
           };
     
           const response = await fetch('http://localhost:8080/api/channels/add_message', {
