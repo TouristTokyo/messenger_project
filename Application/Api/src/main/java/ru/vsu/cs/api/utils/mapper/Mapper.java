@@ -73,6 +73,7 @@ public class Mapper {
         ChannelMessageDto channelMessageDto = new ChannelMessageDto();
 
         channelMessageDto.setId(message.getId());
+        channelMessageDto.setSender(convertToUserSupportingDto(message.getSender()));
         channelMessageDto.setChannelName(message.getChannel().getName());
         channelMessageDto.setData(message.getData());
         channelMessageDto.setSender(convertToUserSupportingDto(message.getSender()));
@@ -103,6 +104,7 @@ public class Mapper {
     private static ChatSupportingDto convertToChatSupportingDto(Chat chat) {
         ChatSupportingDto chatSupportingDto = new ChatSupportingDto();
 
+        chatSupportingDto.setId(chat.getId());
         chatSupportingDto.setSender(convertToUserSupportingDto(chat.getUserFirst()));
         chatSupportingDto.setRecipient(convertToUserSupportingDto(chat.getUserSecond()));
 
@@ -150,6 +152,7 @@ public class Mapper {
     private static SavedMessageSupportingDto convertToSavedMessageSupportingDto(Message message) {
         SavedMessageSupportingDto savedMessageSupportingDto = new SavedMessageSupportingDto();
 
+        savedMessageSupportingDto.setId(message.getId());
         savedMessageSupportingDto.setSender(convertToUserSupportingDto(message.getSender()));
         if (message.getChannel() == null) {
             savedMessageSupportingDto.setChat(convertToChatSupportingDto(message.getChat()));
