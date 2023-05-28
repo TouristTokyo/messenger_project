@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -17,6 +18,10 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    @Value("${security_username}")
+    private String SECURITY_USERNAME;
+    @Value("${security_password}")
+    private String SECURITY_PASSWORD;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
@@ -35,8 +40,8 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
-                .username("admin")
-                .password(getPasswordEncoder().encode("root"))
+                .username(SECURITY_USERNAME)
+                .password(getPasswordEncoder().encode(SECURITY_PASSWORD))
                 .roles("USER")
                 .build();
 
