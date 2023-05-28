@@ -2,9 +2,9 @@ package ru.vsu.cs.api.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import ru.vsu.cs.api.models.Channel;
-import ru.vsu.cs.api.models.Chat;
-import ru.vsu.cs.api.models.Message;
+import ru.vsu.cs.api.dto.supporting.ChannelSupportingDto;
+import ru.vsu.cs.api.dto.supporting.ChatSupportingDto;
+import ru.vsu.cs.api.dto.supporting.SavedMessageSupportingDto;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -17,8 +17,8 @@ public class UserResponseDto {
     private String email;
     private String password;
     private byte[] image;
-    private List<Chat> chats;
-    private List<Channel> channels;
-    private List<Message> savedMessages;
+    private List<ChatSupportingDto> chats;
+    private List<ChannelSupportingDto> channels;
+    private List<SavedMessageSupportingDto> savedMessages;
 
 }

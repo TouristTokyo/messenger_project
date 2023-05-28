@@ -39,8 +39,8 @@ public class UserService {
         if (passwordEncoder.matches(password, user.getPassword())) {
             return user;
         } else {
-            log.warn("Неверный пароль: " + password);
-            throw new UserException("Not found user with password: " + password);
+            log.warn("Incorrect password: " + password);
+            throw new UserException("Неверный пароль");
         }
     }
 
