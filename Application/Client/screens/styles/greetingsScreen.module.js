@@ -86,6 +86,5 @@ export default function useStyles() {
       justifyContent: 'flex-start',
       paddingTop: 20,
     },
-    // You can add more styles as needed
   });
 }

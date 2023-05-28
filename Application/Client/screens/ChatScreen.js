@@ -34,7 +34,7 @@ export default function ChatScreen({ navigation, route }) {
   const [userText, setUserText] = useState('');
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
+      const response = await fetch('http://localhost:8080/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,17 +47,14 @@ export default function ChatScreen({ navigation, route }) {
       });
 
       if (response.ok) {
-        const channelResponse = await response.json();
         setShowPopup(false);
-        // Channel creation successful
-        alert('Channel created');
+        alert('Канал создан');
         window.location.reload();
       } else {
-        // Handle error response
-        alert('Failed to create channel');
+        alert('Не удалось создать канал');
       }
     } catch (error) {
-      alert('Error creating channel:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   const [shouldFetchChatData, setShouldFetchChatData] = useState(true);
@@ -65,7 +62,7 @@ export default function ChatScreen({ navigation, route }) {
   useFocusEffect(
     React.useCallback(() => {
       fetchProfileNickname();
-      setShouldFetchChatData(true); // Trigger fetching when the component is focused
+      setShouldFetchChatData(true);
     }, [])
   );
   
@@ -73,22 +70,22 @@ export default function ChatScreen({ navigation, route }) {
     if (shouldFetchChatData) {
       fetchChatData()
         .then(() => setShouldFetchChatData(false))
-        .catch((error) => console.log('Error fetching chat data:', error));
+        .catch((error) =>  alert('Ошибка при подключении к серверу:', error))
     }
   }, [shouldFetchChatData]);
   
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setShouldFetchChatData(true); // Trigger fetching at regular intervals
-    }, 5000); // Adjust the interval duration as needed (e.g., every 5 seconds)
+      setShouldFetchChatData(true); 
+    }, 5000);
   
-    return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+    return () => clearInterval(intervalId); 
   }, []);
   
   const fetchChatData = async () => {
     const firstUser = user.name;
     const secondUser = chatUser.name;
-    const url = `https://messengerproject-production.up.railway.app/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
+    const url = `http://localhost:8080/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
   
     try {
       const response = await fetch(url, {
@@ -103,15 +100,15 @@ export default function ChatScreen({ navigation, route }) {
         const chatData = await response.json();
         setChatData(chatData);
       } else {
-        throw new Error('Failed to fetch chat data');
+        throw new Error('Ошибка при подгрузке чата, возможно его еще не существует');
       }
     } catch (error) {
-      throw new Error('Error fetching chat data:', error);
+
     }
   };
   
   const handleMessageSent = () => {
-    setShouldFetchChatData(true); // Trigger fetching when a message is sent
+    setShouldFetchChatData(true); 
   };
   
   
@@ -124,7 +121,7 @@ export default function ChatScreen({ navigation, route }) {
         setUserText(nickname);
       }
     } catch (error) {
-      console.log('Error retrieving profile nickname:', error);
+      console.log('Ошибка при подгрузке никнейма:', error);
     }
   };
 
@@ -156,7 +153,7 @@ export default function ChatScreen({ navigation, route }) {
     try {
       await AsyncStorage.setItem('chatMessages', JSON.stringify(messages));
     } catch (error) {
-      console.error('Error while saving chat messages:', error);
+      console.error('Ошибка при сохранении сообщений чата:', error);
     }
   };
 
@@ -167,7 +164,7 @@ export default function ChatScreen({ navigation, route }) {
         setMessages(JSON.parse(savedMessages));
       }
     } catch (error) {
-      console.error('Error while loading chat messages:', error);
+      console.error('Ошибка при подгрузке сообщений чата:', error);
     }
   };
 
@@ -234,7 +231,9 @@ export default function ChatScreen({ navigation, route }) {
             />
           </View>
           <View>
+            <TouchableHighlight onPress={() => setShowPopup(false)}>
             <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
+            </TouchableHighlight>
           </View>
         </View>
       </Modal>

@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         setUser(JSON.parse(userData));
       }
     } catch (error) {
-      console.error('Error during checkLoginStatus:', error);
+      console.error('Ошибка при проверке статуса пользователя:', error);
     }
   };
 
@@ -30,24 +30,24 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(true);
     setUser(userData);
     try {
-      await AsyncStorage.clear(); // Clear existing data before setting new data
+      await AsyncStorage.clear(); 
       await AsyncStorage.setItem('isLoggedIn', 'true');
       await AsyncStorage.setItem('user', JSON.stringify(userData));
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('Ошибкра при входе:', error);
     }
   };
 
   const logout = async () => {
     setIsLoggedIn(false);
     setUser(null);
-    updateSelectedImage(null); // Clear the selected image
+    updateSelectedImage(null); 
     try {
       await AsyncStorage.removeItem('isLoggedIn');
       await AsyncStorage.removeItem('user');
-      navigation.navigate("Auth"); // Assuming you have a navigation object available
+      window.location.reload();
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error('Ошибка при выходе:', error);
     }
   };
 

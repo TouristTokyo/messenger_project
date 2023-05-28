@@ -15,7 +15,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
     const [shouldUseFocusEffect, setShouldUseFocusEffect] = useState(false);
     
     useEffect(() => {
-        setShouldUseFocusEffect(false); // Reset the flag
+        setShouldUseFocusEffect(false);
     }, [channelId]);
     useFocusEffect(
         React.useCallback(() => {
@@ -47,7 +47,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
 
     const fetchChannelData = async () => {
         try {
-            const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}`, {
+            const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,16 +60,15 @@ export default function ChannelUnauthScreen({ navigation, route }) {
 
                 setChannelData(channelData);
             } else {
-                // Handle error response
-                console.log('Failed to fetch channel data');
+                alert('Не удалось получить данные о канале, возможно он больше не существует');
             }
         } catch (error) {
-            console.log('Error fetching channel data:', error);
+            alert('Ошибка при подключении к серверу:', error);
         }
     };
 
     if (!channelData) {
-        return null; // You can render a loading indicator or fallback UI here
+        return null; 
       }
     return (
         <View style={styles.containerMain}>

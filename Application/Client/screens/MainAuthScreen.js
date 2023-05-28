@@ -42,7 +42,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${user.id}`, {
+      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -55,10 +55,10 @@ export default function MainAuthScreen({ navigation }) {
         console.log(userData);
         updateUserCallback(userData);
       } else {
-        console.log('Failed to fetch user data');
+        console.log('Не удалось подгрузить данные пользователя');
       }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   const fetchProfileNickname = async () => {
@@ -68,12 +68,11 @@ export default function MainAuthScreen({ navigation }) {
         setUserText(nickname);
       }
     } catch (error) {
-      console.log('Error retrieving profile nickname:', error);
     }
   };
   const handleClearForwardedMessages = async () => {
     try {
-      const response = await fetch(`https://messengerproject-production.up.railway.app/api/saved_message/delete_all?user_id=${user?.id}`, {
+      const response = await fetch(`http://localhost:8080/api/saved_message/delete_all?user_id=${user?.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -82,14 +81,14 @@ export default function MainAuthScreen({ navigation }) {
       });
   
       if (response.ok) {
-        console.log(`Messages deleted successfully`);
+        console.log(`Сообщения успешно удалены!`);
         window.location.reload();
       } else {
-        console.log(`Failed to delete messages`);
+        console.log(`Не удалось удалить сообщения!`);
 
       }
     } catch (error) {
-      console.log('Error deleting messages:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
   
@@ -108,7 +107,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
+      const response = await fetch('http://localhost:8080/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,23 +122,15 @@ export default function MainAuthScreen({ navigation }) {
       if (response.ok) {
         const channelResponse = await response.json();
         setShowPopup(false);
-        // Channel creation successful
-        alert('Channel created');
+        alert('Канал создан');
         window.location.reload();
       } else {
-        // Handle error response
-        alert('Failed to create channel');
+        alert('Не удалось создать канал');
       }
     } catch (error) {
-      alert('Error creating channel:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
-
-
-
-  const imageSource = user.image;
-
-
 
   return (
     <View style={styles.containerMain}>

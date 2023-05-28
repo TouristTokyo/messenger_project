@@ -21,12 +21,12 @@ function RegScreen({ navigation }) {
 
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(inputText.email)) {
-      alert('Invalid email format');
+      alert('Не правильный формат почты');
       return;
     }
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!passwordRegex.test(inputText.password)) {
-      alert('Invalid password: at least 8 characters long, should contain at least one uppercase letter, at least one lowercase letter,at least one digit, may contain special characters');
+      alert('Неправильный формат пароля: минимум 8 символов в длину, должен содержать минимум одну заглавную и строчную букву, минимум одну цифру, также может содержать специальный символы( !@#$%^&*)');
       return;
     }
 
@@ -36,7 +36,7 @@ function RegScreen({ navigation }) {
       password: inputText.password
     };
 
-    fetch('https://messengerproject-production.up.railway.app/api/register', {
+    fetch('http://localhost:8080/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -48,11 +48,11 @@ function RegScreen({ navigation }) {
         if (response.ok) {
           navigation.navigate('Auth');
         } else {
-          console.error('Registration failed');
+          alert('Не удалось зарегистрироваться');
         }
       })
       .catch(error => {
-        console.error('Error:', error);
+        alert('Ошибка при подключении к серверу:', error);
       });
   };
 

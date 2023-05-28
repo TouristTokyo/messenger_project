@@ -6,7 +6,6 @@ export const MessageProvider = ({ children }) => {
   const [forwardedMessages, setForwardedMessages] = useState([]);
 
   useEffect(() => {
-    // Load forwarded messages from localStorage on component mount
     const storedMessages = localStorage.getItem('forwardedMessages');
     if (storedMessages) {
       setForwardedMessages(JSON.parse(storedMessages));
@@ -14,7 +13,6 @@ export const MessageProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // Save forwarded messages to localStorage whenever it changes
     localStorage.setItem('forwardedMessages', JSON.stringify(forwardedMessages));
   }, [forwardedMessages]);
 

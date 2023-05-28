@@ -26,7 +26,7 @@ const MessageBody = ({ data, currentUser }) => {
     };
 
     try {
-      const response = await fetch('https://messengerproject-production.up.railway.app/api/saved_message/save', {
+      const response = await fetch('http://localhost:8080/api/saved_message/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,14 +36,12 @@ const MessageBody = ({ data, currentUser }) => {
       });
 
       if (response.ok) {
-        // Forwarding successful
-        console.log('Message forwarded successfully');
+
       } else {
-        // Forwarding failed
-        console.log('Failed to forward message');
+        alert('Не удалось сохранить сообщение');
       }
     } catch (error) {
-      console.log('Error forwarding message:', error);
+      console.log('Ошибка при сохранении сообщения:', error);
     }
   };
 

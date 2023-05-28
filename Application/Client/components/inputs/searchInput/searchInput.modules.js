@@ -29,8 +29,8 @@ export default function useStyles() {
       left: 0,
       right: 0,
       flex: 1,
-      maxHeight: 300, // Set the maximum height of the dropdown
-      overflowY: "auto", // Enable vertical scrolling when content exceeds the height
+      maxHeight: 300, 
+      overflowY: "auto", 
       backgroundColor: "#FFFFFF",
       borderRadius: 10,
       boxShadow: "2px 2px 2px rgba(0, 0, 0, 1)",
@@ -42,9 +42,9 @@ export default function useStyles() {
       fontFamily: 'Montserrat-Regular',
       height: 44,
       width: 600,
-      fontSize: 20,                 // Increase the font size
+      fontSize: 20,                 
       paddingLeft: 10,
-      paddingRight: 10,             // Add paddingRight to move the text more to the right
+      paddingRight: 10,             
       borderRadius: 10,
       backgroundColor: "#FFFFFF",
       color: "#000000",

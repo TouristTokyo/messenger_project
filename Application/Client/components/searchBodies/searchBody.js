@@ -12,7 +12,7 @@ export default function SearchBody({ data }) {
   const styles = useStyles();
   const deleteChat = () => {
     
-    fetch(`https://messengerproject-production.up.railway.app/api/chats/delete/${id}`, {
+    fetch(`http://localhost:8080/api/chats/delete/${id}`, {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json',
@@ -20,18 +20,15 @@ export default function SearchBody({ data }) {
       },
     })
       .then(response => {
-        // Handle the response
         if (response.ok) {
-          // Chat deleted successfully
-          alert("Chat deleted successfully");
+          alert("Чат успешно удалён");
           window.location.reload();
         } else {
-          // Error deleting chat
-          console.log("Failed to delete chat");
+          alert("Не удалоось удалить чат");
         }
       })
       .catch(error => {
-        console.error("Error deleting chat:", error);
+        alert("Ошибка при удалении чата:", error);
       });
   };
 

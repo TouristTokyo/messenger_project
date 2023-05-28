@@ -42,7 +42,7 @@ export default function ChannelScreen({ navigation, route }) {
 
     const fetchChannelData = async () => {
         try {
-            const response = await fetch(`https://messengerproject-production.up.railway.app/api/channels/${channelId}`, {
+            const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,46 +52,33 @@ export default function ChannelScreen({ navigation, route }) {
 
             if (response.ok) {
                 const channelData = await response.json();
-
-
-
-                // Check if the user is the channel creator
                 const isCreator = user?.id === channelData.creator?.id;
                 const member = user.channels?.some((channel) => channel.id === channelData.id);
                 const currentUser = channelData.members.find(member => member.user.id === user.id);
 
                 if (currentUser) {
-                    // Access the role object of the current user
                     const { role } = currentUser;
-
                     if (role) {
-                        // User has a role, handle it accordingly
-
-
                         if (role.isAdmin !== undefined) {
-                            // User has an isAdmin property
-
                             setIsAdmin(role.isAdmin);
                         }
                     }
                 }
-                // Update isMember and showSettings based on the condition
                 setIsMember(member);
-
                 setIsDisable(isCreator);
                 setChannelData(channelData);
             } else {
-                throw new Error('Failed to fetch channel data');
+                alert('Не удалось получить данные о канале, возможно он больше не существует');
             }
         } catch (error) {
-            throw new Error('Error fetching channel data:', error);
+            alert('Ошибка при подключении к серверу:', error);
         }
     };
 
     useFocusEffect(
         React.useCallback(() => {
           fetchProfileNickname();
-          setShouldFetchChannelData(true); // Trigger fetching when the component is focused
+          setShouldFetchChannelData(true); 
         }, [])
       );
       
@@ -99,20 +86,20 @@ export default function ChannelScreen({ navigation, route }) {
         if (shouldFetchChannelData) {
           fetchChannelData()
             .then(() => setShouldFetchChannelData(false))
-            .catch((error) => console.log('Error fetching chat data:', error));
+            .catch((error) => alert('Не удалось подгрузить данные о канале:', error));
         }
       }, [shouldFetchChannelData]);
       
       useEffect(() => {
         const intervalId = setInterval(() => {
-          setShouldFetchChannelData(true); // Trigger fetching at regular intervals
-        }, 5000); // Adjust the interval duration as needed (e.g., every 5 seconds)
+          setShouldFetchChannelData(true); 
+        }, 5000); 
       
-        return () => clearInterval(intervalId); // Cleanup the interval on component unmount
+        return () => clearInterval(intervalId); 
       }, []);
     
       const handleMessageSent = () => {
-        setShouldFetchChannelData(true); // Trigger fetching when a message is sent
+        setShouldFetchChannelData(true); 
       };
       
     const fetchProfileNickname = async () => {
@@ -122,7 +109,7 @@ export default function ChannelScreen({ navigation, route }) {
                 setUserText(nickname);
             }
         } catch (error) {
-            console.log('Error retrieving profile nickname:', error);
+            console.log('Ошибка при подгрузке никнейма:', error);
         }
     };
 
@@ -161,8 +148,8 @@ export default function ChannelScreen({ navigation, route }) {
             const name = userText || user.name;
             const channelName = channelData.name;
             const apiUrl = isMember
-                ? `https://messengerproject-production.up.railway.app/api/channels/${channelId}/leave?username=${name}`
-                : `https://messengerproject-production.up.railway.app/api/channels/join?username=${name}&channel_name=${channelName}`;
+                ? `http://localhost:8080/api/channels/${channelId}/leave?username=${name}`
+                : `http://localhost:8080/api/channels/join?username=${name}&channel_name=${channelName}`;
 
             const response = await fetch(apiUrl, {
                 method: isMember ? 'DELETE' : 'POST',
@@ -174,14 +161,13 @@ export default function ChannelScreen({ navigation, route }) {
 
             if (response.ok) {
                 setIsMember((prevIsMember) => !prevIsMember);
-                alert(isMember ? 'You left the channel' : 'You joined the channel');
+                alert(isMember ? 'Вы покинули канал' : 'Вы присоединились к каналу');
                 window.location.reload();
             } else {
-                // Handle error response
-                alert(isMember ? 'Failed to leave the channel' : 'Failed to join the channel');
+                alert(isMember ? 'Не удалось покинуть канал' : 'Не удалось присоединиться к каналу');
             }
         } catch (error) {
-            alert('Error joining/leaving the channel:', error);
+            alert('Ошибка при подключении к серверу:', error);
         }
     };
 
@@ -195,7 +181,7 @@ export default function ChannelScreen({ navigation, route }) {
             };
             await AsyncStorage.setItem('channelState', JSON.stringify(channelState));
         } catch (error) {
-            console.error('Error while saving channel state:', error);
+            console.error('Не удалось сохранить состояние канала:', error);
         }
     };
 
@@ -204,7 +190,7 @@ export default function ChannelScreen({ navigation, route }) {
         try {
             await AsyncStorage.setItem('chatMessages', JSON.stringify(messages));
         } catch (error) {
-            console.error('Error while saving chat messages:', error);
+            console.error('Не удалось сохранить сообщения:', error);
         }
     };
     const imageSource = selectedImage || (user && user.image);
@@ -215,12 +201,12 @@ export default function ChannelScreen({ navigation, route }) {
                 setMessages(JSON.parse(savedMessages));
             }
         } catch (error) {
-            console.error('Error while loading chat messages:', error);
+            console.error('Не удалось подгрузить сообщения:', error);
         }
     };
     const handleCreateChannel = async () => {
         try {
-            const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/create', {
+            const response = await fetch('http://localhost:8080/api/channels/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -233,17 +219,14 @@ export default function ChannelScreen({ navigation, route }) {
             });
 
             if (response.ok) {
-                const channelResponse = await response.json();
                 setShowPopup(false);
-                // Channel creation successful
-                alert('Channel created');
+                alert('Канал создан');
                 window.location.reload();
             } else {
-                // Handle error response
-                alert('Failed to create channel');
+                alert('Не удалось создать канал');
             }
         } catch (error) {
-            alert('Error creating channel:', error);
+            alert('Ошибка при подключении к серверу:', error);
         }
     };
 

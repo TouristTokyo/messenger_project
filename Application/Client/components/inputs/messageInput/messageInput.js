@@ -14,14 +14,13 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
     if (message) {
       try {
         if (channel) {
-          // Use existing API endpoint for channel messages
           const requestBody = {
             currentUsername: curuser,
             message: message,
             channelName: chanInf.name,
           };
     
-          const response = await fetch('https://messengerproject-production.up.railway.app/api/channels/add_message', {
+          const response = await fetch('http://localhost:8080/api/channels/add_message', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -31,11 +30,10 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
           });
     
           if (response.ok) {
-            console.log('Message sent successfully');
             setMessage('');
-            onMessageSent(); // Invoke the callback to trigger chat data fetching
+            onMessageSent(); 
           } else {
-            console.log('Failed to send message');
+            alert('Не удалось отправить сообщение');
           }
         } else {
           // Use custom API endpoint for direct messages
@@ -45,7 +43,7 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
             message: message,
           };
     
-          const response = await fetch('https://messengerproject-production.up.railway.app/api/chats/add_message', {
+          const response = await fetch('http://localhost:8080/api/chats/add_message', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -55,15 +53,14 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
           });
     
           if (response.ok) {
-            console.log('Message sent successfully');
             setMessage('');
-            onMessageSent(); // Invoke the callback to trigger chat data fetching
+            onMessageSent();
           } else {
-            console.log('Failed to send message');
+            alert('Не удалось отправить сообщение');
           }
         }
       } catch (error) {
-        console.error('Error sending message:', error);
+        alert('Ошибка отправки:', error);
       }
     }
   };
@@ -72,7 +69,7 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
     <View style={styles.container}>
       <TextInput
         style={styles.input}
-        placeholder="Type your message here..."
+        placeholder="Сообщение"
         value={message}
         onChangeText={setMessage}
       />

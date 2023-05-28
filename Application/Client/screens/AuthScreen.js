@@ -29,7 +29,7 @@ function AuthScreen({ navigation }) {
     };
 
     // Send the API request
-    fetch('https://messengerproject-production.up.railway.app/api/login', {
+    fetch('http://localhost:8080/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,15 +38,11 @@ function AuthScreen({ navigation }) {
       body: JSON.stringify(requestBody)
     })
       .then(response => {
-        // Handle the response
         if (response.ok) {
-          // Login successful
-          // Assuming the response contains user data or token, you can pass it to the login function
           response.json().then(data => {
-            login(data); // Pass the user data or token to the login function from AuthContext
+            login(data); 
           });
         } else {
-          // Login failed
           response.json().then(errorData => {
             const errorMessage = errorData.message || 'Login failed';
             alert(errorMessage);
@@ -54,7 +50,7 @@ function AuthScreen({ navigation }) {
         }
       })
       .catch(error => {
-        console.error('Error:', error);
+        alert('Ошибка подключения к серверу:', error);
       });
   };
 

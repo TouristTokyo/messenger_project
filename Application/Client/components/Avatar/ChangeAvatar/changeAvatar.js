@@ -55,7 +55,7 @@ export default function ChangeAvatar({ children, ...data }) {
     formData.append('file', blob, 'file.jpg');
   
     const userId = user?.id;
-    const apiUrl = `https://messengerproject-production.up.railway.app/api/users/${userId}/update/image`;
+    const apiUrl = `http://localhost:8080/api/users/${userId}/update/image`;
   
     try {
       const response = await axios.put(apiUrl, formData, {
@@ -66,7 +66,6 @@ export default function ChangeAvatar({ children, ...data }) {
       });
   
       if (response.status === 200 || response.status === 201) {
-        console.log('Image uploaded successfully');
         setSelectedImage(imageAsset.uri);
         updateSelectedImage(imageAsset.uri);
       } 
@@ -86,7 +85,6 @@ export default function ChangeAvatar({ children, ...data }) {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
 
     if (permissionResult.granted === false) {
-      alert("You've refused to allow this app to access your camera!");
       return;
     }
 

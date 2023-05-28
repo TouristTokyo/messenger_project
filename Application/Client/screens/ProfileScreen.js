@@ -17,12 +17,9 @@ export default function ProfileScreen({ navigation }) {
   const styles = useStyles();
   const { selectedImage } = useContext(ImageContext);
   const { user, updateUser } = useContext(AuthContext);
-
-  // Access the user object from the AuthContext
   const [inputText, setInputText] = useState({
-    name: user?.name || '', // Use the user's current name as the initial value if available
+    name: user?.name || '', 
   });
-  const isFormValid = inputText.name;
 
   const username = 'admin';
   const password = 'root';
@@ -43,14 +40,14 @@ export default function ProfileScreen({ navigation }) {
         setUserText(user?.email || '');
       }
     } catch (error) {
-      console.log('Error retrieving profile email:', error);
+      console.log('Ошибка при подгрузке почты:', error);
     }
   };
   const emailContainerRef = useRef(null);
   const [emailFontSize, setEmailFontSize] = useState(36);
 
 
-  const [showInputField, setShowInputField] = useState(false); // Track the visibility of the input field
+  const [showInputField, setShowInputField] = useState(false); 
   const [rotationDeg, setRotationDeg] = useState(0);
 
   useEffect(() => {
@@ -60,8 +57,8 @@ export default function ProfileScreen({ navigation }) {
 
   const handleEmailLayout = () => {
     const emailContainerWidth = emailContainerRef.current.offsetWidth;
-    const desiredMaxWidth = 300; // You can adjust this as needed
-    const desiredMaxFontSize = 36; // You can adjust this as needed
+    const desiredMaxWidth = 300;
+    const desiredMaxFontSize = 36;
     const emailFontSize = Math.min(desiredMaxFontSize, (desiredMaxWidth / emailContainerWidth) * desiredMaxFontSize);
     setEmailFontSize(emailFontSize);
   };
@@ -79,45 +76,38 @@ export default function ProfileScreen({ navigation }) {
 
   const handleAddSvgPress = async () => {
     if (showInputField) {
-      // Save changes and hide the input field
       setShowInputField(false);
-      setRotationDeg(0); // Reset the rotation to 0 degrees
+      setRotationDeg(0);
       try {
         await setProfileNickname(inputText.name);
-        // Call the updateName function only if the name is different from the current value
         if (inputText.name !== user.name) {
-          await updateName(inputText.name); // Call the updateName function to send the PUT request
+          await updateName(inputText.name);
         }
       } catch (error) {
-        console.log('Error saving nickname:', error);
+        console.log('Ошибка сохранения никнейма:', error);
       }
     } else {
-      // Show the input field and rotate the AddSvg icon
       setShowInputField(true);
-      setRotationDeg(90); // Rotate by 90 degrees
+      setRotationDeg(90); 
     }
-
-    // Access the profile nickname from AsyncStorage after saving it
     try {
       const profileNickname = await getProfileNickname();
       console.log('Profile nickname:', profileNickname);
     } catch (error) {
-      console.log('Error retrieving profile nickname:', error);
+      console.log('Ошибка при подгрузке никнейма:', error);
     }
   };
 
-
-  // CSS style to apply the rotation transformation to the AddSvg icon
   const addSvgStyle = {
     transform: `rotate(${showInputField ? 45 : 0}deg)`,
-    transition: 'transform 0.5s ease', // Smooth transition for rotation animation
+    transition: 'transform 0.5s ease', 
   };
 
   const updateName = async (newName) => {
     try {
-      const id = user?.id; // Assuming the user object has an 'id' property
+      const id = user?.id; 
       if (id) {
-        const response = await fetch(`https://messengerproject-production.up.railway.app/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
+        const response = await fetch(`http://localhost:8080/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -126,14 +116,12 @@ export default function ProfileScreen({ navigation }) {
         });
 
         if (response.ok) {
-          // Update the user object in the AuthContext if the update is successful
-
         } else {
-          console.error('Failed to update name');
+          alert('Не удалось обновить имя пользователя');
         }
       }
     } catch (error) {
-      console.error('Error updating name:', error);
+      alert('Ошибка при подключении к серверу:', error);
     }
   };
 
