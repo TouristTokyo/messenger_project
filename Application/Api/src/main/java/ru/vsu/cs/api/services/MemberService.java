@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class MemberService {
     private final MemberRepository memberRepository;
 
@@ -34,7 +36,9 @@ public class MemberService {
     public Member getMemberByUserAndChannel(User user, Channel channel) {
         Member member = memberRepository.findByUserAndChannel(user, channel).orElse(null);
         if (member == null) {
-            throw new MemberException("Not found member with name (" + user.getName() + ") for channel with name ( "
+            log.warn("Not found member with name (" + user.getName() + ") for channel with name ( "
+                    + channel.getName() + ")");
+            throw new MemberException("Не существует участника (" + user.getName() + ") в канале ( "
                     + channel.getName() + ")");
         }
 
@@ -43,6 +47,7 @@ public class MemberService {
 
     @Transactional
     public void save(Member member) {
+        log.info(member.getUser().getName() + " join to " + member.getChannel().getName());
         memberRepository.save(member);
     }
 

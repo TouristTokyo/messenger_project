@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class ChannelService {
     private final ChannelRepository channelRepository;
 
@@ -28,8 +30,10 @@ public class ChannelService {
     @Transactional
     public Channel create(Channel channel) {
         if (channelRepository.findByName(channel.getName()).isPresent()) {
-            throw new ChannelException("Exist channel with name: " + channel.getName());
+            log.warn("Exist channel with name: " + channel.getName());
+            throw new ChannelException("Канал с таким именем уже существует: " + channel.getName());
         }
+        log.info("Channel (" + channel.getName() + ") create successfully");
         return channelRepository.saveAndFlush(channel);
     }
 
@@ -41,7 +45,8 @@ public class ChannelService {
     public Channel getChannelById(BigInteger id) {
         Channel channel = channelRepository.findById(id).orElse(null);
         if (channel == null) {
-            throw new ChannelException("Not found channel with id: " + id);
+            log.warn("Not found channel with id: " + id);
+            throw new ChannelException("Канал с таким id не был найден: " + id);
         }
         return channel;
     }
@@ -49,7 +54,8 @@ public class ChannelService {
     public Channel getChannelByName(String name) {
         Channel channel = channelRepository.findByName(name).orElse(null);
         if (channel == null) {
-            throw new ChannelException("Not found channel with name: " + name);
+            log.warn("Not found channel with name: " + name);
+            throw new ChannelException("Канал с таким именем не был найден: " + name);
         }
         return channel;
     }
@@ -60,8 +66,11 @@ public class ChannelService {
         Channel channel = getChannelById(id);
 
         if (foundChannel != null && !foundChannel.getId().equals(id)) {
-            throw new UserException("Exist channel with name: " + name);
+            log.warn("Exist channel with name: " + name);
+            throw new UserException("Канал с таким именем уже существует: " + name);
         }
+
+        log.info("Updated channel name: " + channel.getName() + " --> " + name);
 
         channel.setName(name);
         channelRepository.save(channel);

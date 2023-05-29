@@ -1,5 +1,6 @@
 package ru.vsu.cs.api.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@Slf4j
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -26,7 +28,8 @@ public class UserService {
     public User getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElse(null);
         if (user == null) {
-            throw new UserException("Not found user with email: " + email);
+            log.warn("Not found user with email: " + email);
+            throw new UserException("Не существует пользователя с такой почтой: " + email);
         }
         return user;
     }
@@ -36,13 +39,15 @@ public class UserService {
         if (passwordEncoder.matches(password, user.getPassword())) {
             return user;
         } else {
-            throw new UserException("Not found user with password: " + password);
+            log.warn("Incorrect password: " + password);
+            throw new UserException("Неверный пароль");
         }
     }
 
     public User getUserByName(String name) {
         User user = userRepository.findByName(name).orElse(null);
         if (user == null) {
+            log.warn("Не существует пользователя с таким именем: " + name);
             throw new UserException("Not found user with name: " + name);
         }
         return user;
@@ -51,7 +56,8 @@ public class UserService {
     public User getById(BigInteger id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) {
-            throw new UserException("Not found user with id: " + id);
+            log.warn("Not found user with id: " + id);
+            throw new UserException("Не существует пользователя с таким id: " + id);
         }
         return user;
     }
@@ -63,13 +69,16 @@ public class UserService {
     @Transactional
     public void save(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new UserException("Exist user with email: " + user.getEmail());
+            log.warn("Exist user with email: " + user.getEmail());
+            throw new UserException("Пользователь с такой почтой уже существует: " + user.getEmail());
         }
         if (userRepository.findByName(user.getName()).isPresent()) {
-            throw new UserException("Exist user with nickname: " + user.getName());
+            log.warn("Exist user with nickname: " + user.getName());
+            throw new UserException("Пользователь с таким именем уже существует: " + user.getName());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        log.info("User (" + user.getName() + ", " + user.getEmail() + ") registered successfully");
     }
 
     @Transactional
@@ -86,7 +95,8 @@ public class UserService {
         User user = getById(id);
 
         if (foundUserByEmail != null && !foundUserByEmail.getId().equals(id)) {
-            throw new UserException("Exist user with email: " + email);
+            log.warn("Exist user with email: " + email);
+            throw new UserException("Пользователь с такой почтой уже существует: " + email);
         }
 
         user.setEmail(email);
@@ -100,7 +110,8 @@ public class UserService {
         User user = getById(id);
 
         if (foundUserByName != null && !foundUserByName.getId().equals(id)) {
-            throw new UserException("Exist user with nickname: " + name);
+            log.warn("Exist user with nickname: " + name);
+            throw new UserException("Пользователь с таким именем уже существует:: " + name);
         }
 
         user.setName(name);
@@ -111,8 +122,9 @@ public class UserService {
     @Transactional
     public void updatePassword(BigInteger id, String lastPassword, String newPassword) {
         User user = getById(id);
-        if(!passwordEncoder.matches(lastPassword, user.getPassword())){
-            throw new UserException("Incorrect current password");
+        if (lastPassword !=null && !passwordEncoder.matches(lastPassword, user.getPassword())) {
+            log.warn("Incorrect current password: " + lastPassword);
+            throw new UserException("Неверный текущий пароль: " + lastPassword);
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);

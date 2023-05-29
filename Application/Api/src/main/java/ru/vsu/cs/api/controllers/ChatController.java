@@ -2,9 +2,11 @@ package ru.vsu.cs.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.message.ChatMessageCreationDto;
 import ru.vsu.cs.api.dto.message.ChatMessageDto;
@@ -48,7 +50,12 @@ public class ChatController {
 
     @PostMapping("/add_message")
     @Operation(summary = "Отправка сообщения в чат")
-    public ResponseEntity<ChatMessageDto> addMessage(@RequestBody ChatMessageCreationDto chatMessageCreationDto) {
+    public ResponseEntity<ChatMessageDto> addMessage(@Valid @RequestBody ChatMessageCreationDto chatMessageCreationDto,
+                                                     BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         User currentUser = userService.getUserByName(chatMessageCreationDto.getCurrentUsername());
         User otherUser = userService.getUserByName(chatMessageCreationDto.getOtherUsername());
 

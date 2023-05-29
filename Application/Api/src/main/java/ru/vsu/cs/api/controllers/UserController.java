@@ -114,7 +114,7 @@ public class UserController {
     @PutMapping(value = "/{id}/update/password")
     @Operation(summary = "Обновление пароля у пользователя")
     public ResponseEntity<HttpStatus> updatePassword(@PathVariable("id") BigInteger id,
-                                                     @RequestParam("last_password") String lastPassword,
+                                                     @RequestParam(value = "last_password", required = false) String lastPassword,
                                                      @RequestParam("new_password") String newPassword) {
         userService.updatePassword(id, lastPassword, newPassword);
         return ResponseEntity.ok(HttpStatus.OK);
