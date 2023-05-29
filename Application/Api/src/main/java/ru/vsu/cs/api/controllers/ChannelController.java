@@ -2,14 +2,16 @@ package ru.vsu.cs.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.ChannelCreationDto;
+import ru.vsu.cs.api.dto.ChannelResponseDto;
 import ru.vsu.cs.api.dto.message.ChannelMessageCreationDto;
 import ru.vsu.cs.api.dto.message.ChannelMessageDto;
-import ru.vsu.cs.api.dto.ChannelResponseDto;
 import ru.vsu.cs.api.dto.search.ChannelSearchDto;
 import ru.vsu.cs.api.models.*;
 import ru.vsu.cs.api.services.*;
@@ -51,7 +53,14 @@ public class ChannelController {
 
     @PostMapping("/create")
     @Operation(summary = "Создание канала")
-    public ResponseEntity<ChannelResponseDto> create(@RequestBody ChannelCreationDto channelCreationDto) {
+    public ResponseEntity<ChannelResponseDto> create(
+            @Valid @RequestBody ChannelCreationDto channelCreationDto,
+            BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         User user = userService.getUserByName(channelCreationDto.getUsername());
         Channel channel = channelService.create(new Channel(user, channelCreationDto.getChannelName()));
 
@@ -68,8 +77,12 @@ public class ChannelController {
 
     @PostMapping("/add_message")
     @Operation(summary = "Отправка сообщения в канал")
-    public ResponseEntity<ChannelMessageDto> addMessage(
-            @RequestBody ChannelMessageCreationDto channelMessageCreationDto) {
+    public ResponseEntity<ChannelMessageDto> addMessage(@Valid @RequestBody ChannelMessageCreationDto channelMessageCreationDto,
+                                                        BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         Channel channel = channelService.getChannelByName(channelMessageCreationDto.getChannelName());
         User user = userService.getUserByName(channelMessageCreationDto.getCurrentUsername());
 

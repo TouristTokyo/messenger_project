@@ -2,9 +2,11 @@ package ru.vsu.cs.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.RoleCreationDto;
 import ru.vsu.cs.api.models.Channel;
@@ -40,7 +42,12 @@ public class RoleController {
 
     @PostMapping("/create")
     @Operation(summary = "Создание/Обновление роли")
-    public ResponseEntity<HttpStatus> create(@RequestBody RoleCreationDto roleCreationDto) {
+    public ResponseEntity<HttpStatus> create(@Valid @RequestBody RoleCreationDto roleCreationDto,
+                                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         User user = userService.getUserByName(roleCreationDto.getUsername());
         Channel channel = channelService.getChannelByName(roleCreationDto.getChannelName());
 

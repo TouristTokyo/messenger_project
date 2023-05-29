@@ -28,7 +28,6 @@ public class EmailController {
         try {
             return new ResponseEntity<>(emailService.sendSimpleEmail(email), HttpStatus.OK);
         } catch (MailException mailException) {
-            System.out.println(mailException.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
