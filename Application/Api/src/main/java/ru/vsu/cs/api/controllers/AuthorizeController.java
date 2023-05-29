@@ -2,9 +2,11 @@ package ru.vsu.cs.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.UserCreationDto;
 import ru.vsu.cs.api.dto.UserLoginDto;
@@ -41,7 +43,12 @@ public class AuthorizeController {
 
     @PostMapping("/login")
     @Operation(summary = "Вход в аккаунт")
-    public ResponseEntity<UserResponseDto> login(@RequestBody UserLoginDto userLoginDto) {
+    public ResponseEntity<UserResponseDto> login(@Valid @RequestBody UserLoginDto userLoginDto,
+                                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         User user = userService.login(userLoginDto.getEmail(), userLoginDto.getPassword());
 
         List<Message> savedMessages = savedMessageService.getSavedMessageByUser(user).stream()
@@ -59,7 +66,12 @@ public class AuthorizeController {
 
     @PostMapping("/register")
     @Operation(summary = "Регистрация")
-    public ResponseEntity<HttpStatus> register(@RequestBody UserCreationDto userCreationDto) {
+    public ResponseEntity<HttpStatus> register(@Valid @RequestBody UserCreationDto userCreationDto,
+                                               BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         userService.save(Mapper.convertToUser(userCreationDto));
         return ResponseEntity.ok(HttpStatus.OK);
     }

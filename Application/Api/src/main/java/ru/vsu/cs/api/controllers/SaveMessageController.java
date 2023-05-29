@@ -2,9 +2,11 @@ package ru.vsu.cs.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.SavedMessageDto;
 import ru.vsu.cs.api.models.SavedMessage;
@@ -38,7 +40,12 @@ public class SaveMessageController {
 
     @PostMapping("/save")
     @Operation(summary = "Сохранение сообщения")
-    public ResponseEntity<HttpStatus> saveMessage(@RequestBody SavedMessageDto savedMessageDto) {
+    public ResponseEntity<HttpStatus> saveMessage(@NotNull @RequestBody SavedMessageDto savedMessageDto,
+                                                  BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
         User user = userService.getUserByName(savedMessageDto.getUsername());
 
         savedMessageService.save(new SavedMessage(messageService.getMessage(savedMessageDto.getMessageId()), user));

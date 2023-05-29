@@ -50,6 +50,7 @@ public class Mapper {
         ChatMessageDto chatMessageDto = new ChatMessageDto();
 
         chatMessageDto.setId(message.getId());
+        chatMessageDto.setSender(convertToUserSupportingDto(message.getSender()));
         chatMessageDto.setChat(convertToChatSupportingDto(message.getChat()));
         chatMessageDto.setData(message.getData());
         chatMessageDto.setDate(message.getDate());
@@ -73,7 +74,6 @@ public class Mapper {
         ChannelMessageDto channelMessageDto = new ChannelMessageDto();
 
         channelMessageDto.setId(message.getId());
-        channelMessageDto.setSender(convertToUserSupportingDto(message.getSender()));
         channelMessageDto.setChannelName(message.getChannel().getName());
         channelMessageDto.setData(message.getData());
         channelMessageDto.setSender(convertToUserSupportingDto(message.getSender()));
