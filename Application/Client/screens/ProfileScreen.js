@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { View, Text, TouchableHighlight, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableHighlight, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import useStyles from './styles/mainAuthScreen.module';
 import HeaderButton from '../components/buttons/headerButton';
@@ -20,7 +20,7 @@ export default function ProfileScreen({ navigation }) {
   const [inputText, setInputText] = useState({
     name: user?.name || '', 
   });
-
+  const { width, height } = useWindowDimensions();
   const username = 'admin';
   const password = 'root';
   const [userText, setUserText] = useState('');
@@ -58,7 +58,7 @@ export default function ProfileScreen({ navigation }) {
   const handleEmailLayout = () => {
     const emailContainerWidth = emailContainerRef.current.offsetWidth;
     const desiredMaxWidth = 300;
-    const desiredMaxFontSize = 36;
+    const desiredMaxFontSize = Math.min(width * 0.02, height * 0.045);
     const emailFontSize = Math.min(desiredMaxFontSize, (desiredMaxWidth / emailContainerWidth) * desiredMaxFontSize);
     setEmailFontSize(emailFontSize);
   };
@@ -142,7 +142,7 @@ export default function ProfileScreen({ navigation }) {
               flex={false}
             />
           ) : (
-            <Text style={{ fontSize: 48, fontFamily: 'Montserrat-Regular', paddingHorizontal: 30 }}>
+            <Text style={{ fontSize:  Math.min(width * 0.03, height * 0.055), fontFamily: 'Montserrat-Regular', paddingHorizontal: 30 }}>
               {inputText.name}
             </Text>
           )}
@@ -157,7 +157,8 @@ export default function ProfileScreen({ navigation }) {
             borderColor: '#000000',
             paddingHorizontal: 10,
             paddingVertical: 15,
-            width: '80%',
+            width: width * 0.2,
+            height: height * 0.1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',

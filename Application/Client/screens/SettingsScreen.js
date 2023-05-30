@@ -76,10 +76,10 @@ export default function SettingsScreen({ navigation, route }) {
       });
   
       if (response.ok) {
-        alert('Чат удален');
+        alert('Канал удален');
         navigation.navigate('MainAuth'); 
       } else {
-        alert('Не удалось удалить чат');
+        alert('Не удалось удалить канал');
       }
     } catch (error) {
       alert('Ошибка при подключении к серверу:', error);

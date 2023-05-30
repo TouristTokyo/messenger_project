@@ -1,23 +1,11 @@
-import { StyleSheet } from 'react-native-web';
+import { StyleSheet, useWindowDimensions } from 'react-native-web';
 import React, { useEffect, useState } from 'react';
 
 
 export default function useStyles() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      setWindowHeight(window.innerHeight);
-    };
+  const { width, height } = useWindowDimensions();
 
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
   return StyleSheet.create({
     container: {
       flex: 1,
@@ -133,7 +121,7 @@ export default function useStyles() {
     },
     barText: {
       fontFamily: 'Montserrat-Regular',
-      fontSize: 24,
+      fontSize: Math.min(width * 0.012, height * 0.032),
       paddingLeft: 20,
     },
     settingsContainer: {
@@ -155,11 +143,11 @@ export default function useStyles() {
       
     },
     sendContainer: {
-      width: '40%',
-      height: '10%',
+      width: width * 0.4,
+      height: height * 0.1,
       position: 'absolute',
       bottom: 0,
-      right: 200,
+      right: width * 0.1,
       marginTop: 50
     },
     forwardContainer: {
@@ -188,7 +176,7 @@ export default function useStyles() {
       overflow: 'hidden',
       position: 'absolute',
       top: '50%', 
-      right: 225,
+      right: width * 0.1,
       transform: [{ translateY: '-50%' }], 
       shadowColor: '#000',
       shadowOffset: { width: 2, height: 2 },
@@ -199,8 +187,8 @@ export default function useStyles() {
     profileContainer: {
       backgroundColor: '#FFFFFF',
       borderRadius: 35,
-      width: '20%',
-      height: '50%',
+      width: width * 0.2,
+      height: height*0.5,
       overflow: 'hidden',
       position: 'absolute',
       top: 40, 
@@ -212,13 +200,13 @@ export default function useStyles() {
       elevation: 7,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingTop: 60,
-      paddingBottom: 60
+     paddingVertical: 60
     },
     profileSettingsContainer: {
       backgroundColor: '#FFFFFF',
       borderRadius: 35,
-      width: '24%',
+      width: width * 0.24,
+      height: height *0.6,
       overflow: 'hidden',
       position: 'absolute',
       shadowColor: '#000',
@@ -261,7 +249,7 @@ export default function useStyles() {
     text: {
       fontFamily: 'Montserrat-Regular',
       color: '#000000',
-      fontSize: 24,
+      fontSize: Math.min(width * 0.012, height * 0.032),
       textAlign: 'center',
       marginBottom: 13
     },

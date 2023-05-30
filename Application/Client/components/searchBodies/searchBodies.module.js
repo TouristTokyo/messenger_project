@@ -20,13 +20,13 @@ export default function useStyles() {
         },
         username: {
           fontFamily: "Montserrat-Regular",
-          fontSize: 24,
+          fontSize: Math.min(width * 0.012, height * 0.032),
           fontWeight: "bold",
           marginLeft: 8,
         },
         channelName: {
           fontFamily: "Montserrat-Regular",
-          fontSize: 24,
+          fontSize: Math.min(width * 0.012, height * 0.032),
           fontWeight: "bold",
         },
         deleteContainer: {

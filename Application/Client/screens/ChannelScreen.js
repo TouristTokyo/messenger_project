@@ -95,7 +95,7 @@ export default function ChannelScreen({ navigation, route }) {
     useEffect(() => {
         const intervalId = setInterval(() => {
             setShouldFetchChannelData(true);
-        }, 5000);
+        }, 1000);
 
         return () => clearInterval(intervalId);
     }, []);

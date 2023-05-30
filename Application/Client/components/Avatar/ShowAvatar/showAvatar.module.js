@@ -4,11 +4,11 @@ export default function useStyles(props) {
     const { width, height } = useWindowDimensions();
     const { profile } = props;
     
-    const containerWidth = profile ? 90 : 40;
-    const imageWidth = profile ? containerWidth : 40;
-    const imageHeight = profile ? containerWidth : 40;
-    const nonePhotoWidth = profile ? containerWidth : 90;
-    const nonePhotoHeight = profile ? containerWidth : 90;
+    const containerWidth = profile ? width* 0.08 : width* 0.025;
+    const imageWidth = profile ? containerWidth : width* 0.025;
+    const imageHeight = profile ? containerWidth : width* 0.025;
+    const nonePhotoWidth = profile ? containerWidth : width* 0.08;
+    const nonePhotoHeight = profile ? containerWidth : width* 0.08;
   
     return StyleSheet.create({
       container: {

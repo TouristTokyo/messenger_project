@@ -77,7 +77,7 @@ export default function ChatScreen({ navigation, route }) {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setShouldFetchChatData(true); 
-    }, 5000);
+    }, 1000);
   
     return () => clearInterval(intervalId); 
   }, []);

@@ -13,7 +13,7 @@ export default function useStyles() {
         text: {
             fontFamily: 'Montserrat-Regular',
             color: '#000000',
-            fontSize: 24,
+            fontSize:Math.min(width * 0.012, height * 0.032),
             textAlign: 'center',
             marginBottom: 13
         },
@@ -25,13 +25,13 @@ export default function useStyles() {
         },
         username: {
             fontFamily: 'Montserrat-Regular',
-            fontSize: 24,
+            fontSize:Math.min(width * 0.012, height * 0.032),
             color: "#000000",
             marginLeft: 40,
         },
         role: {
             fontFamily: 'Montserrat-Regular',
-            fontSize: 24,
+            fontSize: Math.min(width * 0.012, height * 0.032),
             color: "#0076B9",
             marginLeft: 40,
             marginRight: 40

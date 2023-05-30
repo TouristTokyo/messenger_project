@@ -11,9 +11,9 @@ export default function useStyles() {
     },
     input: {
       flex: 1,
-      height: 60,
+      height: Math.min(width * 0.03, height * 0.055), 
       fontFamily: 'Montserrat-Regular',
-      fontSize: 48,
+      fontSize: Math.min(width * 0.03, height * 0.055), 
       paddingLeft: "5%",
       backgroundColor: "#FFFFFF",
       color: "#000000",

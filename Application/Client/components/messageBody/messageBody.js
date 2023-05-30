@@ -53,7 +53,8 @@ const MessageBody = ({ data, currentUser }) => {
     {
       borderTopRightRadius: own ? 10 : 10,
       borderBottomRightRadius: own ? 0 : 10,
-      borderBottomLeftRadius: own ? 10 : 0,
+      borderBottomLeftRadius: own ? 10 : 10,
+      borderTopLeftRadius: own ? 10 : 0,
     },
   ];
 
@@ -74,6 +75,8 @@ const MessageBody = ({ data, currentUser }) => {
         {channel && <Text style={styles.role}>{role}</Text>}
         <Text style={styles.message}>{message}</Text>
         <Text style={own ? styles.ownTime : styles.time}>{time}</Text>
+        {own && <View style={styles.ownBubbleTail} />}
+        {!own && <View style={styles.bubbleTail} />}
       </View>
     </View>
   );

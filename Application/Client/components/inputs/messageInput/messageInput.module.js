@@ -6,12 +6,14 @@ export default function useStyles() {
         container: {
           flexDirection: 'row',
           alignItems: 'flex-end',
+          paddingVertical: 20,
         },
         input: {
           flex: 1,
-          height: 44,
-          fontSize: 16,
+          height: Math.min(width * 0.03, height * 0.055), 
+          fontSize:  Math.min(width * 0.01, height * 0.03),
           paddingLeft: 40,
+          paddingVertical: 5,
           borderRadius: 10,
           backgroundColor: '#FFFFFF',
           color: '#000000',
@@ -23,7 +25,7 @@ export default function useStyles() {
         sendButton: {
           alignSelf: 'flex-end',
           marginLeft: 30,
-          width: 60,
+          width: width * 0.03,
           height: 60,
           alignItems: 'center',
           justifyContent: 'center',
