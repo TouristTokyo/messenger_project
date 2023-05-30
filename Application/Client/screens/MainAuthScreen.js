@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { View, Text, TouchableHighlight, Modal, TouchableOpacity, ScrollView, Image, Platform } from 'react-native-web';
+import { View, Text, TouchableHighlight, Modal, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native-web';
 import { useFocusEffect } from '@react-navigation/native';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/mainAuthScreen.module';
@@ -30,7 +30,7 @@ export default function MainAuthScreen({ navigation }) {
   const password = 'root';
   const updateUserCallback = useCallback(updatedUser => updateUser(updatedUser), [updateUser]);
   const { selectedImage } = useContext(ImageContext);
-
+  const { width, height } = useWindowDimensions();
 
 
   useFocusEffect(
@@ -185,7 +185,7 @@ export default function MainAuthScreen({ navigation }) {
         <ShowAvatar imageUrl={selectedImage} profile={true} />
         <Text style={{
           color: '#000000',
-          fontSize: 48,
+          fontSize:  Math.min(width * 0.03, height * 0.055),
           textAlign: 'center',
           marginBottom: 13,
           fontFamily: 'Montserrat-Regular',

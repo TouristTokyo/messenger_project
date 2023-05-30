@@ -97,7 +97,7 @@ function ForgotScreen({ navigation }) {
         }),
       });
       if (response.ok) {
-        alert('Пароль успешно обновлен');
+        
       } else {
         response.json().then(errorData => {
           const errorMessage = errorData.message ;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native-web';
 import { useWindowDimensions } from 'react-native-web';
 import useStyles from './messageInput.module';
@@ -10,6 +10,7 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
   const styles = useStyles();
   const username = 'admin';
   const password = 'root';
+  const inputRef = useRef(null); 
   const handleSend = async () => {
     if (message) {
       try {
@@ -65,13 +66,24 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
     }
   };
   
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
+        ref={inputRef}
         style={styles.input}
         placeholder="Сообщение"
         value={message}
         onChangeText={setMessage}
+        multiline
+        numberOfLines={4}
+        onKeyPress={handleKeyPress}
       />
       <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
         <SendSvg />

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native-web';
+import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native-web';
 import ShowAvatar from '../Avatar/ShowAvatar/showAvatar';
 import useStyles from './forwardMessage.module';
 import AuthContext from '../../context/AuthContext';
@@ -11,8 +11,8 @@ const ForwardMessage = ({ data }) => {
   const {user} = useContext(AuthContext);
   const username = 'admin';
   const password = 'root';
+  const { width, height } = useWindowDimensions();
   const handleDeletePress = () => {
-   
     const user_id = user.id; 
     const message_id = id; 
 
@@ -52,7 +52,7 @@ const ForwardMessage = ({ data }) => {
         onPress={handleMessageBoxPress}
       >
         {showDeleteButton && (
-          <TouchableOpacity  onPress={handleDeletePress}>
+          <TouchableOpacity onPress={handleDeletePress}>
             <Text style={{ fontFamily: 'Montserrat-Italic' }}>Удалить</Text>
           </TouchableOpacity>
         )}
@@ -60,9 +60,10 @@ const ForwardMessage = ({ data }) => {
           {nickname}
         </Text>
         <Text style={[styles.message, own && styles.ownMessage]}>{message}</Text>
-        <Text style={{ fontFamily: 'Montserrat-Italic' }}>
+        <Text style={{ fontFamily: 'Montserrat-Italic', fontSize: Math.min(width * 0.008, height * 0.025), }}>
           Forwarded from: {from}
         </Text>
+        {!own && <View style={styles.bubbleTail} />}
       </TouchableOpacity>
     </View>
   );

@@ -8,8 +8,9 @@ export default function useStyles() {
       justifyContent: "center",
       alignItems: "center",
       backgroundColor: "#FFFFFF",
+      width: width*0.4,
       zIndex: 0,
-      width: '90%'
+      width: 644
     },
     icon: {
       position: "absolute",
@@ -30,7 +31,7 @@ export default function useStyles() {
       left: 0,
       right: 0,
       flex: 1,
-      maxHeight: 300, 
+      maxHeight: height * 0.3,
       overflowY: "auto", 
       backgroundColor: "#FFFFFF",
       borderRadius: 10,
@@ -42,8 +43,8 @@ export default function useStyles() {
       flex: 1,
       fontFamily: 'Montserrat-Regular',
       height: 44,
-      width: 600,
-      fontSize: 20,                 
+      width: width*0.4,
+      fontSize: Math.min(width * 0.01, height * 0.03),                
       paddingLeft: 10,
       paddingRight: 10,             
       borderRadius: 10,

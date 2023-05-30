@@ -21,6 +21,12 @@ function AuthScreen({ navigation }) {
 
   const handleLogin = () => {
 
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(inputText.email)) {
+      alert('Не верный формат почты');
+      return;
+    }
+
     const requestBody = {
       email: inputText.email,
       password: inputText.password

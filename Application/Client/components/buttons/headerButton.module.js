@@ -1,9 +1,8 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, useWindowDimensions } from 'react-native';
 
 export default function useStyles(disabled) {
-  const { width } = Dimensions.get('window');
   const buttonWidth = width * 0.1;
-
+  const { width, height } = useWindowDimensions();
   const buttonColor = disabled ? 'rgba(0, 0, 0, 0.35)' : 'rgba(0, 118, 185, 0.35)';
 
   return StyleSheet.create({
@@ -16,11 +15,12 @@ export default function useStyles(disabled) {
       alignSelf: 'right',
       marginVertical: 10,
       marginRight: 20,
+      flex: 1
     },
     buttonText: {
       fontFamily: 'Montserrat-Regular',
       color: '#000000',
-      fontSize: 24,
+      fontSize: Math.min(width * 0.015, height * 0.06),
       textAlign: 'center',
     },
   });
