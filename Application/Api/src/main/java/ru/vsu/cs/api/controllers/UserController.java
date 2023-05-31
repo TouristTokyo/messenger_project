@@ -127,13 +127,6 @@ public class UserController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
-    @Operation(summary = "Удаление аккаунта")
-    public ResponseEntity<HttpStatus> delete(@PathVariable("id") BigInteger id) {
-        userService.delete(id);
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
-
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> userException(UserException ex) {
         ErrorResponse response = new ErrorResponse(

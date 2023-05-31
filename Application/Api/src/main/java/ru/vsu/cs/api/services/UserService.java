@@ -129,9 +129,4 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
-
-    @Transactional
-    public void delete(BigInteger id) {
-        userRepository.deleteById(id);
-    }
 }
