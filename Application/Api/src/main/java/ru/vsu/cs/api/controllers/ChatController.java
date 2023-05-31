@@ -44,6 +44,7 @@ public class ChatController {
     }
 
     @GetMapping()
+    @Operation(summary = "Получение всех чатов")
     public List<ChatSearchDto> getChats() {
         return userService.getUsers().stream().map(Mapper::convertToChatSearchDto).toList();
     }
