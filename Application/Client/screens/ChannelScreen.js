@@ -20,12 +20,11 @@ export default function ChannelScreen({ navigation, route }) {
     const styles = useStyles();
     const { channelId } = route.params;
     const [showPopup, setShowPopup] = useState(false);
-    const [role, setRole] = useState('Admin');
     const [inputText, setInputText] = useState({
         nickname: '',
     });
     const { logout } = useContext(AuthContext);
-    const { user, updateUser } = useContext(AuthContext);
+    const { user, storeCurrentScreen} = useContext(AuthContext);
     const [messages, setMessages] = useState([]);
     const { selectedImage } = useContext(ImageContext);
     const [isMember, setIsMember] = useState(false);
@@ -43,7 +42,7 @@ export default function ChannelScreen({ navigation, route }) {
 
     const fetchChannelData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
+            const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/${channelId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,6 +80,7 @@ export default function ChannelScreen({ navigation, route }) {
         React.useCallback(() => {
             fetchProfileNickname();
             setShouldFetchChannelData(true);
+            
         }, [])
     );
 
@@ -150,8 +150,8 @@ export default function ChannelScreen({ navigation, route }) {
             const name = userText || user.name;
             const channelName = channelText;
             const apiUrl = isMember
-                ? `http://localhost:8080/api/channels/${channelId}/leave?username=${name}`
-                : `http://localhost:8080/api/channels/join?username=${name}&channel_name=${channelName}`;
+                ? `https://backend-web-service-test.onrender.com/api/channels/${channelId}/leave?username=${name}`
+                : `https://backend-web-service-test.onrender.com/api/channels/join?username=${name}&channel_name=${channelName}`;
 
             const response = await fetch(apiUrl, {
                 method: isMember ? 'DELETE' : 'POST',
@@ -212,7 +212,7 @@ export default function ChannelScreen({ navigation, route }) {
     };
     const handleCreateChannel = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/channels/create', {
+            const response = await fetch('https://backend-web-service-test.onrender.com/api/channels/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

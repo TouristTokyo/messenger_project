@@ -16,7 +16,7 @@ const ForwardMessage = ({ data }) => {
     const user_id = user.id; 
     const message_id = id; 
 
-    fetch(`http://localhost:8080/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
+    fetch(`https://backend-web-service-test.onrender.com/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

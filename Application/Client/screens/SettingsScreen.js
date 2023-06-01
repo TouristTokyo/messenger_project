@@ -16,7 +16,7 @@ import AuthContext from '../context/AuthContext';
 
 export default function SettingsScreen({ navigation, route }) {
   const { channelId } = route.params;
-  const { user } = useContext(AuthContext);
+  const { user, storeCurrentScreen } = useContext(AuthContext);
   const styles = useStyles();
   const [isAdmin, setIsAdmin] = useState(false);
   const [role, setRole] = useState('');
@@ -36,7 +36,7 @@ export default function SettingsScreen({ navigation, route }) {
   });
   const fetchChannelData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
+      const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/${channelId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export default function SettingsScreen({ navigation, route }) {
   
   const handleDeleteChannel = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/channels/delete/${channelId}`, {
+      const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/delete/${channelId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ export default function SettingsScreen({ navigation, route }) {
     if (isEditingNickname) {
       setIsEditingNickname(false);
       try {
-        const response = await fetch(`http://localhost:8080/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
+        const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

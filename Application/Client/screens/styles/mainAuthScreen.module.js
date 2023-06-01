@@ -205,8 +205,8 @@ export default function useStyles() {
     profileSettingsContainer: {
       backgroundColor: '#FFFFFF',
       borderRadius: 35,
-      width: width * 0.24,
-      height: height *0.6,
+      width: width * 0.25,
+      height: height *0.67,
       overflow: 'hidden',
       position: 'absolute',
       shadowColor: '#000',
@@ -216,14 +216,14 @@ export default function useStyles() {
       elevation: 7,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingTop: 30,
-      paddingBottom: 30,
+      paddingTop: height * 0.1, 
+      paddingBottom: height * 0.1,
       alignSelf: 'stretch',
       marginTop: 'auto',
       marginBottom: 'auto',
       left: '50%',
-      top: '50%',
-      transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
+      
+      transform: [{ translateX: '-50%' }, ],
     },
 
 

@@ -25,10 +25,9 @@ export default function useStyles() {
         sendButton: {
           alignSelf: 'flex-end',
           marginLeft: 30,
-          width: width * 0.03,
-          height: 60,
           alignItems: 'center',
           justifyContent: 'center',
+          transform: [{ rotate: '180deg' }],
         },
       });
 }

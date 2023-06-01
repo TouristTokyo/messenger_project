@@ -26,7 +26,7 @@ const MessageBody = ({ data, currentUser }) => {
     };
 
     try {
-      const response = await fetch('http://localhost:8080/api/saved_message/save', {
+      const response = await fetch('https://backend-web-service-test.onrender.com/api/saved_message/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

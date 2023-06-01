@@ -36,7 +36,7 @@ function RegScreen({ navigation }) {
       password: inputText.password
     };
 
-    fetch('http://localhost:8080/api/register', {
+    fetch('https://backend-web-service-test.onrender.com/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -48,7 +48,10 @@ function RegScreen({ navigation }) {
         if (response.ok) {
           navigation.navigate('Auth');
         } else {
-          alert('Не удалось зарегистрироваться');
+          response.json().then(errorData => {
+            const errorMessage = errorData.message;
+            alert(errorMessage);
+          });
         }
       })
       .catch(error => {

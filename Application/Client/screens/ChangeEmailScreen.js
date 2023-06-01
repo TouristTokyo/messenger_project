@@ -6,6 +6,7 @@ import HeaderButton from '../components/buttons/headerButton';
 import BackSvg from '../assets/icons/backSvg';
 import AuthContext from '../context/AuthContext';
 import { setEmail } from '../context/AsyncStorageUtil';
+import { useFocusEffect } from '@react-navigation/native';
 
 function ChangeEmailScreen({ navigation }) {
   const styles = useStyles();
@@ -15,10 +16,14 @@ function ChangeEmailScreen({ navigation }) {
   });
   const [receivedCode, setReceivedCode] = useState('');
 
-  const { user, updateUser } = useContext(AuthContext);
+  const { user, storeCurrentScreen } = useContext(AuthContext);
   const username = 'admin';
   const password = 'root';
-
+  useFocusEffect(
+    React.useCallback(() => {
+        storeCurrentScreen('ChangeEmail')
+    }, [])
+);
   const isButtonDisabled = () => {
     return !inputText.email || !inputText.code || inputText.code != receivedCode;
   };
@@ -29,7 +34,7 @@ function ChangeEmailScreen({ navigation }) {
 
   const getCode = () => {
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `http://localhost:8080/api/send_email?email=${email}`;
+    const apiUrl = `https://backend-web-service-test.onrender.com/api/send_email?email=${email}`;
 
     fetch(apiUrl, {
       method: 'GET',
@@ -62,7 +67,7 @@ function ChangeEmailScreen({ navigation }) {
   try {
     const userId = user?.id;
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `http://localhost:8080/api/users/${userId}/update/email?email=${email}`;
+    const apiUrl = `https://backend-web-service-test.onrender.com/api/users/${userId}/update/email?email=${email}`;
 
     const response = await fetch(apiUrl, {
       method: 'PUT',

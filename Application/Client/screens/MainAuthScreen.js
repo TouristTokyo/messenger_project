@@ -24,7 +24,7 @@ export default function MainAuthScreen({ navigation }) {
   const [inputText, setInputText] = useState({
     nickname: '',
   });
-  const { user, updateUser, logout } = useContext(AuthContext);
+  const { user, updateUser, logout, storeCurrentScreen } = useContext(AuthContext);
   const [userText, setUserText] = useState('');
   const username = 'admin';
   const password = 'root';
@@ -37,6 +37,7 @@ export default function MainAuthScreen({ navigation }) {
     React.useCallback(() => {
       fetchUserData();
       fetchProfileNickname();
+      storeCurrentScreen('MainAuth')
     }, [])
   );
 
@@ -47,7 +48,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${user.id}`, {
+      const response = await fetch(`https://backend-web-service-test.onrender.com/api/users/${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ export default function MainAuthScreen({ navigation }) {
   };
   const handleClearForwardedMessages = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/saved_message/delete_all?user_id=${user?.id}`, {
+      const response = await fetch(`https://backend-web-service-test.onrender.com/api/saved_message/delete_all?user_id=${user?.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -112,7 +113,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/channels/create', {
+      const response = await fetch('https://backend-web-service-test.onrender.com/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

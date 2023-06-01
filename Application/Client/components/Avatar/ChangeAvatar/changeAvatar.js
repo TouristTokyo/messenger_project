@@ -35,13 +35,9 @@ export default function ChangeAvatar({ children, ...data }) {
     });
   
     if (!result.canceled) {
-      
-           // Update the selected image in the context
-          uploadImage(result);
-        
-      
+          uploadImage(result);  
     } else {
-      // Keep the current image
+
     }
   };
 
@@ -55,7 +51,7 @@ export default function ChangeAvatar({ children, ...data }) {
     formData.append('file', blob, 'file.jpg');
   
     const userId = user?.id;
-    const apiUrl = `http://localhost:8080/api/users/${userId}/update/image`;
+    const apiUrl = `https://backend-web-service-test.onrender.com/api/users/${userId}/update/image`;
   
     try {
       const response = await axios.put(apiUrl, formData, {

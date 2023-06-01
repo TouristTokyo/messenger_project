@@ -16,7 +16,7 @@ import { setProfileNickname, getProfileNickname, getEmail } from '../context/Asy
 export default function ProfileScreen({ navigation }) {
   const styles = useStyles();
   const { selectedImage } = useContext(ImageContext);
-  const { user, updateUser } = useContext(AuthContext);
+  const { user, storeCurrentScreen} = useContext(AuthContext);
   const [inputText, setInputText] = useState({
     name: user?.name || '', 
   });
@@ -28,6 +28,7 @@ export default function ProfileScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       fetchEmail();
+      storeCurrentScreen('Profile')
     }, [user])
   );
 
@@ -58,7 +59,7 @@ export default function ProfileScreen({ navigation }) {
   const handleEmailLayout = () => {
     const emailContainerWidth = emailContainerRef.current.offsetWidth;
     const desiredMaxWidth = 300;
-    const desiredMaxFontSize = Math.min(width * 0.02, height * 0.045);
+    const desiredMaxFontSize = Math.min(width * 0.02, height * 0.043);
     const emailFontSize = Math.min(desiredMaxFontSize, (desiredMaxWidth / emailContainerWidth) * desiredMaxFontSize);
     setEmailFontSize(emailFontSize);
   };
@@ -107,7 +108,7 @@ export default function ProfileScreen({ navigation }) {
     try {
       const id = user?.id; 
       if (id) {
-        const response = await fetch(`http://localhost:8080/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
+        const response = await fetch(`https://backend-web-service-test.onrender.com/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -158,7 +159,6 @@ export default function ProfileScreen({ navigation }) {
             paddingHorizontal: 10,
             paddingVertical: 15,
             width: width * 0.2,
-            height: height * 0.1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -169,7 +169,7 @@ export default function ProfileScreen({ navigation }) {
             <Text
               style={{
                 color: '#000000',
-                fontSize: emailFontSize,
+                fontSize: Math.min(width * 0.02, height * 0.043),
                 textAlign: 'center',
                 fontFamily: 'Montserrat-Regular',
                 marginBottom: 13,
@@ -179,10 +179,10 @@ export default function ProfileScreen({ navigation }) {
             </Text>
           </View>
         </View>
-        <View>
+        <View style = {{alignItems: 'center', width: '100%', marginLeft: 20}}>
           <HeaderButton title={'Изменить почту'} onPress={() => navigation.navigate('ChangeEmail')} />
         </View>
-        <View style={{ marginBottom: 13 }}>
+        <View style={{ marginBottom: 13, alignItems: 'center', width: '100%', marginLeft: 20}}>
           <HeaderButton title={'Изменить пароль'} onPress={() => navigation.navigate('ChangePassword')} />
         </View>
       </View>

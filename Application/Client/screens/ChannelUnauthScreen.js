@@ -47,7 +47,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
     const [channelText, setChannelText] = useState('');
     const fetchChannelData = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/channels/${channelId}`, {
+            const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/${channelId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

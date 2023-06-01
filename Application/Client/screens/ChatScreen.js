@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableHighlight, Modal, TouchableOpacity, ScrollView, TextInput } from 'react-native-web';
+import { View, Text, TouchableHighlight, Modal, TouchableOpacity, ScrollView,  ActivityIndicator  } from 'react-native-web';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/mainAuthScreen.module';
 import SearchInput from '../components/inputs/searchInput/searchInput';
@@ -24,7 +24,7 @@ export default function ChatScreen({ navigation, route }) {
   const [inputText, setInputText] = useState({
     nickname: '',
   });
-  const { user, updateUser } = useContext(AuthContext);
+  const { user, storeCurrentScreen } = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
   const { selectedImage } = useContext(ImageContext);
   const [messages, setMessages] = useState([]);
@@ -32,9 +32,11 @@ export default function ChatScreen({ navigation, route }) {
   const username = 'admin';
   const password = 'root';
   const [userText, setUserText] = useState('');
+
+
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/channels/create', {
+      const response = await fetch('https://backend-web-service-test.onrender.com/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +63,6 @@ export default function ChatScreen({ navigation, route }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchProfileNickname();
       setShouldFetchChatData(true);
     }, [])
   );
@@ -85,7 +86,7 @@ export default function ChatScreen({ navigation, route }) {
   const fetchChatData = async () => {
     const firstUser = user.name;
     const secondUser = chatUser.name;
-    const url = `http://localhost:8080/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
+    const url = `https://backend-web-service-test.onrender.com/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
   
     try {
       const response = await fetch(url, {

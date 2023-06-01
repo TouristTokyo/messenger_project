@@ -21,7 +21,7 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
             channelName: chanInf.channel.name,
           };
     
-          const response = await fetch('http://localhost:8080/api/channels/add_message', {
+          const response = await fetch('https://backend-web-service-test.onrender.com/api/channels/add_message', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
             message: message,
           };
     
-          const response = await fetch('http://localhost:8080/api/chats/add_message', {
+          const response = await fetch('https://backend-web-service-test.onrender.com/api/chats/add_message', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

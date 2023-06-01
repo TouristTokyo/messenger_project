@@ -11,7 +11,7 @@ export default function useStyles() {
           paddingVertical: 15,
           width: width * 0.15,
           paddingHorizontal: 15,
-          height: height * 0.09
+          
           
         },
         text: {

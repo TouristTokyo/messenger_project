@@ -33,7 +33,7 @@ export default function SettingsBody({ data }) {
     const password = 'root';
     const handleDelete = async () => {
         try {
-          const url = `http://localhost:8080/api/channels/${channelId.id}/leave?username=${name}`;
+          const url = `https://backend-web-service-test.onrender.com/api/channels/${channelId.id}/leave?username=${name}`;
           const response = await axios.delete(url, {
             auth: {
               username: username,
@@ -58,7 +58,7 @@ export default function SettingsBody({ data }) {
     };
     const currentUser = channelId.members.find(member => member.user.id === user.id);
     const handleSaveChanges = async () => {
-        const url = 'http://localhost:8080/api/roles/create';
+        const url = 'https://backend-web-service-test.onrender.com/api/roles/create';
       
         const requestBody = {
           name: inputText.role,

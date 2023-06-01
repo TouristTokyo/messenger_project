@@ -39,7 +39,7 @@ function ForgotScreen({ navigation }) {
       return;
     }
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `http://localhost:8080/api/send_email?email=${email}`;
+    const apiUrl = `https://backend-web-service-test.onrender.com/api/send_email?email=${email}`;
 
     fetch(apiUrl, {
       method: 'GET',
@@ -64,7 +64,7 @@ function ForgotScreen({ navigation }) {
   
   const getUserById = async (email) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/users/email?email=${email}`, {
+      const response = await fetch(`https://backend-web-service-test.onrender.com/api/users/email?email=${email}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
@@ -86,7 +86,7 @@ function ForgotScreen({ navigation }) {
       const queryParams = new URLSearchParams({
         new_password: inputText.newPassword,
       });
-      const response = await fetch(`http://localhost:8080/api/users/${userId}/update/password?${queryParams.toString()}`, {
+      const response = await fetch(`https://backend-web-service-test.onrender.com/api/users/${userId}/update/password?${queryParams.toString()}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -46,7 +46,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
 
   const fetchData = async () => {
     try {
-      const channelResponse = await fetch('http://localhost:8080/api/channels', {
+      const channelResponse = await fetch('https://backend-web-service-test.onrender.com/api/channels', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +75,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
           });
         }
 
-        const userResponse = await fetch('http://localhost:8080/api/users', {
+        const userResponse = await fetch('https://backend-web-service-test.onrender.com/api/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

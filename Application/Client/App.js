@@ -8,7 +8,7 @@ import RegScreen from './screens/RegScreen';
 import ForgotScreen from './screens/ForgotScreen';
 import HeaderLogoSvg from './assets/icons/headerLogoSvg';
 import HeaderButton from './components/buttons/headerButton';
-import { Button, TouchableHighlight, View } from 'react-native-web';
+import { Button, TouchableHighlight, View, useWindowDimensions } from 'react-native-web';
 import SearchInput from './components/inputs/searchInput/searchInput';
 import SearchBody from './components/searchBodies/searchBody';
 import MainAuthScreen from './screens/MainAuthScreen';
@@ -24,6 +24,7 @@ import { AuthProvider } from './context/AuthContext';
 import {MessageProvider} from './context/MessageContext';
 import * as Font from 'expo-font';
 
+
 const loadFonts = async () => {
   await Font.loadAsync({
     'Montserrat-Regular': require('./assets/fonts/Montserrat-Regular.ttf'),
@@ -32,10 +33,8 @@ const loadFonts = async () => {
   });
 };
 
-// Load fonts before rendering the app
 loadFonts()
   .then(() => {
-    // Fonts are loaded, render your app
     renderApp();
   })
   .catch((error) => {
@@ -49,13 +48,13 @@ const username = 'admin';
 const password = 'root';
 const [resultsUnauth, setResultsUnauth] = useState([]);
 const [results, setResults] = useState([]);
-
+const { width, height } = useWindowDimensions();
 
 
 useEffect(() => {
   const fetchData = async () => {
     try {
-      // Fetch channel data
+
       const channelResponse = await fetch('http://localhost:8080/api/channels', {
         method: 'GET',
         headers: {
@@ -72,7 +71,6 @@ useEffect(() => {
         for (let i = 0; i < channelData.length; i++) {
           const channel = channelData[i];
 
-          // Add channel object to the formattedResults array
           formattedResults.push({
             name: channel.name,
             onPress: ({ navigation }) =>
@@ -80,7 +78,6 @@ useEffect(() => {
             avatarUrl: null
           });
 
-          // Add channel object to the unauthResults array
           unauthResults.push({
             name: channel.name,
             onPress: ({ navigation }) =>
@@ -89,7 +86,6 @@ useEffect(() => {
           });
         }
 
-        // Fetch user data
         const userResponse = await fetch('http://localhost:8080/api/users', {
           method: 'GET',
           headers: {
@@ -101,7 +97,6 @@ useEffect(() => {
         if (userResponse.ok) {
           const userData = await userResponse.json();
 
-          // Merge user data into formattedResults array
           for (let i = 0; i < userData.length; i++) {
             const user = userData[i];
             formattedResults.push({
@@ -145,18 +140,15 @@ const screens = [
       ),
       headerRight: () => (
         <HeaderButton
-          style={{ marginRight: 20 }}
+          style={{ marginRight: 20 , alignItems: 'center'}}
           title={"Войти"}
           onPress={() => navigation.navigate('Auth')}
         />
       ),
       headerShadowVisible: true,
       headerStyle: {
-        height: 100,
+        height: 90,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        backgroundColor: '#fff',
-        elevation: 3,
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",
@@ -170,9 +162,10 @@ const screens = [
     options: ({ navigation }) => ({
       title: "",
       headerLeft: () => (
-        <TouchableHighlight onPress={() => navigation.navigate('MainUnauth')}>
+        <TouchableHighlight  onPress={() => navigation.navigate('MainUnauth')}>
           <HeaderLogoSvg style={{ marginLeft: 20 }} />
         </TouchableHighlight>
+        
       ),
       headerRight: () => (
 
@@ -183,7 +176,7 @@ const screens = [
             navigation={navigation}
             unauth={true}
             />
-          <View style={{ paddingHorizontal: 193 }} />
+          <View style={{ paddingHorizontal: width* 0.1 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}
@@ -226,7 +219,7 @@ const screens = [
             unauth={true}
             navigation={navigation}
             />
-            <View style={{ paddingHorizontal: 193 }} />
+            <View style={{ paddingHorizontal: width* 0.1 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}
@@ -522,7 +515,7 @@ const screens = [
             navigation={navigation}
             unauth={true}
             />
-          <View style={{ paddingHorizontal: 193 }} />
+           <View style={{ paddingHorizontal: width* 0.1 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}
@@ -562,7 +555,7 @@ const screens = [
             navigation={navigation}
             unauth={true}
             />
-          <View style={{ paddingHorizontal: 193 }} />
+           <View style={{ paddingHorizontal: width* 0.1 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}
@@ -602,7 +595,7 @@ const screens = [
             navigation={navigation}
             unauth={true}
             />
-          <View style={{ paddingHorizontal: 193 }} />
+           <View style={{ paddingHorizontal: width* 0.1 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}

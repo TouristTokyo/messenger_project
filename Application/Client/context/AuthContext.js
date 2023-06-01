@@ -39,6 +39,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const storeCurrentScreen = (screenName) => {
+    AsyncStorage.setItem('currentScreen', screenName);
+  };
+
   const logout = async () => {
     setIsLoggedIn(false);
     setUser(null);
@@ -46,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem('isLoggedIn');
       await AsyncStorage.removeItem('user');
+      await AsyncStorage.removeItem('currentScreen')
    
     } catch (error) {
       console.error('Ошибка при выходе:', error);
@@ -56,12 +61,25 @@ export const AuthProvider = ({ children }) => {
     setUser(updatedUser);
   };
 
+  const getCurrentScreen = async () => {
+    try {
+      const currentScreen = await AsyncStorage.getItem('currentScreen');
+     
+      return currentScreen;
+    } catch (error) {
+      console.error('Error retrieving current screen:', error);
+      return null;
+    }
+  };
+
   const authContextValue = {
     isLoggedIn,
     user,
     login,
     logout,
-    updateUser
+    updateUser,
+    storeCurrentScreen,
+    getCurrentScreen
   };
 
   return (

@@ -4,6 +4,7 @@ import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
 import AuthContext from '../context/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 function AuthScreen({ navigation }) {
   const styles = useStyles();
@@ -13,9 +14,13 @@ function AuthScreen({ navigation }) {
   });
   const isFormValid = inputText.email && inputText.password;
 
-  const { login } = useContext(AuthContext);
+  const { login, storeCurrentScreen } = useContext(AuthContext);
 
-
+  useFocusEffect(
+    React.useCallback(() => {
+        storeCurrentScreen('ChangeEmail')
+    }, [])
+);
   const username = 'admin';
   const password = 'root';
 
@@ -32,7 +37,7 @@ function AuthScreen({ navigation }) {
       password: inputText.password
     };
 
-    fetch('http://localhost:8080/api/login', {
+    fetch('https://backend-web-service-test.onrender.com/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -45,6 +50,7 @@ function AuthScreen({ navigation }) {
           response.json().then(data => {
             login(data); 
           });
+          navigation.navigate('MainAuth');
         } else {
           response.json().then(errorData => {
             const errorMessage = errorData.message || 'Login failed';
