@@ -108,7 +108,11 @@ export default function ChannelScreen({ navigation, route }) {
             console.log('Ошибка при подгрузке никнейма', error);
         }
     };
-
+    const handleLogout = () => {
+        console.log('trigger');
+        logout();
+        window.location.reload();
+      }
     const isFormValid = inputText.nickname;
     const buttons = [
         {
@@ -148,11 +152,6 @@ export default function ChannelScreen({ navigation, route }) {
             alert('Ошибка при подключении к серверу', error);
         }
     };
-
-    const handleLogout = () => {
-        logout();
-        window.location.reload();
-      }
 
     const imageSource = selectedImage || (user && user.image);
     const handleCreateChannel = async () => {
@@ -201,7 +200,7 @@ export default function ChannelScreen({ navigation, route }) {
                 <Text style={{ color: '#000000', fontSize:  Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{userText ? userText : user.name}</Text>
                 {buttons.map((data, index) => (
                     <View style={{ width: '70%' }} key={index}>
-                        <BorderButton key={index} data={data} />
+                        <BorderButton  data={data} />
                     </View>
                 ))}
             </View>
