@@ -215,7 +215,7 @@ export default function MainAuthScreen({ navigation }) {
 
                     own: message.sender?.name === user.name,
                     from: message.chat
-                    ? message.sender?.name === user.name
+                    ? message.chat.sender?.name === user.name
                       ? message.chat.recipient.name
                       : message.chat.sender.name
                     : message.channel.name,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     View,
     Text,
@@ -13,10 +13,11 @@ import HeaderButton from "../buttons/headerButton";
 import DataInput from "../inputs/textInput/textInput";
 import axios from 'axios';
 import useStyles from "./settingsBody.module";
+import AuthContext from "../../context/AuthContext";
 
 
 export default function SettingsBody({ data }) {
-    const { role, name, onPress, containerStyle, creator, channelId } = data;
+    const { role, name, onPress, containerStyle, creator, channelId, admin } = data;
     const [isHovered, setIsHovered] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [inputText, setInputText] = useState({
@@ -28,8 +29,12 @@ export default function SettingsBody({ data }) {
     const username = 'admin';
     const password = 'root';
     const isFormValid = inputText.role;
+    const {user} = useContext(AuthContext);
 
     const handleDelete = async () => {
+      if (user.name == name || admin && !creator){
+        alert('Ошибка при попытки удаления пользователя:');
+      }else{
         try {
           const url = `https://linking-api.onrender.com/api/channels/${channelId.channel.id}/leave?username=${name}`;
           const response = await axios.delete(url, {
@@ -41,6 +46,7 @@ export default function SettingsBody({ data }) {
         } catch (error) {
           alert('Ошибка при попытки удаления пользователя:', error);
         }
+      }
       };
 
     const handleAdminClick = () => {

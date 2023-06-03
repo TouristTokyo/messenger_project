@@ -154,6 +154,7 @@ export default function SettingsScreen({ navigation, route }) {
                 role: channel.role.name,
                 onRoleChange: handleRoleChange,
                 creator: channel.role.creator,
+                admin: channel.role.admin,
                 channelId: channelData
               }}
               

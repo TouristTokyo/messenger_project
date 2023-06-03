@@ -11,7 +11,7 @@ import MessageBody from '../components/messageBody/messageBody';
 export default function ChannelUnauthScreen({ navigation, route }) {
     const styles = useStyles();
     const { channelId } = route.params;
-    const [ setShouldUseFocusEffect] = useState(false);
+    const [shouldUseFocusEffect, setShouldUseFocusEffect] = useState(false);
     
     useEffect(() => {
         setShouldUseFocusEffect(false);
