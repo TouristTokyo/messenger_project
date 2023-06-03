@@ -27,7 +27,7 @@ public class SecurityConfig {
         http.csrf().disable()
                 .cors().and()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/channels", "/api/chats", "/api/login", "/api/register").permitAll()
+                .requestMatchers("/api/channels", "/api/login", "/api/register").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
