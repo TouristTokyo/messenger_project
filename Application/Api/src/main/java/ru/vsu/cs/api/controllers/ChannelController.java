@@ -46,7 +46,7 @@ public class ChannelController {
     }
 
     @GetMapping
-    @Operation(summary = "Получение всех канналов")
+    @Operation(summary = "Получение всех каналов")
     public List<ChannelSearchDto> getChannels() {
         return channelService.getAll().stream().map(Mapper::convertToChannelDto).toList();
     }

@@ -110,6 +110,10 @@ export default function ChannelScreen({ navigation, route }) {
     };
 
     const isFormValid = inputText.nickname;
+    const handleLogout = () => {
+        logout();
+        window.location.reload();
+      }
     const buttons = [
         {
             onPress: ({ }) => navigation.navigate('Profile'),
@@ -149,10 +153,7 @@ export default function ChannelScreen({ navigation, route }) {
         }
     };
 
-    const handleLogout = () => {
-        logout();
-        window.location.reload();
-      }
+   
 
     const imageSource = selectedImage || (user && user.image);
     const handleCreateChannel = async () => {
