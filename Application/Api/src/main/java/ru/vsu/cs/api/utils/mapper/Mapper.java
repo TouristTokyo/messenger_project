@@ -13,6 +13,10 @@ import java.util.List;
 public class Mapper {
     public static UserResponseDto convertToUserResponseDto(User user, List<Chat> chats, List<Message> savedMessages,
                                                            List<Channel> channels) {
+        if (user == null || savedMessages == null || channels == null) {
+            return null;
+        }
+
         UserResponseDto userResponseDto = new UserResponseDto();
 
         userResponseDto.setId(user.getId());
@@ -47,6 +51,10 @@ public class Mapper {
     }
 
     public static ChatMessageDto convertToChatMessageDto(Message message) {
+        if (message == null) {
+            return null;
+        }
+
         ChatMessageDto chatMessageDto = new ChatMessageDto();
 
         chatMessageDto.setId(message.getId());
@@ -60,6 +68,10 @@ public class Mapper {
 
     public static ChannelResponseDto convertToChannelResponseDto(Channel channel, List<Member> members,
                                                                  List<Message> messages) {
+        if (channel == null || messages == null || members == null) {
+            return null;
+        }
+
         ChannelResponseDto channelResponseDto = new ChannelResponseDto();
 
         channelResponseDto.setChannel(convertToChannelSupportingDto(channel));
@@ -71,6 +83,10 @@ public class Mapper {
     }
 
     public static ChannelMessageDto convertToChannelMessageDto(Message message) {
+        if (message == null) {
+            return null;
+        }
+
         ChannelMessageDto channelMessageDto = new ChannelMessageDto();
 
         channelMessageDto.setId(message.getId());
@@ -83,6 +99,10 @@ public class Mapper {
     }
 
     public static ChannelSearchDto convertToChannelDto(Channel channel) {
+        if (channel == null) {
+            return null;
+        }
+
         ChannelSearchDto channelSearchDto = new ChannelSearchDto();
 
         channelSearchDto.setId(channel.getId());
@@ -92,6 +112,10 @@ public class Mapper {
     }
 
     public static ChatSearchDto convertToChatSearchDto(User user) {
+        if (user == null) {
+            return null;
+        }
+
         ChatSearchDto chatSearchDto = new ChatSearchDto();
 
         chatSearchDto.setName(user.getName());
@@ -102,6 +126,10 @@ public class Mapper {
 
 
     private static ChatSupportingDto convertToChatSupportingDto(Chat chat) {
+        if (chat == null) {
+            return null;
+        }
+
         ChatSupportingDto chatSupportingDto = new ChatSupportingDto();
 
         chatSupportingDto.setId(chat.getId());
@@ -112,6 +140,9 @@ public class Mapper {
     }
 
     private static UserSupportingDto convertToUserSupportingDto(User user) {
+        if (user == null) {
+            return null;
+        }
         UserSupportingDto userSupportingDto = new UserSupportingDto();
 
         userSupportingDto.setId(user.getId());
@@ -122,6 +153,10 @@ public class Mapper {
     }
 
     private static ChannelSupportingDto convertToChannelSupportingDto(Channel channel) {
+        if (channel == null) {
+            return null;
+        }
+
         ChannelSupportingDto channelSupportingDto = new ChannelSupportingDto();
 
         channelSupportingDto.setId(channel.getId());
@@ -131,6 +166,10 @@ public class Mapper {
     }
 
     private static RoleSupportingDto convertToRoleSupportingDto(Role role) {
+        if (role == null) {
+            return null;
+        }
+
         RoleSupportingDto roleSupportingDto = new RoleSupportingDto();
 
         roleSupportingDto.setName(role.getName());
@@ -141,6 +180,10 @@ public class Mapper {
     }
 
     private static MemberSupportingDto convertToMemberSupportingDto(Member member) {
+        if (member == null) {
+            return null;
+        }
+
         MemberSupportingDto memberSupportingDto = new MemberSupportingDto();
 
         memberSupportingDto.setUser(convertToUserSupportingDto(member.getUser()));
@@ -150,6 +193,10 @@ public class Mapper {
     }
 
     private static SavedMessageSupportingDto convertToSavedMessageSupportingDto(Message message) {
+        if (message == null) {
+            return null;
+        }
+
         SavedMessageSupportingDto savedMessageSupportingDto = new SavedMessageSupportingDto();
 
         savedMessageSupportingDto.setId(message.getId());
