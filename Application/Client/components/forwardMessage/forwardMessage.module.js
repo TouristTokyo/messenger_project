@@ -1,0 +1,85 @@
+import { StyleSheet, useWindowDimensions } from 'react-native-web';
+
+export default function useStyles() {
+  const { width, height } = useWindowDimensions();
+  return StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+    },
+    avatar: {
+      alignSelf: 'flex-start',
+    },
+    messageBox: {
+      marginLeft: 15,
+      flex: 1,
+      backgroundColor: '#E7DEDE',
+      borderLeftWidth: 5,
+      borderLeftColor: '#0076B9',
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      marginBottom: 10,
+      maxWidth: '40%',
+      borderTopRightRadius: 10,
+      borderBottomRightRadius: 10,
+    },
+    ownMessageBox: {
+      backgroundColor: 'rgba(0, 118, 185, 0.35)',
+      borderLeftColor: '#0076B9',
+      borderLeftWidth: 5,
+      marginLeft: 15,
+      flex: 1,
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      marginBottom: 10,
+      maxWidth: '40%',
+      borderTopRightRadius: 10,
+      borderBottomRightRadius: 10,
+    },
+    nickname: {
+      fontSize: Math.min(width * 0.012, height * 0.032),
+      fontFamily: 'Montserrat-Regular',
+      color: 'black',
+      fontWeight: 'bold',
+      marginBottom: 5,
+    },
+    ownNickname: {
+      fontSize: Math.min(width * 0.012, height * 0.032),
+      fontFamily: 'Montserrat-Regular',
+      color: 'black',
+      fontWeight: 'bold',
+      marginBottom: 5,
+    },
+    message: {
+      fontSize: Math.min(width * 0.01, height * 0.03),
+      fontFamily: 'Montserrat-Regular',
+      color: 'black',
+      flexWrap: 'wrap',
+      marginBottom: 10,
+    },
+    ownMessage: {
+      fontSize: Math.min(width * 0.01, height * 0.03),
+      fontFamily: 'Montserrat-Regular',
+      color: 'black',
+      flexWrap: 'wrap',
+      marginBottom: 10,
+    },
+    bubbleTail: {
+      position: 'absolute',
+      bottom: 0,
+      left: -14,
+      width: 5,
+      height: 0,
+      borderStyle: 'solid',
+      borderTopWidth: 10,
+      borderRightWidth: 0,
+      borderBottomWidth: 0,
+      borderLeftWidth: 10,
+      borderTopColor: '#0076B9',
+      borderBottomColor: 'transparent',
+      borderRightColor: 'transparent',
+      borderLeftColor: 'transparent',
+      transform: [{ rotate: '90deg' }],
+    },
+  });
+}

@@ -1,0 +1,96 @@
+package ru.vsu.cs.api.controllers;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import ru.vsu.cs.api.dto.RoleCreationDto;
+import ru.vsu.cs.api.models.Channel;
+import ru.vsu.cs.api.models.Member;
+import ru.vsu.cs.api.models.Role;
+import ru.vsu.cs.api.models.User;
+import ru.vsu.cs.api.services.ChannelService;
+import ru.vsu.cs.api.services.MemberService;
+import ru.vsu.cs.api.services.RoleService;
+import ru.vsu.cs.api.services.UserService;
+import ru.vsu.cs.api.utils.ErrorResponse;
+import ru.vsu.cs.api.utils.exceptions.ChannelException;
+import ru.vsu.cs.api.utils.exceptions.MemberException;
+import ru.vsu.cs.api.utils.exceptions.UserException;
+
+import java.time.LocalDateTime;
+
+@RestController
+@RequestMapping("/api/roles")
+@CrossOrigin
+@Tag(name = "Роли", description = "Методы для работы с ролями")
+public class RoleController {
+    private final MemberService memberService;
+    private final RoleService roleService;
+    private final UserService userService;
+    private final ChannelService channelService;
+
+    @Autowired
+    public RoleController(MemberService memberService, RoleService roleService, UserService userService,
+                          ChannelService channelService) {
+        this.memberService = memberService;
+        this.roleService = roleService;
+        this.userService = userService;
+        this.channelService = channelService;
+    }
+
+    @PutMapping("/update")
+    @Operation(summary = "Создание/Обновление роли")
+    public ResponseEntity<HttpStatus> create(@Valid @RequestBody RoleCreationDto roleCreationDto,
+                                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+
+        User user = userService.getUserByName(roleCreationDto.getUsername());
+        Channel channel = channelService.getChannelByName(roleCreationDto.getChannelName());
+
+        Member member = memberService.getMemberByUserAndChannel(user, channel);
+
+        Role role = member.getRole();
+
+        role = roleService.update(role.getId(), new Role(roleCreationDto.getName(), roleCreationDto.getIsAdmin(), false));
+
+        memberService.updateRole(member, role);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @ExceptionHandler()
+    private ResponseEntity<ErrorResponse> memberException(MemberException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler()
+    private ResponseEntity<ErrorResponse> channelException(ChannelException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> userException(UserException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+
+}
