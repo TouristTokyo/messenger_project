@@ -16,7 +16,18 @@ const MessageBody = ({ data, currentUser }) => {
   const password = 'root';
   const {user} = useContext(AuthContext);
   const styles = useStyles();
-  const { addForwardedMessage } = useContext(MessageContext);
+  const forwardIcon = isFocused ? <ForwardFocusSvg /> : <ForwardSvg />;
+
+  const messageBoxStyles = [
+    styles.messageBox,
+    own ? styles.ownMessageBox : styles.box,
+    {
+      borderTopRightRadius: own ? 10 : 10,
+      borderBottomRightRadius: own ? 0 : 10,
+      borderBottomLeftRadius: own ? 10 : 10,
+      borderTopLeftRadius: own ? 10 : 0,
+    },
+  ];
 
   const handleForwardPress = async () => {
     setIsFocused(prevState => !prevState);
@@ -26,7 +37,7 @@ const MessageBody = ({ data, currentUser }) => {
     };
 
     try {
-      const response = await fetch('https://backend-web-service-test.onrender.com/api/saved_message/save', {
+      const response = await fetch('https://linking-api.onrender.com/api/saved_message/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,22 +52,9 @@ const MessageBody = ({ data, currentUser }) => {
         alert('Не удалось сохранить сообщение');
       }
     } catch (error) {
-      console.log('Ошибка при сохранении сообщения:', error);
+      console.log('Ошибка при сохранении сообщения', error);
     }
   };
-
-  const forwardIcon = isFocused ? <ForwardFocusSvg /> : <ForwardSvg />;
-
-  const messageBoxStyles = [
-    styles.messageBox,
-    own ? styles.ownMessageBox : styles.box,
-    {
-      borderTopRightRadius: own ? 10 : 10,
-      borderBottomRightRadius: own ? 0 : 10,
-      borderBottomLeftRadius: own ? 10 : 10,
-      borderTopLeftRadius: own ? 10 : 0,
-    },
-  ];
 
   return (
     <View style={own ? styles.ownContainer : styles.container}>

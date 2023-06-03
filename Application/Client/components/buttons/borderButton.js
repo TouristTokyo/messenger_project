@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableHighlight, Text } from 'react-native-web';
+import { TouchableHighlight, Text } from 'react-native-web';
 import useStyles from './borderButton.module';
 
 export default function BorderButton({ data }) {

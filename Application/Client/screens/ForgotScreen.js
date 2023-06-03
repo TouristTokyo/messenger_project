@@ -12,8 +12,6 @@ function ForgotScreen({ navigation }) {
     confirmPassword: '',
     code: ''
   });
-
-  
   const username = 'admin';
   const password = 'root';
   const [receivedCode, setReceivedCode] = useState('');
@@ -27,7 +25,6 @@ function ForgotScreen({ navigation }) {
       inputText.newPassword !== inputText.confirmPassword || inputText.code != receivedCode
     );
   };
-
   const isDisabled = () => {
     return !inputText.email;
   };
@@ -39,7 +36,7 @@ function ForgotScreen({ navigation }) {
       return;
     }
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `https://backend-web-service-test.onrender.com/api/send_email?email=${email}`;
+    const apiUrl = `https://linking-api.onrender.com/api/send_email?email=${email}`;
 
     fetch(apiUrl, {
       method: 'GET',
@@ -58,13 +55,13 @@ function ForgotScreen({ navigation }) {
         }
       })
       .catch((error) => {
-        alert('Ошибка при подключении к серверу:', error);
+        alert('Ошибка при подключении к серверу', error);
       });
   };
   
   const getUserById = async (email) => {
     try {
-      const response = await fetch(`https://backend-web-service-test.onrender.com/api/users/email?email=${email}`, {
+      const response = await fetch(`https://linking-api.onrender.com/api/users/email?email=${email}`, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
@@ -77,7 +74,7 @@ function ForgotScreen({ navigation }) {
         alert('Пользователь с указанной почтой не найден');
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
   
@@ -86,7 +83,7 @@ function ForgotScreen({ navigation }) {
       const queryParams = new URLSearchParams({
         new_password: inputText.newPassword,
       });
-      const response = await fetch(`https://backend-web-service-test.onrender.com/api/users/${userId}/update/password?${queryParams.toString()}`, {
+      const response = await fetch(`https://linking-api.onrender.com/api/users/${userId}/update/password?${queryParams.toString()}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +102,7 @@ function ForgotScreen({ navigation }) {
         });
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
   

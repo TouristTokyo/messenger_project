@@ -5,7 +5,6 @@ import useStyles from './styles/mainAuthScreen.module';
 import HeaderButton from '../components/buttons/headerButton';
 import ChangeAvatar from '../components/Avatar/ChangeAvatar/changeAvatar';
 import BackSvg from '../assets/icons/backSvg';
-import CrossSvg from '../assets/icons/crossSvg';
 import AddSvg from '../assets/icons/addSvg';
 import NicknameInput from '../components/inputs/nicknameInput/nicknameInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,7 +15,7 @@ import { setProfileNickname, getProfileNickname, getEmail } from '../context/Asy
 export default function ProfileScreen({ navigation }) {
   const styles = useStyles();
   const { selectedImage } = useContext(ImageContext);
-  const { user, storeCurrentScreen} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [inputText, setInputText] = useState({
     name: user?.name || '', 
   });
@@ -28,7 +27,6 @@ export default function ProfileScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       fetchEmail();
-      storeCurrentScreen('Profile')
     }, [user])
   );
 
@@ -59,7 +57,7 @@ export default function ProfileScreen({ navigation }) {
   const handleEmailLayout = () => {
     const emailContainerWidth = emailContainerRef.current.offsetWidth;
     const desiredMaxWidth = 300;
-    const desiredMaxFontSize = Math.min(width * 0.02, height * 0.043);
+    const desiredMaxFontSize = Math.min(width * 0.02, height * 0.045);
     const emailFontSize = Math.min(desiredMaxFontSize, (desiredMaxWidth / emailContainerWidth) * desiredMaxFontSize);
     setEmailFontSize(emailFontSize);
   };
@@ -108,7 +106,7 @@ export default function ProfileScreen({ navigation }) {
     try {
       const id = user?.id; 
       if (id) {
-        const response = await fetch(`https://backend-web-service-test.onrender.com/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
+        const response = await fetch(`https://linking-api.onrender.com/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -122,7 +120,7 @@ export default function ProfileScreen({ navigation }) {
         }
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
 
@@ -169,7 +167,7 @@ export default function ProfileScreen({ navigation }) {
             <Text
               style={{
                 color: '#000000',
-                fontSize: Math.min(width * 0.02, height * 0.043),
+                fontSize: emailFontSize,
                 textAlign: 'center',
                 fontFamily: 'Montserrat-Regular',
                 marginBottom: 13,
@@ -182,7 +180,7 @@ export default function ProfileScreen({ navigation }) {
         <View style = {{alignItems: 'center', width: '100%', marginLeft: 20}}>
           <HeaderButton title={'Изменить почту'} onPress={() => navigation.navigate('ChangeEmail')} />
         </View>
-        <View style={{ marginBottom: 13, alignItems: 'center', width: '100%', marginLeft: 20}}>
+        <View style={{ marginBottom: 13,alignItems: 'center', width: '100%', marginLeft: 20}}>
           <HeaderButton title={'Изменить пароль'} onPress={() => navigation.navigate('ChangePassword')} />
         </View>
       </View>

@@ -1,6 +1,4 @@
 import { StyleSheet, useWindowDimensions } from 'react-native-web';
-import React, { useEffect, useState } from 'react';
-
 
 export default function useStyles() {
 
@@ -90,7 +88,7 @@ export default function useStyles() {
       backgroundColor: '#FFFFFF',
       borderRadius: 35,
       width: '50%',
-      height: '10%',
+      //height: '10%',
       overflow: 'hidden',
       position: 'absolute',
       top: 40, 
@@ -105,7 +103,7 @@ export default function useStyles() {
       backgroundColor: '#FFFFFF',
       borderRadius: 35,
       width: '50%',
-      height: '10%',
+      //height: '10%',
       overflow: 'hidden',
       position: 'absolute',
       top: 40,
@@ -205,8 +203,8 @@ export default function useStyles() {
     profileSettingsContainer: {
       backgroundColor: '#FFFFFF',
       borderRadius: 35,
-      width: width * 0.25,
-      height: height *0.67,
+      width: width * 0.24,
+      height: height *0.6,
       overflow: 'hidden',
       position: 'absolute',
       shadowColor: '#000',
@@ -216,14 +214,14 @@ export default function useStyles() {
       elevation: 7,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingTop: height * 0.1, 
-      paddingBottom: height * 0.1,
+      paddingTop: 30,
+      paddingBottom: 30,
       alignSelf: 'stretch',
       marginTop: 'auto',
       marginBottom: 'auto',
       left: '50%',
-      
-      transform: [{ translateX: '-50%' }, ],
+      top: '50%',
+      transform: [{ translateX: '-50%' }, { translateY: '-50%' }],
     },
 
 

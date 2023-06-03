@@ -20,7 +20,7 @@ export default function useStyles(disabled) {
     buttonText: {
       fontFamily: 'Montserrat-Regular',
       color: '#000000',
-      fontSize: Math.min(width * 0.015, height * 0.05),
+      fontSize: Math.min(width * 0.015, height * 0.06),
       textAlign: 'center',
     },
   });

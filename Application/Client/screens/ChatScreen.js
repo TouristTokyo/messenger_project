@@ -1,30 +1,29 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableHighlight, Modal, TouchableOpacity, ScrollView,  ActivityIndicator  } from 'react-native-web';
+import { View, Text, TouchableHighlight, Modal, ScrollView, useWindowDimensions } from 'react-native-web';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/mainAuthScreen.module';
-import SearchInput from '../components/inputs/searchInput/searchInput';
 import HeaderButton from '../components/buttons/headerButton';
 import DataInput from '../components/inputs/textInput/textInput';
 import SearchBody from '../components/searchBodies/searchBody';
 import ShowAvatar from '../components/Avatar/ShowAvatar/showAvatar';
 import BorderButton from '../components/buttons/borderButton';
-import ForwardMessage from '../components/forwardMessage/forwardMessage';
 import MessageBody from '../components/messageBody/messageBody';
 import MessageInput from '../components/inputs/messageInput/messageInput';
 import { ImageContext } from '../context/ImageContext';
 import AuthContext from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-import { setProfileNickname, getProfileNickname } from '../context/AsyncStorageUtil';
+import { getProfileNickname } from '../context/AsyncStorageUtil';
 
 export default function ChatScreen({ navigation, route }) {
+  const { width, height } = useWindowDimensions();
   const { chatUser } = route.params;
   const styles = useStyles();
   const [showPopup, setShowPopup] = useState(false);
   const [inputText, setInputText] = useState({
     nickname: '',
   });
-  const { user, storeCurrentScreen } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const { logout } = useContext(AuthContext);
   const { selectedImage } = useContext(ImageContext);
   const [messages, setMessages] = useState([]);
@@ -33,10 +32,9 @@ export default function ChatScreen({ navigation, route }) {
   const password = 'root';
   const [userText, setUserText] = useState('');
 
-
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('https://backend-web-service-test.onrender.com/api/channels/create', {
+      const response = await fetch('https://linking-api.onrender.com/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,13 +54,14 @@ export default function ChatScreen({ navigation, route }) {
         alert('Не удалось создать канал');
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
   const [shouldFetchChatData, setShouldFetchChatData] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
+      fetchProfileNickname();
       setShouldFetchChatData(true);
     }, [])
   );
@@ -86,7 +85,7 @@ export default function ChatScreen({ navigation, route }) {
   const fetchChatData = async () => {
     const firstUser = user.name;
     const secondUser = chatUser.name;
-    const url = `https://backend-web-service-test.onrender.com/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
+    const url = `https://linking-api.onrender.com/api/chats/usernames?first_user=${firstUser}&second_user=${secondUser}`;
   
     try {
       const response = await fetch(url, {
@@ -118,7 +117,6 @@ export default function ChatScreen({ navigation, route }) {
     window.location.reload();
   }
  
-
   const fetchProfileNickname = async () => {
     try {
       const nickname = await getProfileNickname();
@@ -126,18 +124,9 @@ export default function ChatScreen({ navigation, route }) {
         setUserText(nickname);
       }
     } catch (error) {
-      console.log('Ошибка при подгрузке никнейма:', error);
+      console.log('Ошибка при подгрузке никнейма', error);
     }
   };
-
-  useEffect(() => {
-    loadChatMessages();
-  }, []);
-
-  useEffect(() => {
-    saveChatMessages();
-  }, [messages]);
-
 
   const imageSource = selectedImage || (user && user.image);
   const isFormValid = inputText.nickname;
@@ -152,27 +141,6 @@ export default function ChatScreen({ navigation, route }) {
     },
   ];
 
-
-
-  const saveChatMessages = async () => {
-    try {
-      await AsyncStorage.setItem('chatMessages', JSON.stringify(messages));
-    } catch (error) {
-      console.error('Ошибка при сохранении сообщений чата:', error);
-    }
-  };
-
-  const loadChatMessages = async () => {
-    try {
-      const savedMessages = await AsyncStorage.getItem('chatMessages');
-      if (savedMessages) {
-        setMessages(JSON.parse(savedMessages));
-      }
-    } catch (error) {
-      console.error('Ошибка при подгрузке сообщений чата:', error);
-    }
-  };
-
   return (
     <View style={styles.containerMain}>
       <View style={styles.barContainer}>
@@ -186,7 +154,7 @@ export default function ChatScreen({ navigation, route }) {
       </View>
       <View style={styles.profileContainer}>
         <ShowAvatar imageUrl={imageSource} profile={true} />
-        <Text style={{ color: '#000000', fontSize: 48, textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{userText ? userText : user.name}</Text>
+        <Text style={{ color: '#000000', fontSize: Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{userText ? userText : user.name}</Text>
         {buttons.map((data, index) => (
           <View style={{ width: '70%' }} key={index}>
             <BorderButton data={data} />

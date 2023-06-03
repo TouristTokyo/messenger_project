@@ -1,22 +1,7 @@
 import { StyleSheet } from 'react-native-web';
-import React, { useEffect, useState } from 'react';
 
 export default function useStyles() {
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      setWindowHeight(window.innerHeight);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+ 
   return StyleSheet.create({
     container: {
       flex: 1,

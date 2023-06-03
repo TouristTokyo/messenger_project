@@ -1,10 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TouchableHighlight, Alert } from 'react-native-web';
+import { View, Text, TouchableHighlight} from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
 import AuthContext from '../context/AuthContext';
-import { useFocusEffect } from '@react-navigation/native';
 
 function AuthScreen({ navigation }) {
   const styles = useStyles();
@@ -13,14 +12,7 @@ function AuthScreen({ navigation }) {
     email: ''
   });
   const isFormValid = inputText.email && inputText.password;
-
-  const { login, storeCurrentScreen } = useContext(AuthContext);
-
-  useFocusEffect(
-    React.useCallback(() => {
-        storeCurrentScreen('ChangeEmail')
-    }, [])
-);
+  const { login } = useContext(AuthContext);
   const username = 'admin';
   const password = 'root';
 
@@ -37,7 +29,7 @@ function AuthScreen({ navigation }) {
       password: inputText.password
     };
 
-    fetch('https://backend-web-service-test.onrender.com/api/login', {
+    fetch('https://linking-api.onrender.com/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -50,7 +42,6 @@ function AuthScreen({ navigation }) {
           response.json().then(data => {
             login(data); 
           });
-          navigation.navigate('MainAuth');
         } else {
           response.json().then(errorData => {
             const errorMessage = errorData.message || 'Login failed';
@@ -59,7 +50,7 @@ function AuthScreen({ navigation }) {
         }
       })
       .catch(error => {
-        alert('Ошибка подключения к серверу:', error);
+        alert('Ошибка подключения к серверу', error);
       });
   };
 

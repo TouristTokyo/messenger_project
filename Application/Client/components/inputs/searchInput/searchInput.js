@@ -9,9 +9,13 @@ import { useNavigation, useIsFocused } from '@react-navigation/native';
 export default function SearchInput({ value, setValue, navigation, unauth, ...data }) {
   const [isFocused, setIsFocused] = useState(false);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const isComponentFocused = useIsFocused(); // Check if the component is focused
-
+  const isComponentFocused = useIsFocused(); 
+  const styles = useStyles();
   const navigationt = useNavigation();
+  const username = 'admin';
+  const password = 'root';
+  const [results, setResults] = useState([]);
+  const [resultsUnauth, setResultsUnauth] = useState([]);
 
   const handlePress = (channelId) => {
     navigationt.navigate('Channel', { channelId });
@@ -25,12 +29,10 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
     navigationt.navigate('ChannelUnauth', { channelId });
   };
 
-  const styles = useStyles();
-
   const handleFocus = () => {
     setIsFocused(true);
     setIsDropdownVisible(true);
-    fetchData(); // Fetch data when the input is in focus
+    fetchData(); 
   };
 
   const handleCrossSvgPress = () => {
@@ -39,14 +41,9 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
     setIsDropdownVisible(false);
   };
 
-  const username = 'admin';
-  const password = 'root';
-  const [results, setResults] = useState([]);
-  const [resultsUnauth, setResultsUnauth] = useState([]);
-
   const fetchData = async () => {
     try {
-      const channelResponse = await fetch('https://backend-web-service-test.onrender.com/api/channels', {
+      const channelResponse = await fetch('https://linking-api.onrender.com/api/channels', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +72,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
           });
         }
 
-        const userResponse = await fetch('https://backend-web-service-test.onrender.com/api/users', {
+        const userResponse = await fetch('https://linking-api.onrender.com/api/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -105,7 +102,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
         alert('Ошибка при подгрузке данных с сервера');
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Ошибка при подгрузке данных с сервера', error);
     }
   };
 

@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import React, { useContext } from 'react';
 import { View, Image } from 'react-native-web';
 import useStyles from './showAvatar.module';
-import { Text } from 'react-native';
 import PlusSvg from '../../../assets/icons/plusSvg';
 import { ImageContext } from '../../../context/ImageContext';
 import AuthContext from '../../../context/AuthContext';
@@ -10,7 +8,7 @@ import AuthContext from '../../../context/AuthContext';
 export default function ShowAvatar({ imageUrl, profile, }) {
   const styles = useStyles({ profile });
   const { selectedImage } = useContext(ImageContext);
-  const { user } = useContext(AuthContext); // Use `useContext` instead of `useState`
+  const { user } = useContext(AuthContext); 
 
   const renderAvatar = () => {
     if (imageUrl && imageUrl.startsWith('data:image')) {

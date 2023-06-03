@@ -12,7 +12,6 @@ export default function useStyles() {
           width: width * 0.15,
           paddingHorizontal: 15,
           
-          
         },
         text: {
           fontFamily: 'Montserrat-Regular',

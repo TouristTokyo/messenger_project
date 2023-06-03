@@ -2,23 +2,17 @@ import { View} from 'react-native-web';
 import LogoSvg from '../assets/icons/logoSvg';
 import HeaderButton from '../components/buttons/headerButton';
 import useStyles from './styles/greetingsScreen.module';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 
 function GreetingsScreen({ navigation }) {
   const styles = useStyles();
-  const { isLoggedIn, getCurrentScreen } = useContext(AuthContext);
+  const { isLoggedIn } = useContext(AuthContext);
 
-  useEffect(() => {
-    const fetchCurrentScreen = async () => {
-      if (isLoggedIn) {
-        const screenName = await getCurrentScreen();
-        navigation.navigate(screenName);
-      }
-    };
-
-    fetchCurrentScreen();
-  }, [isLoggedIn, getCurrentScreen, navigation]);
+  if (isLoggedIn) {
+    navigation.navigate('MainAuth');
+    return null;
+  }
   return (
     <View style={styles.container}>
       <LogoSvg />

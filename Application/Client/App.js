@@ -8,7 +8,7 @@ import RegScreen from './screens/RegScreen';
 import ForgotScreen from './screens/ForgotScreen';
 import HeaderLogoSvg from './assets/icons/headerLogoSvg';
 import HeaderButton from './components/buttons/headerButton';
-import { Button, TouchableHighlight, View, useWindowDimensions } from 'react-native-web';
+import { Button, TouchableHighlight, View } from 'react-native-web';
 import SearchInput from './components/inputs/searchInput/searchInput';
 import SearchBody from './components/searchBodies/searchBody';
 import MainAuthScreen from './screens/MainAuthScreen';
@@ -23,7 +23,7 @@ import { ImageProvider } from './context/ImageContext';
 import { AuthProvider } from './context/AuthContext';
 import {MessageProvider} from './context/MessageContext';
 import * as Font from 'expo-font';
-
+import { Helmet } from 'react-helmet';
 
 const loadFonts = async () => {
   await Font.loadAsync({
@@ -48,14 +48,15 @@ const username = 'admin';
 const password = 'root';
 const [resultsUnauth, setResultsUnauth] = useState([]);
 const [results, setResults] = useState([]);
-const { width, height } = useWindowDimensions();
 
+useEffect(() => {
+  document.title = 'Linking';
+}, []);
 
 useEffect(() => {
   const fetchData = async () => {
     try {
-
-      const channelResponse = await fetch('http://localhost:8080/api/channels', {
+      const channelResponse = await fetch('https://linking-api.onrender.com/api/channels', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -70,23 +71,20 @@ useEffect(() => {
 
         for (let i = 0; i < channelData.length; i++) {
           const channel = channelData[i];
-
           formattedResults.push({
             name: channel.name,
             onPress: ({ navigation }) =>
-            navigation.navigate('Channel', { channelId: channel.id }),
+            navigation.navigate('Channel', { channelId: channel.channel.id }),
             avatarUrl: null
           });
-
           unauthResults.push({
             name: channel.name,
             onPress: ({ navigation }) =>
-            navigation.navigate('ChannelUnauth', { channelId: channel.id }),
+            navigation.navigate('ChannelUnauth', { channelId: channel.channel.id }),
             avatarUrl: null
           });
         }
-
-        const userResponse = await fetch('http://localhost:8080/api/users', {
+        const userResponse = await fetch('https://linking-api.onrender.com/api/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -96,7 +94,6 @@ useEffect(() => {
 
         if (userResponse.ok) {
           const userData = await userResponse.json();
-
           for (let i = 0; i < userData.length; i++) {
             const user = userData[i];
             formattedResults.push({
@@ -140,15 +137,18 @@ const screens = [
       ),
       headerRight: () => (
         <HeaderButton
-          style={{ marginRight: 20 , alignItems: 'center'}}
+          style={{ marginRight: 20 }}
           title={"Войти"}
           onPress={() => navigation.navigate('Auth')}
         />
       ),
       headerShadowVisible: true,
       headerStyle: {
-        height: 90,
+        height: 100,
         borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        backgroundColor: '#fff',
+        elevation: 3,
         justifyContent: "space-between",
         flexDirection: "row",
         alignItems: "center",
@@ -162,10 +162,9 @@ const screens = [
     options: ({ navigation }) => ({
       title: "",
       headerLeft: () => (
-        <TouchableHighlight  onPress={() => navigation.navigate('MainUnauth')}>
+        <TouchableHighlight onPress={() => navigation.navigate('MainUnauth')}>
           <HeaderLogoSvg style={{ marginLeft: 20 }} />
         </TouchableHighlight>
-        
       ),
       headerRight: () => (
 
@@ -176,7 +175,7 @@ const screens = [
             navigation={navigation}
             unauth={true}
             />
-          <View style={{ paddingHorizontal: width* 0.1 }} />
+          <View style={{ paddingHorizontal: 193 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}
@@ -219,7 +218,7 @@ const screens = [
             unauth={true}
             navigation={navigation}
             />
-            <View style={{ paddingHorizontal: width* 0.1 }} />
+            <View style={{ paddingHorizontal: 193 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}
@@ -515,7 +514,7 @@ const screens = [
             navigation={navigation}
             unauth={true}
             />
-           <View style={{ paddingHorizontal: width* 0.1 }} />
+          <View style={{ paddingHorizontal: 193 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}
@@ -555,7 +554,7 @@ const screens = [
             navigation={navigation}
             unauth={true}
             />
-           <View style={{ paddingHorizontal: width* 0.1 }} />
+          <View style={{ paddingHorizontal: 193 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}
@@ -595,7 +594,7 @@ const screens = [
             navigation={navigation}
             unauth={true}
             />
-           <View style={{ paddingHorizontal: width* 0.1 }} />
+          <View style={{ paddingHorizontal: 193 }} />
           <HeaderButton
             style={{ marginLeft: 10 }}
             title={"Войти"}

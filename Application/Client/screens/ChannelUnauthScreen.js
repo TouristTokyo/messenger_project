@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableHighlight, Modal, TouchableOpacity, ScrollView, TextInput } from 'react-native-web';
+import { View, Text, TouchableHighlight, ScrollView } from 'react-native-web';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/mainAuthScreen.module';
 import { useFocusEffect } from '@react-navigation/native';
 import HeaderButton from '../components/buttons/headerButton';
-
 import MessageBody from '../components/messageBody/messageBody';
-import AuthContext from '../context/AuthContext';
+
 
 
 export default function ChannelUnauthScreen({ navigation, route }) {
     const styles = useStyles();
     const { channelId } = route.params;
-    const [shouldUseFocusEffect, setShouldUseFocusEffect] = useState(false);
+    const [ setShouldUseFocusEffect] = useState(false);
     
     useEffect(() => {
         setShouldUseFocusEffect(false);
@@ -47,7 +46,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
     const [channelText, setChannelText] = useState('');
     const fetchChannelData = async () => {
         try {
-            const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/${channelId}`, {
+            const response = await fetch(`https://linking-api.onrender.com/api/channels/${channelId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

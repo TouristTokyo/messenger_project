@@ -1,8 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, TouchableHighlight, ScrollView } from 'react-native';
-import CreateSvg from '../assets/icons/createSvg';
+import React, { useState, useContext } from 'react';
+import { View, TouchableHighlight, ScrollView } from 'react-native';
 import useStyles from './styles/mainAuthScreen.module';
-import SearchInput from '../components/inputs/searchInput/searchInput';
 import HeaderButton from '../components/buttons/headerButton';
 import BackSvg from '../assets/icons/backSvg';
 import SettingsBody from '../components/settingsBody/settingsBody';
@@ -12,11 +10,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import AuthContext from '../context/AuthContext';
 
-
-
 export default function SettingsScreen({ navigation, route }) {
   const { channelId } = route.params;
-  const { user, storeCurrentScreen } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const styles = useStyles();
   const [isAdmin, setIsAdmin] = useState(false);
   const [role, setRole] = useState('');
@@ -36,7 +32,7 @@ export default function SettingsScreen({ navigation, route }) {
   });
   const fetchChannelData = async () => {
     try {
-      const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/${channelId}`, {
+      const response = await fetch(`https://linking-api.onrender.com/api/channels/${channelId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -56,18 +52,15 @@ export default function SettingsScreen({ navigation, route }) {
         setIsAdmin(isCreator);
       } else {
         alert('Не удалось получить данные о канале, возможно он больше не существует');
-
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
 
-  
-  
   const handleDeleteChannel = async () => {
     try {
-      const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/delete/${channelId}`, {
+      const response = await fetch(`https://linking-api.onrender.com/api/channels/delete/${channelId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -82,11 +75,10 @@ export default function SettingsScreen({ navigation, route }) {
         alert('Не удалось удалить канал');
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
   
-
   const handleRoleChange = async (newRole) => {
     setRole(newRole);
     try {
@@ -100,7 +92,7 @@ export default function SettingsScreen({ navigation, route }) {
     if (isEditingNickname) {
       setIsEditingNickname(false);
       try {
-        const response = await fetch(`https://backend-web-service-test.onrender.com/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
+        const response = await fetch(`https://linking-api.onrender.com/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -127,7 +119,7 @@ export default function SettingsScreen({ navigation, route }) {
           alert('Не удалось обновить имя канала');
         }
       } catch (error) {
-        alert('Ошибка при подключении к серверу:', error);
+        alert('Ошибка при подключении к серверу', error);
       }
     } else {
       setIsEditingNickname(true);
@@ -171,7 +163,7 @@ export default function SettingsScreen({ navigation, route }) {
       </View>
 
       <View style={styles.topLeft}>
-        <TouchableHighlight onPress={() => navigation.navigate('Channel', { channelId: channelData.id })}>
+        <TouchableHighlight onPress={() => navigation.navigate('Channel', { channelId: channelId })}>
           <BackSvg />
         </TouchableHighlight>
       </View>

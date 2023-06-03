@@ -1,9 +1,8 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { View, Text, TouchableHighlight, Modal, TouchableOpacity, ScrollView, useWindowDimensions } from 'react-native-web';
+import React, { useState, useContext, useCallback } from 'react';
+import { View, Text, TouchableHighlight, Modal, ScrollView, useWindowDimensions } from 'react-native-web';
 import { useFocusEffect } from '@react-navigation/native';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/mainAuthScreen.module';
-import SearchInput from '../components/inputs/searchInput/searchInput';
 import HeaderButton from '../components/buttons/headerButton';
 import DataInput from '../components/inputs/textInput/textInput';
 import SearchBody from '../components/searchBodies/searchBody';
@@ -12,9 +11,8 @@ import BorderButton from '../components/buttons/borderButton';
 import ForwardMessage from '../components/forwardMessage/forwardMessage';
 import { ImageContext } from '../context/ImageContext';
 import AuthContext from '../context/AuthContext';
-import { MessageContext } from '../context/MessageContext';
 import DeleteSvg from '../assets/icons/deleteSvg';
-import { setProfileNickname, getProfileNickname } from '../context/AsyncStorageUtil';
+import { getProfileNickname } from '../context/AsyncStorageUtil';
 
 
 
@@ -24,7 +22,7 @@ export default function MainAuthScreen({ navigation }) {
   const [inputText, setInputText] = useState({
     nickname: '',
   });
-  const { user, updateUser, logout, storeCurrentScreen } = useContext(AuthContext);
+  const { user, updateUser, logout } = useContext(AuthContext);
   const [userText, setUserText] = useState('');
   const username = 'admin';
   const password = 'root';
@@ -37,7 +35,6 @@ export default function MainAuthScreen({ navigation }) {
     React.useCallback(() => {
       fetchUserData();
       fetchProfileNickname();
-      storeCurrentScreen('MainAuth')
     }, [])
   );
 
@@ -48,7 +45,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch(`https://backend-web-service-test.onrender.com/api/users/${user.id}`, {
+      const response = await fetch(`https://linking-api.onrender.com/api/users/${user.id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -58,13 +55,12 @@ export default function MainAuthScreen({ navigation }) {
 
       if (response.ok) {
         const userData = await response.json();
-        console.log(userData);
         updateUserCallback(userData);
       } else {
         console.log('Не удалось подгрузить данные пользователя');
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
   const fetchProfileNickname = async () => {
@@ -78,7 +74,7 @@ export default function MainAuthScreen({ navigation }) {
   };
   const handleClearForwardedMessages = async () => {
     try {
-      const response = await fetch(`https://backend-web-service-test.onrender.com/api/saved_message/delete_all?user_id=${user?.id}`, {
+      const response = await fetch(`https://linking-api.onrender.com/api/saved_message/delete_all?user_id=${user?.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +90,7 @@ export default function MainAuthScreen({ navigation }) {
 
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
   
@@ -113,7 +109,7 @@ export default function MainAuthScreen({ navigation }) {
 
   const handleCreateChannel = async () => {
     try {
-      const response = await fetch('https://backend-web-service-test.onrender.com/api/channels/create', {
+      const response = await fetch('https://linking-api.onrender.com/api/channels/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +122,6 @@ export default function MainAuthScreen({ navigation }) {
       });
 
       if (response.ok) {
-        const channelResponse = await response.json();
         setShowPopup(false);
         alert('Канал создан');
         window.location.reload();
@@ -134,7 +129,7 @@ export default function MainAuthScreen({ navigation }) {
         alert('Не удалось создать канал');
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
 
@@ -221,8 +216,8 @@ export default function MainAuthScreen({ navigation }) {
                     own: message.sender?.name === user.name,
                     from: message.chat
                     ? message.sender?.name === user.name
-                      ? message.chat.sender.name
-                      : message.chat.recipient.name
+                      ? message.chat.recipient.name
+                      : message.chat.sender.name
                     : message.channel.name,
                      id: message.id
                   }}
