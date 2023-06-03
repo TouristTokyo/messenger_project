@@ -5,7 +5,6 @@ import useStyles from './styles/mainAuthScreen.module';
 import HeaderButton from '../components/buttons/headerButton';
 import ChangeAvatar from '../components/Avatar/ChangeAvatar/changeAvatar';
 import BackSvg from '../assets/icons/backSvg';
-import CrossSvg from '../assets/icons/crossSvg';
 import AddSvg from '../assets/icons/addSvg';
 import NicknameInput from '../components/inputs/nicknameInput/nicknameInput';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,7 +15,7 @@ import { setProfileNickname, getProfileNickname, getEmail } from '../context/Asy
 export default function ProfileScreen({ navigation }) {
   const styles = useStyles();
   const { selectedImage } = useContext(ImageContext);
-  const { user, updateUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [inputText, setInputText] = useState({
     name: user?.name || '', 
   });
@@ -107,7 +106,7 @@ export default function ProfileScreen({ navigation }) {
     try {
       const id = user?.id; 
       if (id) {
-        const response = await fetch(`http://localhost:8080/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
+        const response = await fetch(`https://linking-api.onrender.com/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -121,7 +120,7 @@ export default function ProfileScreen({ navigation }) {
         }
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
 
@@ -158,7 +157,6 @@ export default function ProfileScreen({ navigation }) {
             paddingHorizontal: 10,
             paddingVertical: 15,
             width: width * 0.2,
-            height: height * 0.1,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -179,10 +177,10 @@ export default function ProfileScreen({ navigation }) {
             </Text>
           </View>
         </View>
-        <View>
+        <View style = {{alignItems: 'center', width: '100%', marginLeft: 20}}>
           <HeaderButton title={'Изменить почту'} onPress={() => navigation.navigate('ChangeEmail')} />
         </View>
-        <View style={{ marginBottom: 13 }}>
+        <View style={{ marginBottom: 13,alignItems: 'center', width: '100%', marginLeft: 20}}>
           <HeaderButton title={'Изменить пароль'} onPress={() => navigation.navigate('ChangePassword')} />
         </View>
       </View>

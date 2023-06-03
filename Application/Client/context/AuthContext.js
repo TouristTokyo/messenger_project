@@ -46,9 +46,9 @@ export const AuthProvider = ({ children }) => {
     try {
       await AsyncStorage.removeItem('isLoggedIn');
       await AsyncStorage.removeItem('user');
-   
+      await AsyncStorage.clear(); 
     } catch (error) {
-      console.error('Ошибка при выходе:', error);
+      alert('Ошибка при выходе:', error);
     }
   };
 

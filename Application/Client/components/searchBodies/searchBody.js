@@ -1,18 +1,18 @@
 import React from "react";
-import { View, StyleSheet, Text, TouchableHighlight, Image } from "react-native-web";
+import { View, Text, TouchableHighlight } from "react-native-web";
 import ShowAvatar from "../Avatar/ShowAvatar/showAvatar";
 import DeleteSvg from "../../assets/icons/deleteSvg";
 import useStyles from "./searchBodies.module";
 
 export default function SearchBody({ data }) {
   const [isHovered, setIsHovered] = React.useState(false);
-  const { avatarUrl, username, channelName, onPress, containerStyle, main, id} = data;
+  const { avatarUrl, username, onPress, containerStyle, main, id} = data;
   const name = 'admin';
   const password = 'root';
   const styles = useStyles();
+
   const deleteChat = () => {
-    
-    fetch(`http://localhost:8080/api/chats/delete/${id}`, {
+    fetch(`https://linking-api.onrender.com/api/chats/delete/${id}`, {
       method: "DELETE",
       headers: {
         'Content-Type': 'application/json',
@@ -28,7 +28,7 @@ export default function SearchBody({ data }) {
         }
       })
       .catch(error => {
-        alert("Ошибка при удалении чата:", error);
+        alert("Ошибка при удалении чата", error);
       });
   };
 

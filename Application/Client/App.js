@@ -23,6 +23,7 @@ import { ImageProvider } from './context/ImageContext';
 import { AuthProvider } from './context/AuthContext';
 import {MessageProvider} from './context/MessageContext';
 import * as Font from 'expo-font';
+import { Helmet } from 'react-helmet';
 
 const loadFonts = async () => {
   await Font.loadAsync({
@@ -32,10 +33,8 @@ const loadFonts = async () => {
   });
 };
 
-// Load fonts before rendering the app
 loadFonts()
   .then(() => {
-    // Fonts are loaded, render your app
     renderApp();
   })
   .catch((error) => {
@@ -50,13 +49,14 @@ const password = 'root';
 const [resultsUnauth, setResultsUnauth] = useState([]);
 const [results, setResults] = useState([]);
 
-
+useEffect(() => {
+  document.title = 'Linking';
+}, []);
 
 useEffect(() => {
   const fetchData = async () => {
     try {
-      // Fetch channel data
-      const channelResponse = await fetch('http://localhost:8080/api/channels', {
+      const channelResponse = await fetch('https://linking-api.onrender.com/api/channels', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -71,26 +71,20 @@ useEffect(() => {
 
         for (let i = 0; i < channelData.length; i++) {
           const channel = channelData[i];
-
-          // Add channel object to the formattedResults array
           formattedResults.push({
             name: channel.name,
             onPress: ({ navigation }) =>
-            navigation.navigate('Channel', { channelId: channel.id }),
+            navigation.navigate('Channel', { channelId: channel.channel.id }),
             avatarUrl: null
           });
-
-          // Add channel object to the unauthResults array
           unauthResults.push({
             name: channel.name,
             onPress: ({ navigation }) =>
-            navigation.navigate('ChannelUnauth', { channelId: channel.id }),
+            navigation.navigate('ChannelUnauth', { channelId: channel.channel.id }),
             avatarUrl: null
           });
         }
-
-        // Fetch user data
-        const userResponse = await fetch('http://localhost:8080/api/users', {
+        const userResponse = await fetch('https://linking-api.onrender.com/api/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -100,8 +94,6 @@ useEffect(() => {
 
         if (userResponse.ok) {
           const userData = await userResponse.json();
-
-          // Merge user data into formattedResults array
           for (let i = 0; i < userData.length; i++) {
             const user = userData[i];
             formattedResults.push({

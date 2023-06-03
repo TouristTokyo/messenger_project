@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TouchableHighlight, Alert } from 'react-native-web';
+import { View, Text, TouchableHighlight} from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
@@ -12,10 +12,7 @@ function AuthScreen({ navigation }) {
     email: ''
   });
   const isFormValid = inputText.email && inputText.password;
-
   const { login } = useContext(AuthContext);
-
-
   const username = 'admin';
   const password = 'root';
 
@@ -32,7 +29,7 @@ function AuthScreen({ navigation }) {
       password: inputText.password
     };
 
-    fetch('http://localhost:8080/api/login', {
+    fetch('https://linking-api.onrender.com/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -53,7 +50,7 @@ function AuthScreen({ navigation }) {
         }
       })
       .catch(error => {
-        alert('Ошибка подключения к серверу:', error);
+        alert('Ошибка подключения к серверу', error);
       });
   };
 

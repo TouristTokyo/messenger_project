@@ -11,10 +11,8 @@ function RegScreen({ navigation }) {
     email: '',
     password: ''
   });
-
   const username = 'admin';
   const password = 'root';
-
   const isFormValid = inputText.name && inputText.password && inputText.email;
 
   const handleRegistration = () => {
@@ -36,7 +34,7 @@ function RegScreen({ navigation }) {
       password: inputText.password
     };
 
-    fetch('http://localhost:8080/api/register', {
+    fetch('https://linking-api.onrender.com/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -52,7 +50,7 @@ function RegScreen({ navigation }) {
         }
       })
       .catch(error => {
-        alert('Ошибка при подключении к серверу:', error);
+        alert('Ошибка при подключении к серверу', error);
       });
   };
 

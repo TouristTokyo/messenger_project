@@ -2,8 +2,8 @@
   "background_color": "#ffffff",
   "display": "standalone",
   "lang": "en",
-  "name": "FrontM",
-  "short_name": "FrontM",
+  "name": "Linking",
+  "short_name": "Linking",
   "start_url": "/?utm_source=web_app_manifest",
   "orientation": "portrait"
 }

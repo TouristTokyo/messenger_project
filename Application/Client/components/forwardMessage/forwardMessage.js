@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, useWindowDimensions } from 'react-native-web';
+import { View, Text, TouchableOpacity, useWindowDimensions } from 'react-native-web';
 import ShowAvatar from '../Avatar/ShowAvatar/showAvatar';
 import useStyles from './forwardMessage.module';
 import AuthContext from '../../context/AuthContext';
@@ -12,11 +12,12 @@ const ForwardMessage = ({ data }) => {
   const username = 'admin';
   const password = 'root';
   const { width, height } = useWindowDimensions();
+  
   const handleDeletePress = () => {
     const user_id = user.id; 
     const message_id = id; 
 
-    fetch(`http://localhost:8080/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
+    fetch(`https://linking-api.onrender.com/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -31,7 +32,7 @@ const ForwardMessage = ({ data }) => {
         }
       })
       .catch((error) => {
-        alert('Ошибка при удалении сообщения:', error);
+        alert('Ошибка при удалении сообщения', error);
       });
   };
 

@@ -35,27 +35,20 @@ export default function ChangeAvatar({ children, ...data }) {
     });
   
     if (!result.canceled) {
-      
-           // Update the selected image in the context
-          uploadImage(result);
-        
-      
+          uploadImage(result); 
     } else {
-      // Keep the current image
     }
   };
 
   const uploadImage = async (imageAsset) => {
     const formData = new FormData();
-  
-    // Convert image URI to Blob
     const response = await fetch(imageAsset.uri);
     const blob = await response.blob();
   
     formData.append('file', blob, 'file.jpg');
   
     const userId = user?.id;
-    const apiUrl = `http://localhost:8080/api/users/${userId}/update/image`;
+    const apiUrl = `https://linking-api.onrender.com/api/users/${userId}/update/image`;
   
     try {
       const response = await axios.put(apiUrl, formData, {
@@ -71,15 +64,10 @@ export default function ChangeAvatar({ children, ...data }) {
       } 
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
-        alert('Error: ' + error.response.data.message);
+        alert('Ошибка ' + error.response.data.message);
       } 
     }
   };
-
-
-
-
-
 
   const openCamera = async () => {
     const permissionResult = await ImagePicker.requestCameraPermissionsAsync();

@@ -5,7 +5,6 @@ import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
 import BackSvg from '../assets/icons/backSvg';
 import AuthContext from '../context/AuthContext';
-import axios from 'axios';
 
 function ChangePasswordScreen({ navigation }) {
   const styles = useStyles();
@@ -17,8 +16,6 @@ function ChangePasswordScreen({ navigation }) {
   const username = 'admin';
   const password = 'root';
   const { user } = useContext(AuthContext);
-  const id = user?.id; 
-
   const isButtonDisabled = () => {
     return (
       !inputText.newPassword ||
@@ -43,7 +40,7 @@ function ChangePasswordScreen({ navigation }) {
     });
   
     try {
-      const response = await fetch(`http://localhost:8080/api/users/${id}/update/password?${queryParams.toString()}`, {
+      const response = await fetch(`https://linking-api.onrender.com/api/users/${id}/update/password?${queryParams.toString()}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +54,7 @@ function ChangePasswordScreen({ navigation }) {
         alert('Не удалось обновить пароль');
       }
     } catch (error) {
-      alert('Ошибка при подключении к серверу:', error);
+      alert('Ошибка при подключении к серверу', error);
     }
   };
   

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, Button, TouchableHighlight, Alert } from 'react-native-web';
+import React, { useState, useContext } from 'react';
+import { View,TouchableHighlight } from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
@@ -14,22 +14,19 @@ function ChangeEmailScreen({ navigation }) {
     code: '',
   });
   const [receivedCode, setReceivedCode] = useState('');
-
-  const { user, updateUser } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const username = 'admin';
   const password = 'root';
-
   const isButtonDisabled = () => {
     return !inputText.email || !inputText.code || inputText.code != receivedCode;
   };
-
   const isDisabled = () => {
     return !inputText.email;
   };
 
   const getCode = () => {
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `http://localhost:8080/api/send_email?email=${email}`;
+    const apiUrl = `https://linking-api.onrender.com/api/send_email?email=${email}`;
 
     fetch(apiUrl, {
       method: 'GET',
@@ -49,7 +46,7 @@ function ChangeEmailScreen({ navigation }) {
         }
       })
       .catch((error) => {
-        alert('Ошибка при подключении к серверу:', error);
+        alert('Ошибка при подключении к серверу', error);
       });
   };
 
@@ -62,7 +59,7 @@ function ChangeEmailScreen({ navigation }) {
   try {
     const userId = user?.id;
     const email = encodeURIComponent(inputText.email);
-    const apiUrl = `http://localhost:8080/api/users/${userId}/update/email?email=${email}`;
+    const apiUrl = `https://linking-api.onrender.com/api/users/${userId}/update/email?email=${email}`;
 
     const response = await fetch(apiUrl, {
       method: 'PUT',
@@ -79,7 +76,7 @@ function ChangeEmailScreen({ navigation }) {
       alert('Не удалось обновить почту');
     }
   } catch (error) {
-    alert('Ошибка при подключении к серверу:', error);
+    alert('Ошибка при подключении к серверу', error);
   }
 };
 

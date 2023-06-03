@@ -1,6 +1,4 @@
 import { StyleSheet, useWindowDimensions } from 'react-native-web';
-import React, { useEffect, useState } from 'react';
-
 
 export default function useStyles() {
 
@@ -90,7 +88,7 @@ export default function useStyles() {
       backgroundColor: '#FFFFFF',
       borderRadius: 35,
       width: '50%',
-      height: '10%',
+      //height: '10%',
       overflow: 'hidden',
       position: 'absolute',
       top: 40, 
@@ -105,7 +103,7 @@ export default function useStyles() {
       backgroundColor: '#FFFFFF',
       borderRadius: 35,
       width: '50%',
-      height: '10%',
+      //height: '10%',
       overflow: 'hidden',
       position: 'absolute',
       top: 40,

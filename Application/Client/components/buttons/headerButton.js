@@ -1,6 +1,4 @@
-import { View } from "react-native-web";
 import useStyles from "./headerButton.module";
-
 import { Text, TouchableHighlight} from 'react-native-web';
 
 
