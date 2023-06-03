@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.RoleCreationDto;
 import ru.vsu.cs.api.models.Channel;
+import ru.vsu.cs.api.models.Member;
 import ru.vsu.cs.api.models.Role;
 import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.services.ChannelService;
@@ -17,7 +18,9 @@ import ru.vsu.cs.api.services.MemberService;
 import ru.vsu.cs.api.services.RoleService;
 import ru.vsu.cs.api.services.UserService;
 import ru.vsu.cs.api.utils.ErrorResponse;
+import ru.vsu.cs.api.utils.exceptions.ChannelException;
 import ru.vsu.cs.api.utils.exceptions.MemberException;
+import ru.vsu.cs.api.utils.exceptions.UserException;
 
 import java.time.LocalDateTime;
 
@@ -40,7 +43,7 @@ public class RoleController {
         this.channelService = channelService;
     }
 
-    @PostMapping("/create")
+    @PutMapping("/update")
     @Operation(summary = "Создание/Обновление роли")
     public ResponseEntity<HttpStatus> create(@Valid @RequestBody RoleCreationDto roleCreationDto,
                                              BindingResult bindingResult) {
@@ -51,9 +54,13 @@ public class RoleController {
         User user = userService.getUserByName(roleCreationDto.getUsername());
         Channel channel = channelService.getChannelByName(roleCreationDto.getChannelName());
 
-        Role role = roleService.save(new Role(roleCreationDto.getName(), roleCreationDto.getIsAdmin(), false));
+        Member member = memberService.getMemberByUserAndChannel(user, channel);
 
-        memberService.updateRole(user, channel, role);
+        Role role = member.getRole();
+
+        role = roleService.update(role.getId(), new Role(roleCreationDto.getName(), roleCreationDto.getIsAdmin(), false));
+
+        memberService.updateRole(member, role);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -64,7 +71,25 @@ public class RoleController {
                 ex.getMessage(),
                 LocalDateTime.now()
         );
-        return new ResponseEntity<>(response, HttpStatus.PAYLOAD_TOO_LARGE);
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler()
+    private ResponseEntity<ErrorResponse> channelException(ChannelException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> userException(UserException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
 

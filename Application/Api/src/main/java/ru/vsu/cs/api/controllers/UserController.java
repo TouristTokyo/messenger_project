@@ -136,10 +136,10 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler()
-    private ResponseEntity<ErrorResponse> fileMaxSizeException(MaxUploadSizeExceededException ex) {
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    private ResponseEntity<ErrorResponse> fileMaxSizeException() {
         ErrorResponse response = new ErrorResponse(
-                ex.getMessage(),
+                "Максимальный размер загружаемого файла: 3MB",
                 LocalDateTime.now()
         );
         return new ResponseEntity<>(response, HttpStatus.PAYLOAD_TOO_LARGE);
