@@ -46,7 +46,10 @@ function RegScreen({ navigation }) {
         if (response.ok) {
           navigation.navigate('Auth');
         } else {
-          alert('Не удалось зарегистрироваться');
+          response.json().then(errorData => {
+            const errorMessage = errorData.message;
+            alert(errorMessage);
+          });
         }
       })
       .catch(error => {
