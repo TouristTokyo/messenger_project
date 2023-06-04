@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.vsu.cs.api.dto.SavedMessageDto;
+import ru.vsu.cs.api.models.Message;
 import ru.vsu.cs.api.models.SavedMessage;
 import ru.vsu.cs.api.models.User;
 import ru.vsu.cs.api.services.MessageService;
@@ -47,8 +48,10 @@ public class SaveMessageController {
         }
 
         User user = userService.getUserByName(savedMessageDto.getUsername());
+        Message message = messageService.getMessage(savedMessageDto.getMessageId());
 
-        savedMessageService.save(new SavedMessage(messageService.getMessage(savedMessageDto.getMessageId()), user));
+        savedMessageService.checkSavedMessage(user, message);
+        savedMessageService.save(new SavedMessage(message, user));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
@@ -64,7 +67,10 @@ public class SaveMessageController {
     @Operation(summary = "Удаление конкретного сохранённого сообщения")
     public ResponseEntity<HttpStatus> deleteMessage(@RequestParam("user_id") BigInteger userId,
                                                     @RequestParam("message_id") BigInteger messageId) {
-        savedMessageService.delete(messageService.getMessage(messageId), userService.getById(userId));
+        Message message = messageService.getMessage(messageId);
+        User user = userService.getById(userId);
+
+        savedMessageService.delete(savedMessageService.getSavedMessageByMessageAndUser(message, user).getId());
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

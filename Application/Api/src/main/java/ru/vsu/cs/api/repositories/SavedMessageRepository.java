@@ -8,12 +8,12 @@ import ru.vsu.cs.api.models.User;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface SavedMessageRepository extends JpaRepository<SavedMessage, BigInteger> {
     List<SavedMessage> findByUser(User user);
 
     void deleteAllByUser(User user);
-
-    void deleteByMessageAndUser(Message message, User user);
+    Optional<SavedMessage> findByMessageAndUser(Message message, User user);
 }
