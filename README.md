@@ -22,8 +22,16 @@
 # Визуализация проекта 
 1) [Miro](https://miro.com/app/board/uXjVPgHy0fg=/?share_link_id=897598389692)
 
-2) [Диаграммы](https://github.com/ilyastaver/messenger_project/tree/main/Диаграмм)
+2) [Диаграммы](https://github.com/TouristTokyo/messenger_project/tree/main/Diagrams)
 
-3) [Trello](https://trello.com/b/xPTp0wMz/веб-приложение-мессенджер)
+3) [Документация](https://github.com/TouristTokyo/messenger_project/tree/main/Documents)
 
-4) [Figma](https://www.figma.com/file/TKYZGoCgf4RVoTxHGIkMBT/Messenger?node-id=0%3A1&t=gyPvwPvUUnbrJ0hj-1)
+4) [Trello](https://trello.com/b/xPTp0wMz/веб-приложение-мессенджер)
+
+5) [Figma](https://www.figma.com/file/LBIOJMVFno7KNdw1x7hkke/Messenger?node-id=0%3A1&t=gMBF8YJx8i0pk3g9-1)
+
+6) [Видеопрезентация технического задания](https://youtu.be/BFVJCdGCEMA)
+
+# Продакшн макет
+
+[Figma](https://www.figma.com/file/LBIOJMVFno7KNdw1x7hkke/Messenger?node-id=0%3A1&t=gMBF8YJx8i0pk3g9-1)
