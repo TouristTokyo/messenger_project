@@ -70,6 +70,7 @@ public class ChatController {
     @DeleteMapping("/delete/{id}")
     @Operation(summary = "Удаление чата")
     public ResponseEntity<HttpStatus> deleteChat(@PathVariable("id") BigInteger id) {
+        chatService.getById(id);
         chatService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }

@@ -10,7 +10,6 @@ import ru.vsu.cs.api.repositories.RoleRepository;
 import java.math.BigInteger;
 
 @Service
-@Transactional(readOnly = true)
 @Slf4j
 public class RoleService {
     private final RoleRepository roleRepository;
@@ -29,7 +28,6 @@ public class RoleService {
     @Transactional
     public Role update(BigInteger id, Role role) {
         role.setId(id);
-        log.info("Updated role with id: " + id);
         roleRepository.save(role);
         return role;
     }
