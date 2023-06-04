@@ -870,9 +870,15 @@ class MessengerApiApplicationTests {
         message.setData("Test save message!");
         message.setDate(LocalDateTime.now());
 
+        SavedMessage savedMessage = new SavedMessage();
+        savedMessage.setId(BigInteger.ONE);
+        savedMessage.setMessage(message);
+        savedMessage.setUser(currentUser);
+
         when(userService.getById(BigInteger.ONE)).thenReturn(currentUser);
         when(messageService.getMessage(BigInteger.ONE)).thenReturn(message);
-        doNothing().when(savedMessageService).deleteAllByUser(currentUser);
+        when(savedMessageService.getSavedMessageByMessageAndUser(message, currentUser)).thenReturn(savedMessage);
+        doNothing().when(savedMessageService).delete(savedMessage.getId());
 
         mockMvc.perform(delete("/api/saved_message/delete")
                         .header("Authorization", "Basic " + base64Credentials)
