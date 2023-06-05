@@ -36,6 +36,12 @@
 
 5) [Figma](https://www.figma.com/file/LBIOJMVFno7KNdw1x7hkke/Messenger?node-id=0%3A1&t=gMBF8YJx8i0pk3g9-1)
 
+6) [Кабинет аналитики](https://metrika.yandex.ru/dashboard?id=93805223)
+
+7) [Swagger (основная ссылка)](https://linking-api.onrender.com/swagger-ui/index.html#/)
+
+8) [SwaggerHub (резервная ссылка)](https://app.swaggerhub.com/apis/TouristTokyo/linking-api/1.0.0)
+
 ### Видео:
 1) [Видеопрезентация технического задания](https://youtu.be/BFVJCdGCEMA)
 
