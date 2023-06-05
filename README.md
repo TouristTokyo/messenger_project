@@ -42,6 +42,8 @@
 
 8) [SwaggerHub (резервная ссылка)](https://app.swaggerhub.com/apis/TouristTokyo/linking-api/1.0.0)
 
+9) [Доступ к серверу](https://docs.google.com/document/d/1vNXw2MBPTompcZ9b_9N7aDX82JTwQaU3zamD9QjuWd0/edit?usp=sharing) 
+
 ### Видео:
 1) [Видеопрезентация технического задания](https://youtu.be/BFVJCdGCEMA)
 
