@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View,TouchableHighlight } from 'react-native-web';
+import { View, TouchableHighlight, useWindowDimensions, ActivityIndicator } from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
@@ -17,6 +17,9 @@ function ChangeEmailScreen({ navigation }) {
   const { user } = useContext(AuthContext);
   const username = 'admin';
   const password = 'root';
+  const { width, height } = useWindowDimensions();
+  const scale = Math.min(width * 0.0009, height * 0.001);
+  const [isLoading, setIsLoading] = useState(false);
   const isButtonDisabled = () => {
     return !inputText.email || !inputText.code || inputText.code != receivedCode;
   };
@@ -25,6 +28,7 @@ function ChangeEmailScreen({ navigation }) {
   };
 
   const getCode = () => {
+    setIsLoading(true);
     const email = encodeURIComponent(inputText.email);
     const apiUrl = `https://linking-api.onrender.com/api/send_email?email=${email}`;
 
@@ -39,10 +43,10 @@ function ChangeEmailScreen({ navigation }) {
         setReceivedCode(data);
         if (data) {
           alert('Код подтверждения был отправлен на указанную почту!');
-         
+          setIsLoading(false);
         } else {
           alert('Не удалось отправить код');
-          
+
         }
       })
       .catch((error) => {
@@ -56,71 +60,83 @@ function ChangeEmailScreen({ navigation }) {
       alert('Не правильный формат почты');
       return;
     }
-  try {
-    const userId = user?.id;
-    const email = encodeURIComponent(inputText.email);
-    const apiUrl = `https://linking-api.onrender.com/api/users/${userId}/update/email?email=${email}`;
+    setIsLoading(true);
+    try {
+      const userId = user?.id;
+      const email = encodeURIComponent(inputText.email);
+      const apiUrl = `https://linking-api.onrender.com/api/users/${userId}/update/email?email=${email}`;
 
-    const response = await fetch(apiUrl, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Basic ${btoa(`${username}:${password}`)}`,
-      },
-    });
+      const response = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+        },
+      });
 
-    if (response.ok) {
-      alert('Почта успешно обновлена');
-      setEmail(inputText.email);
-    } else {
-      alert('Не удалось обновить почту');
+      if (response.ok) {
+        alert('Почта успешно обновлена');
+        setEmail(inputText.email);
+        setIsLoading(false);
+      } else {
+        alert('Не удалось обновить почту');
+      }
+    } catch (error) {
+      alert('Ошибка при подключении к серверу', error);
     }
-  } catch (error) {
-    alert('Ошибка при подключении к серверу', error);
-  }
-};
+  };
 
 
   return (
     <View style={styles.containerMain}>
-      <View style={styles.textContainer}>
-        <View style={styles.inputContainer}>
-          <View style={{ marginBottom: 13 }}>
-            <DataInput
-              value={inputText.email}
-              setValue={(text) => setInputText({ ...inputText, email: text })}
-              placeholder={"Почта"}
-              type={"email"}
-              flex={false}
+      {isLoading && (
+        <View style={styles.textContainer}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+          </View>
+        </View>
+      )}
+      {!isLoading && (
+        <View style={styles.textContainer}>
+          <View style={styles.inputContainer}>
+            <View style={{ marginBottom: 13 }}>
+              <DataInput
+                value={inputText.email}
+                setValue={(text) => setInputText({ ...inputText, email: text })}
+                placeholder={"Почта"}
+                type={"email"}
+                flex={false}
+              />
+            </View>
+            <View style={{ marginBottom: 13 }}>
+              <DataInput
+                value={inputText.code}
+                setValue={(text) => setInputText({ ...inputText, code: text })}
+                placeholder={"Код"}
+                type={"code"}
+                flex={false}
+              />
+            </View>
+          </View>
+
+          <View>
+            <HeaderButton
+              title={"Изменить почту"}
+              onPress={changeEmail}
+              disabled={isButtonDisabled()}
             />
           </View>
           <View style={{ marginBottom: 13 }}>
-            <DataInput
-              value={inputText.code}
-              setValue={(text) => setInputText({ ...inputText, code: text })}
-              placeholder={"Код"}
-              type={"code"}
-              flex={false}
+            <HeaderButton
+              title={"Получить код"}
+              onPress={getCode}
+              disabled={isDisabled()}
             />
           </View>
         </View>
 
-        <View>
-          <HeaderButton
-            title={"Изменить почту"}
-            onPress={changeEmail}
-            disabled={isButtonDisabled()}
-          />
-        </View>
-        <View style={{ marginBottom: 13 }}>
-          <HeaderButton
-            title={"Получить код"}
-            onPress={getCode}
-            disabled={isDisabled()}
-          />
-        </View>
-      </View>
-      <View style={styles.topLeft}>
+      )}
+      <View style={[styles.topLeft, { transform: [{ scale }] }]}>
         <TouchableHighlight onPress={() => navigation.navigate('Profile')}>
           <BackSvg />
         </TouchableHighlight>

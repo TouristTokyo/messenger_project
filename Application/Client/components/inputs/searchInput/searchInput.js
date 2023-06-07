@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, TextInput, TouchableOpacity, ScrollView } from "react-native-web";
+import { View, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native-web";
 import useStyles from "./searchInput.modules";
 import SearchSvg from "../../../assets/icons/searchSvg";
 import CrossSvg from "../../../assets/icons/crossSvg";
@@ -16,7 +16,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
   const password = 'root';
   const [results, setResults] = useState([]);
   const [resultsUnauth, setResultsUnauth] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(true);
   const handlePress = (channelId) => {
     navigationt.navigate('Channel', { channelId });
   };
@@ -98,6 +98,7 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
 
         setResults(formattedResults);
         setResultsUnauth(unauthResults);
+        setIsLoading(false);
       } else {
         alert('Ошибка при подгрузке данных с сервера');
       }
@@ -136,7 +137,12 @@ export default function SearchInput({ value, setValue, navigation, unauth, ...da
           <CrossSvg style={styles.dismissIcon}  />
         </TouchableOpacity>
       )}
-      {isDropdownVisible && (
+       {isLoading && isDropdownVisible && (
+          <View style={styles.dropdown}>
+            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+          </View>
+        )}
+      {isDropdownVisible && !isLoading &&(
         <ScrollView style={styles.dropdown}>
           {filteredResults.map((result, index) => (
             <SearchBody

@@ -3,6 +3,7 @@ import { View, Text, TouchableHighlight } from 'react-native-web';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/greetingsScreen.module';
 import SearchInput from '../components/inputs/searchInput/searchInput';
+import HeaderButton from '../components/buttons/headerButton';
 
 export default function MainUnauthScreen({ navigation }) {
   const styles = useStyles();
@@ -14,9 +15,8 @@ export default function MainUnauthScreen({ navigation }) {
         <Text style={styles.text}>Зарегистрируйтесь, чтобы начать общаться</Text>
       </View>
       <View style={styles.bottomLeft}>
-        <TouchableHighlight onPress={() => navigation.navigate('Auth')}>
-          <CreateSvg />
-        </TouchableHighlight>
+      <HeaderButton title = 'Создать канал' onPress={() => navigation.navigate('Auth')}> 
+        </HeaderButton>
       </View>
     </View>
   );

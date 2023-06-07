@@ -17,7 +17,7 @@ const MessageBody = ({ data, currentUser }) => {
   const {user} = useContext(AuthContext);
   const styles = useStyles();
   const forwardIcon = isFocused ? <ForwardFocusSvg /> : <ForwardSvg />;
-
+  const [isClosed, setIsClosed] = useState(true);
   const messageBoxStyles = [
     styles.messageBox,
     own ? styles.ownMessageBox : styles.box,
@@ -30,6 +30,7 @@ const MessageBody = ({ data, currentUser }) => {
   ];
 
   const handleForwardPress = async () => {
+    setIsClosed(false);
     setIsFocused(prevState => !prevState);
     const body = {
       username: user.name,
@@ -64,7 +65,7 @@ const MessageBody = ({ data, currentUser }) => {
         </View>
       )}
       <View style={messageBoxStyles}>
-        {!unauth && (
+        {!unauth && isClosed && (
           <TouchableOpacity onPress={handleForwardPress}>
             <View style={own ? styles.ownForward : styles.forward}>{forwardIcon}</View>
           </TouchableOpacity>

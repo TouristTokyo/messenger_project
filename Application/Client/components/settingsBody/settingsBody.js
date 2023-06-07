@@ -3,7 +3,8 @@ import {
     View,
     Text,
     TouchableOpacity,
-    Modal,
+    Modal, 
+    useWindowDimensions
 } from "react-native-web";
 import ChangeSvg from "../../assets/icons/changeSvg";
 import DeleteSvg from "../../assets/icons/deleteSvg";
@@ -30,6 +31,8 @@ export default function SettingsBody({ data }) {
     const password = 'root';
     const isFormValid = inputText.role;
     const {user} = useContext(AuthContext);
+    const { width, height } = useWindowDimensions();
+    const scale = Math.min(width *0.0006, height *0.001);
 
     const handleDelete = async () => {
       if (user.name == name || admin && !creator){
@@ -107,8 +110,8 @@ export default function SettingsBody({ data }) {
 
                 {!creator  && (
                     <TouchableOpacity onPress={() => setShowPopup(true)}>
-                        <ChangeSvg />
-                    </TouchableOpacity>
+                    <ChangeSvg style={{ transform: [{ scale }] }} />
+                  </TouchableOpacity>
                 )}
             </View>
 
