@@ -16,7 +16,7 @@ const ForwardMessage = ({ data }) => {
   const handleDeletePress = () => {
     const user_id = user.id; 
     const message_id = id; 
-
+     setShowDeleteButton(false);
     fetch(`https://linking-api.onrender.com/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
       method: 'DELETE',
       headers: {

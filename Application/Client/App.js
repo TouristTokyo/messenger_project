@@ -8,9 +8,8 @@ import RegScreen from './screens/RegScreen';
 import ForgotScreen from './screens/ForgotScreen';
 import HeaderLogoSvg from './assets/icons/headerLogoSvg';
 import HeaderButton from './components/buttons/headerButton';
-import { Button, TouchableHighlight, View } from 'react-native-web';
+import { TouchableHighlight, View } from 'react-native-web';
 import SearchInput from './components/inputs/searchInput/searchInput';
-import SearchBody from './components/searchBodies/searchBody';
 import MainAuthScreen from './screens/MainAuthScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import ChangeEmailScreen from './screens/ChangeEmailScreen';
@@ -23,7 +22,6 @@ import { ImageProvider } from './context/ImageContext';
 import { AuthProvider } from './context/AuthContext';
 import {MessageProvider} from './context/MessageContext';
 import * as Font from 'expo-font';
-import { Helmet } from 'react-helmet';
 
 const loadFonts = async () => {
   await Font.loadAsync({
