@@ -1,5 +1,5 @@
 import React, { useState, useContext, useCallback } from 'react';
-import { View, Text, TouchableHighlight, Modal, ScrollView, useWindowDimensions } from 'react-native-web';
+import { View, Text, TouchableHighlight, Modal, ScrollView, useWindowDimensions, ActivityIndicator } from 'react-native-web';
 import { useFocusEffect } from '@react-navigation/native';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/mainAuthScreen.module';
@@ -29,7 +29,7 @@ export default function MainAuthScreen({ navigation }) {
   const updateUserCallback = useCallback(updatedUser => updateUser(updatedUser), [updateUser]);
   const { selectedImage } = useContext(ImageContext);
   const { width, height } = useWindowDimensions();
-
+  const [isLoading, setIsLoading] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -44,6 +44,7 @@ export default function MainAuthScreen({ navigation }) {
   }
 
   const fetchUserData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(`https://linking-api.onrender.com/api/users/${user.id}`, {
         method: 'GET',
@@ -56,6 +57,7 @@ export default function MainAuthScreen({ navigation }) {
       if (response.ok) {
         const userData = await response.json();
         updateUserCallback(userData);
+        setIsLoading(false);
       } else {
         console.log('Не удалось подгрузить данные пользователя');
       }
@@ -73,6 +75,7 @@ export default function MainAuthScreen({ navigation }) {
     }
   };
   const handleClearForwardedMessages = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(`https://linking-api.onrender.com/api/saved_message/delete_all?user_id=${user?.id}`, {
         method: 'DELETE',
@@ -81,7 +84,7 @@ export default function MainAuthScreen({ navigation }) {
           'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
         },
       });
-  
+
       if (response.ok) {
         console.log(`Сообщения успешно удалены!`);
         window.location.reload();
@@ -93,7 +96,7 @@ export default function MainAuthScreen({ navigation }) {
       alert('Ошибка при подключении к серверу', error);
     }
   };
-  
+
 
   const isFormValid = inputText.nickname;
   const buttons = [
@@ -136,52 +139,86 @@ export default function MainAuthScreen({ navigation }) {
   return (
     <View style={styles.containerMain}>
       <View style={styles.messageContainer}>
-        <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-          {user.channels.map((channel) => (
-            <SearchBody
-              key={channel.id}
-              data={{
-                username: channel.name,
-                onPress: () => navigation.navigate('Channel', { channelId: channel.id }),
-              }}
-            />
-          ))}
-          {user.chats.map((chat) => {
-            if (chat.recipient.name === user.name) {
-              return (
-                <SearchBody
-                  key={chat.id}
-                  data={{
-                    avatarUrl: chat.sender.image,
-                    username: chat.sender.name,
-                    onPress: () => navigation.navigate('Chat', { chatUser: chat.sender }),
-                    main: true,
-                    id: chat.id
-                  }}
-                />
-              );
-            } else {
-              return (
-                <SearchBody
-                  key={chat.id}
-                  data={{
-                    avatarUrl: chat.recipient.image,
-                    username: chat.recipient.name,
-                    onPress: () => navigation.navigate('Chat', { chatUser: chat.recipient }),
-                    main: true,
-                    id: chat.id
-                  }}
-                />
-              );
-            }
-          })}
-        </ScrollView>
+
+        <View style={styles.containerTop}>
+          <Text style={styles.headerText}>Ваши чаты</Text>
+        </View>
+        {isLoading && (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+          </View>
+        )}
+        {!isLoading && user.chats.length > 0 ? (
+
+          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+            {user.chats.map((chat) => {
+              if (chat.recipient.name === user.name) {
+                return (
+                  <SearchBody
+                    key={chat.id}
+                    data={{
+                      avatarUrl: chat.sender.image,
+                      username: chat.sender.name,
+                      onPress: () => navigation.navigate('Chat', { chatUser: chat.sender }),
+                      main: true,
+                      id: chat.id
+                    }}
+                  />
+                );
+              } else {
+                return (
+                  <SearchBody
+                    key={chat.id}
+                    data={{
+                      avatarUrl: chat.recipient.image,
+                      username: chat.recipient.name,
+                      onPress: () => navigation.navigate('Chat', { chatUser: chat.recipient }),
+                      main: true,
+                      id: chat.id
+                    }}
+                  />
+                );
+              }
+            })}
+          </ScrollView>
+
+
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyMessageText}>У вас нет чатов</Text>
+          </View>
+        )}
+        <View style={styles.containerBottom}>
+          <Text style={styles.headerText}>Ваши каналы</Text>
+        </View>
+        {isLoading && (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+          </View>
+        )}
+        {!isLoading && user.channels.length > 0 ? (
+          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+            {user.channels.map((channel) => (
+              <SearchBody
+                key={channel.id}
+                data={{
+                  username: channel.name,
+                  onPress: () => navigation.navigate('Channel', { channelId: channel.id }),
+                }}
+              />
+            ))}
+          </ScrollView>
+        ) : (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyMessageText}>Вы не состоите в каких-либо каналах</Text>
+          </View>
+        )}
       </View>
       <View style={styles.profileContainer}>
         <ShowAvatar imageUrl={selectedImage} profile={true} />
         <Text style={{
           color: '#000000',
-          fontSize:  Math.min(width * 0.03, height * 0.055),
+          fontSize: Math.min(width * 0.03, height * 0.055),
           textAlign: 'center',
           marginBottom: 13,
           fontFamily: 'Montserrat-Regular',
@@ -193,44 +230,56 @@ export default function MainAuthScreen({ navigation }) {
         ))}
       </View>
       <View style={styles.forwardContainer}>
-        {user?.savedMessages?.length > 0 && (
-          <View style={{ right: 50, position: 'absolute', zIndex: 1 }}>
+        <View style={styles.headerBar}>
+          <Text style={styles.headerText}>Сохранённые сообщения</Text>
+
+          {user?.savedMessages?.length > 0 && !isLoading &&(
             <TouchableHighlight onPress={handleClearForwardedMessages}>
               <DeleteSvg />
             </TouchableHighlight>
+          )}
+        </View>
+        {isLoading && (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
           </View>
         )}
-        <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-
-          {user?.savedMessages?.map((message) => {
-            return (
-              <View style={{ marginBottom: 13 }}>
-                <ForwardMessage
-                  key={message.id}
-                  data={{
-                    imageUrl: message.sender?.image,
-                    nickname: message.sender?.name,
-
-                    message: message.data,
-
-                    own: message.sender?.name === user.name,
-                    from: message.chat
-                    ? message.chat.sender?.name === user.name
-                      ? message.chat.recipient.name
-                      : message.chat.sender.name
-                    : message.channel.name,
-                     id: message.id
-                  }}
-                />
-              </View>
-            );
-          })}
-        </ScrollView>
+        {!isLoading && user?.savedMessages?.length > 0 ? (
+          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+            {user.savedMessages.map((message) => {
+              return (
+                <View style={{ marginBottom: 13 }}>
+                  <ForwardMessage
+                    key={message.id}
+                    data={{
+                      imageUrl: message.sender?.image,
+                      nickname: message.sender?.name,
+                      message: message.data,
+                      own: message.sender?.name === user.name,
+                      from: message.chat
+                        ? message.chat.sender?.name === user.name
+                          ? message.chat.recipient.name
+                          : message.chat.sender.name
+                        : message.channel.name,
+                      id: message.id,
+                    }}
+                  />
+                </View>
+              );
+            })}
+          </ScrollView>
+        ) : (
+          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+            <View style={styles.emptyMessageContainer}>
+              <Text style={styles.emptyMessageText}>У вас нет сохранённых сообщений</Text>
+            </View>
+          </ScrollView>
+        )}
       </View>
+
       <View style={styles.bottomLeft}>
-        <TouchableHighlight onPress={() => setShowPopup(true)}>
-          <CreateSvg />
-        </TouchableHighlight>
+        <HeaderButton title='Создать канал' onPress={() => setShowPopup(true)}>
+        </HeaderButton>
       </View>
       <Modal visible={showPopup} transparent={true}>
         <View style={styles.popupContainer}>
@@ -246,7 +295,7 @@ export default function MainAuthScreen({ navigation }) {
           </View>
           <TouchableHighlight onPress={() => setShowPopup(false)}>
             <HeaderButton title={"Создать"} onPress={handleCreateChannel} disabled={!isFormValid} />
-            </TouchableHighlight>
+          </TouchableHighlight>
         </View>
       </Modal>
     </View>

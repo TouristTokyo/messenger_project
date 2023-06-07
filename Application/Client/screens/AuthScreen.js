@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, TouchableHighlight} from 'react-native-web';
+import { View, Text, TouchableHighlight, ActivityIndicator } from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
@@ -15,15 +15,15 @@ function AuthScreen({ navigation }) {
   const { login } = useContext(AuthContext);
   const username = 'admin';
   const password = 'root';
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleLogin = () => {
-
+    
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(inputText.email)) {
       alert('Не верный формат почты');
       return;
     }
-
+    setIsLoading(true);
     const requestBody = {
       email: inputText.email,
       password: inputText.password
@@ -40,13 +40,14 @@ function AuthScreen({ navigation }) {
       .then(response => {
         if (response.ok) {
           response.json().then(data => {
-            login(data); 
+            login(data);
           });
         } else {
           response.json().then(errorData => {
             const errorMessage = errorData.message || 'Login failed';
             alert(errorMessage);
           });
+         
         }
       })
       .catch(error => {
@@ -56,8 +57,17 @@ function AuthScreen({ navigation }) {
 
   return (
     <View style={styles.containerMain}>
-      <View style={styles.textContainer}>
-        <View style={styles.inputContainer}>
+    
+        {isLoading && (
+           <View style={styles.textContainer}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+          </View>
+          </View>
+        )}
+        {!isLoading && (
+           <View style={styles.textContainer}>
+          <View style={styles.inputContainer}>
           <View style={{ marginBottom: 13 }}>
             <DataInput
               value={inputText.email}
@@ -101,7 +111,10 @@ function AuthScreen({ navigation }) {
             onPress={() => navigation.navigate('Reg')}
           />
         </View>
-      </View>
+        </View>
+        )}
+
+     
     </View>
   );
 }

@@ -23,6 +23,7 @@ export default function ProfileScreen({ navigation }) {
   const username = 'admin';
   const password = 'root';
   const [userText, setUserText] = useState('');
+  const scale = Math.min(width *0.0009, height *0.001);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -184,7 +185,7 @@ export default function ProfileScreen({ navigation }) {
           <HeaderButton title={'Изменить пароль'} onPress={() => navigation.navigate('ChangePassword')} />
         </View>
       </View>
-      <View style={styles.topLeft}>
+      <View style={[styles.topLeft, { transform: [{ scale }] }]}>
         <TouchableHighlight onPress={() => navigation.navigate('MainAuth')}>
           <BackSvg />
         </TouchableHighlight>

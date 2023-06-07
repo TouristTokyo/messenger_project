@@ -14,6 +14,7 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
     if (message) {
       try {
         if (channel) {
+          setMessage('');
           const requestBody = {
             currentUsername: curuser,
             message: message,
@@ -30,12 +31,12 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
           });
     
           if (response.ok) {
-            setMessage('');
             onMessageSent(); 
           } else {
             alert('Не удалось отправить сообщение');
           }
         } else {
+          setMessage('');
           const requestBody = {
             currentUsername: curuser,
             otherUsername: chanInf,
@@ -52,7 +53,6 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
           });
     
           if (response.ok) {
-            setMessage('');
             onMessageSent();
           } else {
             alert('Не удалось отправить сообщение');
