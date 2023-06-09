@@ -50,6 +50,7 @@ function RegScreen({ navigation }) {
             const errorMessage = errorData.message;
             alert(errorMessage);
           });
+          setIsLoading(false);
         }
       })
       .catch(error => {
