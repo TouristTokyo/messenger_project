@@ -53,7 +53,7 @@ function ForgotScreen({ navigation }) {
           setIsLoading(false);
         } else {
           alert('Не удалось отправить код подтверждения');
-         
+          setIsLoading(false);
         }
       })
       .catch((error) => {
@@ -74,6 +74,7 @@ function ForgotScreen({ navigation }) {
       return userData;
       } else {
         alert('Пользователь с указанной почтой не найден');
+        setIsLoading(false);
       }
     } catch (error) {
       alert('Ошибка при подключении к серверу', error);
@@ -102,6 +103,7 @@ function ForgotScreen({ navigation }) {
           const errorMessage = errorData.message ;
          alert(errorMessage);
         });
+        setIsLoading(false);
       }
     } catch (error) {
       alert('Ошибка при подключении к серверу', error);
@@ -120,8 +122,10 @@ function ForgotScreen({ navigation }) {
     if (userId) {
       await updatePassword(userId);
       alert('Пароль успешно обновлен');
+      setIsLoading(false);
     } else {
       alert('Пользователь с указанной почтой не найден');
+      setIsLoading(false);
     }
       navigation.navigate('Auth');
     } catch (error) {

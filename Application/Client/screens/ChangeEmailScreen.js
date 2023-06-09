@@ -46,7 +46,7 @@ function ChangeEmailScreen({ navigation }) {
           setIsLoading(false);
         } else {
           alert('Не удалось отправить код');
-
+          setIsLoading(true);
         }
       })
       .catch((error) => {
@@ -80,6 +80,7 @@ function ChangeEmailScreen({ navigation }) {
         setIsLoading(false);
       } else {
         alert('Не удалось обновить почту');
+        setIsLoading(false);
       }
     } catch (error) {
       alert('Ошибка при подключении к серверу', error);
