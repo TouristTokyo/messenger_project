@@ -56,6 +56,7 @@ function ChangePasswordScreen({ navigation }) {
         setIsLoading(false);
       } else {
         alert('Не удалось обновить пароль');
+        setIsLoading(false);
       }
     } catch (error) {
       alert('Ошибка при подключении к серверу', error);

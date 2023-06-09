@@ -47,7 +47,7 @@ function AuthScreen({ navigation }) {
             const errorMessage = errorData.message || 'Login failed';
             alert(errorMessage);
           });
-         
+          setIsLoading(false);
         }
       })
       .catch(error => {
