@@ -35,6 +35,7 @@ export default function MainAuthScreen({ navigation }) {
     React.useCallback(() => {
       fetchUserData();
       fetchProfileNickname();
+     
     }, [])
   );
 
@@ -58,6 +59,7 @@ export default function MainAuthScreen({ navigation }) {
         const userData = await response.json();
         updateUserCallback(userData);
         setIsLoading(false);
+        console.log(user?.savedMessages);
       } else {
         console.log('Не удалось подгрузить данные пользователя');
       }
@@ -148,46 +150,51 @@ export default function MainAuthScreen({ navigation }) {
             <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
           </View>
         )}
-        {!isLoading && user.chats.length > 0 ? (
 
-          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-            {user.chats.map((chat) => {
-              if (chat.recipient.name === user.name) {
-                return (
-                  <SearchBody
-                    key={chat.id}
-                    data={{
-                      avatarUrl: chat.sender.image,
-                      username: chat.sender.name,
-                      onPress: () => navigation.navigate('Chat', { chatUser: chat.sender }),
-                      main: true,
-                      id: chat.id
-                    }}
-                  />
-                );
-              } else {
-                return (
-                  <SearchBody
-                    key={chat.id}
-                    data={{
-                      avatarUrl: chat.recipient.image,
-                      username: chat.recipient.name,
-                      onPress: () => navigation.navigate('Chat', { chatUser: chat.recipient }),
-                      main: true,
-                      id: chat.id
-                    }}
-                  />
-                );
-              }
-            })}
-          </ScrollView>
-
-
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyMessageText}>У вас нет чатов</Text>
-          </View>
+        {!isLoading && (
+          <>
+            {user.chats.length > 0 ? (
+              <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+                {user.chats.map((chat) => {
+                  if (chat.recipient.name === user.name) {
+                    return (
+                      <SearchBody
+                        key={chat.id}
+                        data={{
+                          avatarUrl: chat.sender.image,
+                          username: chat.sender.name,
+                          onPress: () => navigation.navigate('Chat', { chatUser: chat.sender }),
+                          main: true,
+                          id: chat.id
+                        }}
+                      />
+                    );
+                  } else {
+                    return (
+                      <SearchBody
+                        key={chat.id}
+                        data={{
+                          avatarUrl: chat.recipient.image,
+                          username: chat.recipient.name,
+                          onPress: () => navigation.navigate('Chat', { chatUser: chat.recipient }),
+                          main: true,
+                          id: chat.id
+                        }}
+                      />
+                    );
+                  }
+                })}
+              </ScrollView>
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyMessageText}>У вас нет чатов</Text>
+              </View>
+            )}
+          </>
         )}
+
+
+
         <View style={styles.containerBottom}>
           <Text style={styles.headerText}>Ваши каналы</Text>
         </View>
@@ -196,23 +203,28 @@ export default function MainAuthScreen({ navigation }) {
             <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
           </View>
         )}
-        {!isLoading && user.channels.length > 0 ? (
-          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-            {user.channels.map((channel) => (
-              <SearchBody
-                key={channel.id}
-                data={{
-                  username: channel.name,
-                  onPress: () => navigation.navigate('Channel', { channelId: channel.id }),
-                }}
-              />
-            ))}
-          </ScrollView>
-        ) : (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyMessageText}>Вы не состоите в каких-либо каналах</Text>
-          </View>
+        {!isLoading && (
+          <>
+            {user.channels.length > 0 ? (
+              <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+                {user.channels.map((channel) => (
+                  <SearchBody
+                    key={channel.id}
+                    data={{
+                      username: channel.name,
+                      onPress: () => navigation.navigate('Channel', { channelId: channel.id }),
+                    }}
+                  />
+                ))}
+              </ScrollView>
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyMessageText}>Вы не состоите в каких-либо каналах</Text>
+              </View>
+            )}
+          </>
         )}
+
       </View>
       <View style={styles.profileContainer}>
         <ShowAvatar imageUrl={selectedImage} profile={true} />
@@ -233,7 +245,7 @@ export default function MainAuthScreen({ navigation }) {
         <View style={styles.headerBar}>
           <Text style={styles.headerText}>Сохранённые сообщения</Text>
 
-          {user?.savedMessages?.length > 0 && !isLoading &&(
+          {user?.savedMessages?.length > 0 && !isLoading && (
             <TouchableHighlight onPress={handleClearForwardedMessages}>
               <DeleteSvg />
             </TouchableHighlight>
@@ -244,37 +256,48 @@ export default function MainAuthScreen({ navigation }) {
             <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
           </View>
         )}
-        {!isLoading && user?.savedMessages?.length > 0 ? (
-          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-            {user.savedMessages.map((message) => {
-              return (
-                <View style={{ marginBottom: 13 }}>
-                  <ForwardMessage
-                    key={message.id}
-                    data={{
-                      imageUrl: message.sender?.image,
-                      nickname: message.sender?.name,
-                      message: message.data,
-                      own: message.sender?.name === user.name,
-                      from: message.chat
-                        ? message.chat.sender?.name === user.name
-                          ? message.chat.recipient.name
-                          : message.chat.sender.name
-                        : message.channel.name,
-                      id: message.id,
-                    }}
-                  />
+        {!isLoading && (
+          <>
+            {user?.savedMessages?.length > 0 ? (
+              <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+                {user.savedMessages.map((message) => {
+                  return (
+                    <View style={{ marginBottom: 13 }}>
+                      <ForwardMessage
+                        key={message.id}
+                        data={{
+                          imageUrl: message.sender?.image,
+                          nickname: message.sender?.name,
+                          message: message.data,
+                          own: message.sender?.name === user.name,
+                          from: message.chat
+                            ? message.chat.sender?.name === user.name
+                              ? message.chat.recipient.name
+                              : message.chat.sender.name
+                            : message.channel.name,
+                          id: message.id,
+                          nav: message.chat
+                          ? message.chat.sender?.name === user.name
+                            ? message.chat.recipient
+                            : message.chat.sender
+                          : user.channels.find(channel => channel.name === message.channel.name)?.id,
+                          answer: message.chat ? true : false,
+                        }}
+                      />
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+                <View style={styles.emptyMessageContainer}>
+                  <Text style={styles.emptyMessageText}>У вас нет сохранённых сообщений</Text>
                 </View>
-              );
-            })}
-          </ScrollView>
-        ) : (
-          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-            <View style={styles.emptyMessageContainer}>
-              <Text style={styles.emptyMessageText}>У вас нет сохранённых сообщений</Text>
-            </View>
-          </ScrollView>
+              </ScrollView>
+            )}
+          </>
         )}
+
       </View>
 
       <View style={styles.bottomLeft}>

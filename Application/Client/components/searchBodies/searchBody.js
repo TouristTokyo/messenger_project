@@ -34,7 +34,7 @@ export default function SearchBody({ data }) {
 
   return (
     <TouchableHighlight
-      style={[styles.container, containerStyle, isHovered && { backgroundColor: "#E7DEDE" }]}
+      style={[styles.container, containerStyle, isHovered && !avatarUrl &&{ backgroundColor: "rgba(0, 118, 185, 0.35)" }, isHovered && avatarUrl &&{ backgroundColor: "#E7DEDE" }]}
       onPress={onPress}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
