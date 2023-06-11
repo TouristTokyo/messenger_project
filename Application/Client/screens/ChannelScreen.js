@@ -23,6 +23,7 @@ export default function ChannelScreen({ navigation, route }) {
         nickname: '',
     });
     const { width, height } = useWindowDimensions();
+    const scaleChange = Math.min(width * 0.0006, height * 0.001);
     const { logout } = useContext(AuthContext);
     const { user } = useContext(AuthContext);
     const { selectedImage } = useContext(ImageContext);
@@ -47,7 +48,7 @@ export default function ChannelScreen({ navigation, route }) {
             });
 
             if (response.ok) {
-                
+
                 const channelData = await response.json();
                 const isCreator = user?.id === channelData.creator?.id;
                 const member = channelData.members.find(member => member.user.id === user.id);
@@ -187,37 +188,9 @@ export default function ChannelScreen({ navigation, route }) {
     return (
         <View style={styles.containerMain}>
 
-            {isLoading && (
-                <View style={styles.barChanContainer}>
-                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                        <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)'/>
-                    </View>
-                </View>
-            )}
-
-
-            {!isLoading && (
-                <View style={styles.barChanContainer}>
-                    <Text style={styles.barText}>{channelText}</Text>
-                    <View>
-                        <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} disabled={isDisable} />
-                    </View>
-                    {isAdmin && isMember && (
-                    <View style={{ marginRight: 20 }}>
-                        <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.channel.id })}>
-                            <SettingsSvg />
-                        </TouchableHighlight>
-                    </View>
-                    )}
-                </View>
-            )}
-
-
-
-
             <View style={styles.profileContainer}>
                 <ShowAvatar imageUrl={imageSource} profile={true} />
-                <Text style={{ color: '#000000', fontSize: Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{userText ? userText : user.name}</Text>
+                <Text style={{ color: '#000000', fontSize: Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{user.name}</Text>
                 {buttons.map((data, index) => (
                     <View style={{ width: '70%' }} key={index}>
                         <BorderButton key={index} data={data} />
@@ -225,6 +198,33 @@ export default function ChannelScreen({ navigation, route }) {
                 ))}
             </View>
             <View style={styles.historyContainer}>
+                {isLoading && (
+                    <View style={styles.barChanContainer}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+                        </View>
+                    </View>
+                )}
+
+
+                {!isLoading && (
+                    <View style={styles.barChanContainer}>
+                        <Text style={styles.barText}>{channelText}</Text>
+                        <View>
+                            <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} disabled={isDisable} />
+                        </View>
+                        {isAdmin && isMember && (
+                            <View style={{ marginRight: 20 }}>
+                                <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.channel.id })}>
+                                    <SettingsSvg style={{
+                                        transform: `scale(${scaleChange})`,
+
+                                    }} />
+                                </TouchableHighlight>
+                            </View>
+                        )}
+                    </View>
+                )}
                 {isLoading && (
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
@@ -260,13 +260,13 @@ export default function ChannelScreen({ navigation, route }) {
 
                     </ScrollView>
                 )}
-
+                {isMember && (
+                    <View style={styles.sendContainer}>
+                        <MessageInput channel={true} curuser={user.name} chanInf={channelData} onMessageSent={handleMessageSent} />
+                    </View>
+                )}
             </View>
-            {isMember && (
-                <View style={styles.sendContainer}>
-                    <MessageInput channel={true} curuser={userText ? userText : user.name} chanInf={channelData} onMessageSent={handleMessageSent} />
-                </View>
-            )}
+
             <View style={styles.bottomLeft}>
                 <HeaderButton title='Создать канал' onPress={() => setShowPopup(true)}>
                 </HeaderButton>

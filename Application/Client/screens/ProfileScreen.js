@@ -11,19 +11,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImageContext } from '../context/ImageContext';
 import AuthContext from '../context/AuthContext';
 import { setProfileNickname, getProfileNickname, getEmail } from '../context/AsyncStorageUtil';
+import ChangeSvg from '../assets/icons/changeSvg';
 
 export default function ProfileScreen({ navigation }) {
   const styles = useStyles();
   const { selectedImage } = useContext(ImageContext);
   const { user } = useContext(AuthContext);
   const [inputText, setInputText] = useState({
-    name: user?.name || '', 
+    name: user?.name || '',
   });
   const { width, height } = useWindowDimensions();
   const username = 'admin';
   const password = 'root';
   const [userText, setUserText] = useState('');
-  const scale = Math.min(width *0.0009, height *0.001);
+  const scale = Math.min(width * 0.0009, height * 0.001);
+  const scaleChange = Math.min(width * 0.0006, height * 0.001);
+  const [updateNameSuccess, setUpdateNameSuccess] = useState(true);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -47,7 +50,7 @@ export default function ProfileScreen({ navigation }) {
   const [emailFontSize, setEmailFontSize] = useState(36);
 
 
-  const [showInputField, setShowInputField] = useState(false); 
+  const [showInputField, setShowInputField] = useState(false);
   const [rotationDeg, setRotationDeg] = useState(0);
 
   useEffect(() => {
@@ -74,38 +77,9 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
-  const handleAddSvgPress = async () => {
-    if (showInputField) {
-      setShowInputField(false);
-      setRotationDeg(0);
-      try {
-        await setProfileNickname(inputText.name);
-        if (inputText.name !== user.name) {
-          await updateName(inputText.name);
-        }
-      } catch (error) {
-        console.log('Ошибка сохранения никнейма:', error);
-      }
-    } else {
-      setShowInputField(true);
-      setRotationDeg(90); 
-    }
-    try {
-      const profileNickname = await getProfileNickname();
-      console.log('Profile nickname:', profileNickname);
-    } catch (error) {
-      console.log('Ошибка при подгрузке никнейма:', error);
-    }
-  };
-
-  const addSvgStyle = {
-    transform: `rotate(${showInputField ? 45 : 0}deg)`,
-    transition: 'transform 0.5s ease', 
-  };
-
   const updateName = async (newName) => {
     try {
-      const id = user?.id; 
+      const id = user?.id;
       if (id) {
         const response = await fetch(`https://linking-api.onrender.com/api/users/${id}/update/name?name=${encodeURIComponent(newName)}`, {
           method: 'PUT',
@@ -118,6 +92,9 @@ export default function ProfileScreen({ navigation }) {
         if (response.ok) {
         } else {
           alert('Не удалось обновить имя пользователя');
+          setUpdateNameSuccess(false);
+          setShowInputField(true); 
+            setRotationDeg(90); 
         }
       }
     } catch (error) {
@@ -125,6 +102,35 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  const handleAddSvgPress = async () => {
+    if (showInputField) {
+      setShowInputField(false);
+      setRotationDeg(0);
+      try {
+        if (inputText.name !== user.name) {
+          try {
+            await updateName(inputText.name);
+          } catch (error) {
+            console.log('Ошибка при обновлении имени пользователя:', error);
+            setShowInputField(true); 
+            setRotationDeg(90); 
+            return;
+          }
+        }
+      } catch (error) {
+        console.log('Ошибка сохранения никнейма:', error);
+      }
+      try {
+        await setProfileNickname(user.name);
+      } catch (error) {
+        console.log('Ошибка при подгрузке никнейма:', error);
+      }
+    } else {
+      setShowInputField(true);
+      setRotationDeg(90);
+    }
+  };
+  
 
 
 
@@ -132,7 +138,7 @@ export default function ProfileScreen({ navigation }) {
     <View style={styles.containerMain}>
       <View style={styles.profileSettingsContainer}>
         <View style={{ marginBottom: 13 }}>
-          <ChangeAvatar  children={selectedImage}/>
+          <ChangeAvatar children={selectedImage} />
         </View>
         <View style={styles.nicknameContainer}>
           {showInputField ? (
@@ -142,13 +148,18 @@ export default function ProfileScreen({ navigation }) {
               flex={false}
             />
           ) : (
-            <Text style={{ fontSize:  Math.min(width * 0.03, height * 0.055), fontFamily: 'Montserrat-Regular', paddingHorizontal: 30 }}>
+            <Text style={{ fontSize: Math.min(width * 0.03, height * 0.055), fontFamily: 'Montserrat-Regular', paddingHorizontal: 30 }}>
               {inputText.name}
             </Text>
           )}
-          <TouchableOpacity onPress={handleAddSvgPress}>
-            <AddSvg style={addSvgStyle} />
-          </TouchableOpacity>
+          <View >
+            <TouchableOpacity onPress={handleAddSvgPress}>
+              <ChangeSvg style={{
+                transform: `rotate(${showInputField ? 360 : 0}deg) scale(${scale})`,
+                transition: 'transform 0.5s ease',
+              }} />
+            </TouchableOpacity>
+          </View>
         </View>
         <View
           style={{
@@ -178,10 +189,10 @@ export default function ProfileScreen({ navigation }) {
             </Text>
           </View>
         </View>
-        <View style = {{alignItems: 'center', width: '100%', marginLeft: 20}}>
+        <View style={{ alignItems: 'center', width: '100%', marginLeft: 20 }}>
           <HeaderButton title={'Изменить почту'} onPress={() => navigation.navigate('ChangeEmail')} />
         </View>
-        <View style={{ marginBottom: 13,alignItems: 'center', width: '100%', marginLeft: 20}}>
+        <View style={{ marginBottom: 13, alignItems: 'center', width: '100%', marginLeft: 20 }}>
           <HeaderButton title={'Изменить пароль'} onPress={() => navigation.navigate('ChangePassword')} />
         </View>
       </View>

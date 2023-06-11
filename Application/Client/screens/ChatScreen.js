@@ -143,6 +143,17 @@ export default function ChatScreen({ navigation, route }) {
 
   return (
     <View style={styles.containerMain}>
+      
+      <View style={styles.profileContainer}>
+        <ShowAvatar imageUrl={imageSource} profile={true} />
+        <Text style={{ color: '#000000', fontSize: Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{user.name}</Text>
+        {buttons.map((data, index) => (
+          <View style={{ width: '70%' }} key={index}>
+            <BorderButton data={data} />
+          </View>
+        ))}
+      </View>
+      <View style={styles.historyContainer}>
       <View style={styles.barContainer}>
         <SearchBody
           data={{
@@ -152,16 +163,6 @@ export default function ChatScreen({ navigation, route }) {
           }}
         />
       </View>
-      <View style={styles.profileContainer}>
-        <ShowAvatar imageUrl={imageSource} profile={true} />
-        <Text style={{ color: '#000000', fontSize: Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{userText ? userText : user.name}</Text>
-        {buttons.map((data, index) => (
-          <View style={{ width: '70%' }} key={index}>
-            <BorderButton data={data} />
-          </View>
-        ))}
-      </View>
-      <View style={styles.historyContainer}>
         {isLoading && (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
@@ -189,11 +190,11 @@ export default function ChatScreen({ navigation, route }) {
             })}
           </ScrollView>
         )}
-
+       <View style={styles.sendContainer}>
+        <MessageInput channel={false} curuser={user.name} chanInf={chatUser.name} onMessageSent={handleMessageSent} />
       </View>
-      <View style={styles.sendContainer}>
-        <MessageInput channel={false} curuser={userText ? userText : user.name} chanInf={chatUser.name} onMessageSent={handleMessageSent} />
       </View>
+     
       <View style={styles.bottomLeft}>
         <HeaderButton title='Создать канал' onPress={() => setShowPopup(true)}>
         </HeaderButton>
