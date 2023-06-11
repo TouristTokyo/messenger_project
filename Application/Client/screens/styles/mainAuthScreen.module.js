@@ -93,6 +93,7 @@ export default function useStyles() {
       //height: '10%',
       overflow: 'hidden',
       position: 'absolute',
+      zIndex: 1,
       top: 0, 
       right: 0, 
       shadowColor: '#000',
@@ -103,6 +104,7 @@ export default function useStyles() {
     },
     barChanContainer: {
       backgroundColor: '#FFFFFF',
+      zIndex: 1,
       borderTopLeftRadius: 35,
       width: '100%',
       height: '10%',
@@ -193,8 +195,8 @@ export default function useStyles() {
     
     historyContainer: {
       backgroundColor: '#FFFFFF',
-      paddingTop: 90,
-      paddingBottom: 100,
+      paddingTop: width * 0.045,
+      paddingBottom: width * 0.05,
       borderRadius: 35,
       marginTop: 30,
       width: '65%',
