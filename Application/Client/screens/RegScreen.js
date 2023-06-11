@@ -70,7 +70,7 @@ function RegScreen({ navigation }) {
       {!isLoading && (
         <View style={styles.textContainer}>
           <View style={styles.inputContainer}>
-            <View style={{ marginBottom: 13 }}>
+            <View style={{ marginBottom: 20 }}>
               <DataInput
                 value={inputText.name}
                 setValue={text => setInputText({ ...inputText, name: text })}
@@ -79,7 +79,7 @@ function RegScreen({ navigation }) {
                 flex={false}
               />
             </View>
-            <View style={{ marginBottom: 13 }}>
+            <View style={{ marginBottom: 20 }}>
               <DataInput
                 value={inputText.email}
                 setValue={text => setInputText({ ...inputText, email: text })}
@@ -88,7 +88,7 @@ function RegScreen({ navigation }) {
                 flex={false}
               />
             </View>
-            <View style={{ marginBottom: 13 }}>
+            <View style={{ marginBottom: 20 }}>
               <DataInput
                 value={inputText.password}
                 setValue={text => setInputText({ ...inputText, password: text })}
