@@ -13,7 +13,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
 @Slf4j
 public class ChannelService {
     private final ChannelRepository channelRepository;
@@ -23,6 +22,7 @@ public class ChannelService {
         this.channelRepository = channelRepository;
     }
 
+    @Transactional(readOnly = true)
     public List<Channel> getAll() {
         return channelRepository.findAll();
     }
@@ -30,7 +30,7 @@ public class ChannelService {
     @Transactional
     public Channel create(Channel channel) {
         if (channelRepository.findByName(channel.getName()).isPresent()) {
-            log.warn("Exist channel with name: " + channel.getName());
+            log.info("Exist channel with name: " + channel.getName());
             throw new ChannelException("Канал с таким именем уже существует: " + channel.getName());
         }
         log.info("Channel (" + channel.getName() + ") create successfully");
@@ -42,19 +42,21 @@ public class ChannelService {
         channelRepository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public Channel getChannelById(BigInteger id) {
         Channel channel = channelRepository.findById(id).orElse(null);
         if (channel == null) {
-            log.warn("Not found channel with id: " + id);
+            log.info("Not found channel with id: " + id);
             throw new ChannelException("Канал с таким id не был найден: " + id);
         }
         return channel;
     }
 
+    @Transactional(readOnly = true)
     public Channel getChannelByName(String name) {
         Channel channel = channelRepository.findByName(name).orElse(null);
         if (channel == null) {
-            log.warn("Not found channel with name: " + name);
+            log.info("Not found channel with name: " + name);
             throw new ChannelException("Канал с таким именем не был найден: " + name);
         }
         return channel;
@@ -66,7 +68,7 @@ public class ChannelService {
         Channel channel = getChannelById(id);
 
         if (foundChannel != null && !foundChannel.getId().equals(id)) {
-            log.warn("Exist channel with name: " + name);
+            log.info("Exist channel with name: " + name);
             throw new UserException("Канал с таким именем уже существует: " + name);
         }
 

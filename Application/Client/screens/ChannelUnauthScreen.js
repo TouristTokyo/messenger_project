@@ -107,9 +107,9 @@ export default function ChannelUnauthScreen({ navigation, route }) {
 
             </View>
             <View style = {styles.bottomLeft}>
-             <TouchableHighlight onPress={() => navigation.navigate('Auth')}>
-          <CreateSvg />
-        </TouchableHighlight>
+            <HeaderButton title = 'Создать канал' onPress={() => navigation.navigate('Auth')}> 
+        </HeaderButton>
+        
         </View>
         </View>
     );

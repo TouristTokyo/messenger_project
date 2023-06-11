@@ -13,7 +13,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
 @Slf4j
 public class ChatService {
     private final ChatRepository chatRepository;
@@ -34,30 +33,34 @@ public class ChatService {
         return chatRepository.saveAndFlush(chat);
     }
 
+    @Transactional(readOnly = true)
     public Chat getByUsernames(User currentUser, User otherUser) {
         Chat chat = chatRepository.findByUsernames(currentUser.getId(), otherUser.getId()).orElse(null);
         if (chat == null) {
-            log.warn("Not found chat for users: " + currentUser.getName() + " and " + otherUser.getName());
+            log.info("Not found chat for users: " + currentUser.getName() + " and " + otherUser.getName());
             throw new ChatException("Не найден чат между такими пользователями: " + currentUser.getName() + " и " + otherUser.getName());
         }
         return chat;
     }
 
+    @Transactional(readOnly = true)
     public Chat getById(BigInteger id) {
         Chat chat = chatRepository.findById(id).orElse(null);
         if (chat == null) {
-            log.warn("Not found chat with id: " + id);
+            log.info("Not found chat with id: " + id);
             throw new ChatException("Не существует чата с таким id: " + id);
         }
         return chat;
     }
 
+    @Transactional(readOnly = true)
     public List<Chat> getChatsByUser(User user) {
         return chatRepository.findByUserFirstOrUserSecond(user, user);
     }
 
     @Transactional
     public void delete(BigInteger id) {
+        log.info("Deleted chat with id: " + id);
         chatRepository.deleteById(id);
     }
 

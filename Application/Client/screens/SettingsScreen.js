@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TouchableHighlight, ScrollView } from 'react-native';
+import { View, TouchableHighlight, ScrollView, useWindowDimensions, ActivityIndicator } from 'react-native-web';
 import useStyles from './styles/mainAuthScreen.module';
 import HeaderButton from '../components/buttons/headerButton';
 import BackSvg from '../assets/icons/backSvg';
@@ -9,6 +9,7 @@ import AddSvg from '../assets/icons/addSvg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import AuthContext from '../context/AuthContext';
+import ChangeSvg from '../assets/icons/changeSvg';
 
 export default function SettingsScreen({ navigation, route }) {
   const { channelId } = route.params;
@@ -16,19 +17,22 @@ export default function SettingsScreen({ navigation, route }) {
   const styles = useStyles();
   const [isAdmin, setIsAdmin] = useState(false);
   const [role, setRole] = useState('');
-  
+  const [rotationDeg, setRotationDeg] = useState(0);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [channelData, setChannelData] = useState([]);
   const username = 'admin';
   const password = 'root';
-
+  const { width, height } = useWindowDimensions();
+  const scale = Math.min(width * 0.0009, height * 0.001);
+  const [isLoading, setIsLoading] = useState(true);
+  const scaleChange = Math.min(width * 0.0006, height * 0.001);
   useFocusEffect(
     React.useCallback(() => {
       fetchChannelData();
     }, [])
   );
   const [inputText, setInputText] = useState({
-    nickname: channelData.name || 'a',
+    nickname: channelData.name || 'Загрузка',
   });
   const fetchChannelData = async () => {
     try {
@@ -39,10 +43,11 @@ export default function SettingsScreen({ navigation, route }) {
           'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
         },
       });
-  
+
       if (response.ok) {
+
         const channelData = await response.json();
-        
+
         setChannelData(channelData);
         setInputText((prevInputText) => ({
           ...prevInputText,
@@ -50,6 +55,7 @@ export default function SettingsScreen({ navigation, route }) {
         }));
         const isCreator = user?.id === channelData.creator?.id;
         setIsAdmin(isCreator);
+        setIsLoading(false);
       } else {
         alert('Не удалось получить данные о канале, возможно он больше не существует');
       }
@@ -67,10 +73,10 @@ export default function SettingsScreen({ navigation, route }) {
           'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
         },
       });
-  
+
       if (response.ok) {
         alert('Канал удален');
-        navigation.navigate('MainAuth'); 
+        navigation.navigate('MainAuth');
       } else {
         alert('Не удалось удалить канал');
       }
@@ -78,7 +84,7 @@ export default function SettingsScreen({ navigation, route }) {
       alert('Ошибка при подключении к серверу', error);
     }
   };
-  
+
   const handleRoleChange = async (newRole) => {
     setRole(newRole);
     try {
@@ -91,6 +97,7 @@ export default function SettingsScreen({ navigation, route }) {
   const handleAddButtonClick = async () => {
     if (isEditingNickname) {
       setIsEditingNickname(false);
+      setRotationDeg(0);
       try {
         const response = await fetch(`https://linking-api.onrender.com/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
           method: 'PUT',
@@ -99,21 +106,21 @@ export default function SettingsScreen({ navigation, route }) {
             'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
           },
         });
-  
+
         if (response.ok) {
           const channelResponse = await response.json();
           const updatedChannels = user.channels.map((channel) => {
-          if (channel.id === channelResponse.id) {
-            return { ...channel, name: channelResponse.name };
-          }
-          return channel;
-        });
+            if (channel.id === channelResponse.id) {
+              return { ...channel, name: channelResponse.name };
+            }
+            return channel;
+          });
 
-        const updatedUser = {
-          ...user,
-          channels: updatedChannels,
-        };
-        localStorage.setItem('user', JSON.stringify(updatedUser));
+          const updatedUser = {
+            ...user,
+            channels: updatedChannels,
+          };
+          localStorage.setItem('user', JSON.stringify(updatedUser));
 
         } else {
           alert('Не удалось обновить имя канала');
@@ -123,6 +130,7 @@ export default function SettingsScreen({ navigation, route }) {
       }
     } else {
       setIsEditingNickname(true);
+      setRotationDeg(90);
     }
   };
 
@@ -140,30 +148,41 @@ export default function SettingsScreen({ navigation, route }) {
           />
         </View>
         <TouchableHighlight onPress={handleAddButtonClick}>
-          <AddSvg />
+          <ChangeSvg style={{
+            transform: `rotate(${isEditingNickname ? 360 : 0}deg) scale(${scale})`,
+            transition: 'transform 0.5s ease',
+          }} />
         </TouchableHighlight>
       </View>
       <View style={styles.settingsContainer}>
-        <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-        {channelData.members?.map((channel) => (
-            <SettingsBody
-             
-              data={{
-                key: channel.id,
-                name: channel.user.name,
-                role: channel.role.name,
-                onRoleChange: handleRoleChange,
-                creator: channel.role.creator,
-                admin: channel.role.admin,
-                channelId: channelData
-              }}
-              
-            />
-          ))}
-        </ScrollView>
+        {isLoading && (
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+          </View>
+        )}
+        {!isLoading && (
+          <ScrollView style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+            {channelData.members?.map((channel) => (
+              <SettingsBody
+
+                data={{
+                  key: channel.id,
+                  name: channel.user.name,
+                  role: channel.role.name,
+                  onRoleChange: handleRoleChange,
+                  creator: channel.role.creator,
+                  admin: channel.role.admin,
+                  channelId: channelData
+                }}
+
+              />
+            ))}
+          </ScrollView>
+        )}
+
       </View>
 
-      <View style={styles.topLeft}>
+      <View style={[styles.topLeft, { transform: [{ scale }] }]}>
         <TouchableHighlight onPress={() => navigation.navigate('Channel', { channelId: channelId })}>
           <BackSvg />
         </TouchableHighlight>

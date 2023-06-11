@@ -17,6 +17,7 @@ import ru.vsu.cs.api.models.*;
 import ru.vsu.cs.api.services.*;
 import ru.vsu.cs.api.utils.ErrorResponse;
 import ru.vsu.cs.api.utils.exceptions.ChannelException;
+import ru.vsu.cs.api.utils.exceptions.MemberException;
 import ru.vsu.cs.api.utils.exceptions.UserException;
 import ru.vsu.cs.api.utils.mapper.Mapper;
 
@@ -46,7 +47,7 @@ public class ChannelController {
     }
 
     @GetMapping
-    @Operation(summary = "Получение всех канналов")
+    @Operation(summary = "Получение всех каналов")
     public List<ChannelSearchDto> getChannels() {
         return channelService.getAll().stream().map(Mapper::convertToChannelDto).toList();
     }
@@ -99,6 +100,8 @@ public class ChannelController {
         User user = userService.getUserByName(username);
         Channel channel = channelService.getChannelByName(channelName);
 
+        memberService.checkUserInChannel(user, channel);
+
         Role role = roleService.save(new Role("member", false, false));
 
         Member member = new Member(channel, user, role);
@@ -113,6 +116,8 @@ public class ChannelController {
                                             @RequestParam("username") String username) {
         Member member = memberService.getMemberByUserAndChannel(userService.getUserByName(username),
                 channelService.getChannelById(id));
+
+        memberService.checkCreator(member);
 
         roleService.delete(member.getRole().getId());
         memberService.delete(member.getId());
@@ -160,6 +165,15 @@ public class ChannelController {
 
     @ExceptionHandler
     private ResponseEntity<ErrorResponse> userException(UserException ex) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ErrorResponse> memberException(MemberException ex) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
                 LocalDateTime.now()

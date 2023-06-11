@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, TouchableHighlight } from 'react-native-web';
+import { View, ActivityIndicator } from 'react-native-web';
 import useStyles from './styles/greetingsScreen.module';
 import DataInput from '../components/inputs/textInput/textInput';
 import HeaderButton from '../components/buttons/headerButton';
@@ -15,7 +15,7 @@ function ForgotScreen({ navigation }) {
   const username = 'admin';
   const password = 'root';
   const [receivedCode, setReceivedCode] = useState('');
- 
+  const [isLoading, setIsLoading] = useState(false);
   const isButtonDisabled = () => {
     return (
       !inputText.newPassword ||
@@ -35,6 +35,7 @@ function ForgotScreen({ navigation }) {
       alert('Не верный формат почты');
       return;
     }
+    setIsLoading(true);
     const email = encodeURIComponent(inputText.email);
     const apiUrl = `https://linking-api.onrender.com/api/send_email?email=${email}`;
 
@@ -49,9 +50,10 @@ function ForgotScreen({ navigation }) {
         setReceivedCode(data);
         if (data) {
           alert('Код подтверждения был отправлен на указанную почту!');
+          setIsLoading(false);
         } else {
           alert('Не удалось отправить код подтверждения');
-         
+          setIsLoading(false);
         }
       })
       .catch((error) => {
@@ -72,6 +74,7 @@ function ForgotScreen({ navigation }) {
       return userData;
       } else {
         alert('Пользователь с указанной почтой не найден');
+        setIsLoading(false);
       }
     } catch (error) {
       alert('Ошибка при подключении к серверу', error);
@@ -100,6 +103,7 @@ function ForgotScreen({ navigation }) {
           const errorMessage = errorData.message ;
          alert(errorMessage);
         });
+        setIsLoading(false);
       }
     } catch (error) {
       alert('Ошибка при подключении к серверу', error);
@@ -112,13 +116,16 @@ function ForgotScreen({ navigation }) {
       alert('Неправильный формат пароля: минимум 8 символов в длину, должен содержать минимум одну заглавную и строчную букву, минимум одну цифру, также может содержать специальный символы( !@#$%^&*)');
       return;
     }
+    setIsLoading(true);
     try {
       const userId = await getUserById(inputText.email);
     if (userId) {
       await updatePassword(userId);
       alert('Пароль успешно обновлен');
+      setIsLoading(false);
     } else {
       alert('Пользователь с указанной почтой не найден');
+      setIsLoading(false);
     }
       navigation.navigate('Auth');
     } catch (error) {
@@ -129,7 +136,15 @@ function ForgotScreen({ navigation }) {
 
   return (
     <View style={styles.containerMain}>
-      <View style={styles.textContainer}>
+      {isLoading && (
+        <View style={styles.textContainer}>
+          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+          </View>
+        </View>
+      )}
+      {!isLoading && (
+        <View style={styles.textContainer}>
         <View style={styles.inputContainer}>
           <View style={{ marginBottom: 13 }}>
             <DataInput
@@ -176,6 +191,8 @@ function ForgotScreen({ navigation }) {
           <HeaderButton title={'Получить код'} onPress={getCode} disabled={isDisabled()} />
         </View>
       </View>
+      )}
+      
     </View>
   );
 }

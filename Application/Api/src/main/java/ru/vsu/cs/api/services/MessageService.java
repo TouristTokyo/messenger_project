@@ -14,7 +14,6 @@ import java.math.BigInteger;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
 @Slf4j
 public class MessageService {
     private final MessageRepository messageRepository;
@@ -30,18 +29,21 @@ public class MessageService {
         return messageRepository.saveAndFlush(message);
     }
 
+    @Transactional(readOnly = true)
     public List<Message> getMessagesByChat(Chat chat) {
         return messageRepository.findByChat(chat);
     }
 
+    @Transactional(readOnly = true)
     public List<Message> getMessagesByChannel(Channel channel) {
         return messageRepository.findByChannel(channel);
     }
 
+    @Transactional(readOnly = true)
     public Message getMessage(BigInteger id) {
         Message message = messageRepository.findById(id).orElse(null);
         if (message == null) {
-            log.warn("Not found message with id: " + id);
+            log.info("Not found message with id: " + id);
             throw new MessageException("Не найденно сообщения с данным id: " + id);
         }
         return message;

@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableHighlight, Modal, ScrollView, useWindowDimensions } from 'react-native';
+import { View, Text, TouchableHighlight, Modal, ScrollView, useWindowDimensions, ActivityIndicator } from 'react-native';
 import CreateSvg from '../assets/icons/createSvg';
 import useStyles from './styles/mainAuthScreen.module';
 import HeaderButton from '../components/buttons/headerButton';
@@ -12,7 +12,7 @@ import { ImageContext } from '../context/ImageContext';
 import AuthContext from '../context/AuthContext';
 import DataInput from '../components/inputs/textInput/textInput';
 import { useFocusEffect } from '@react-navigation/native';
-import {  getProfileNickname } from '../context/AsyncStorageUtil';
+import { getProfileNickname } from '../context/AsyncStorageUtil';
 
 
 export default function ChannelScreen({ navigation, route }) {
@@ -23,6 +23,7 @@ export default function ChannelScreen({ navigation, route }) {
         nickname: '',
     });
     const { width, height } = useWindowDimensions();
+    const scaleChange = Math.min(width * 0.0006, height * 0.001);
     const { logout } = useContext(AuthContext);
     const { user } = useContext(AuthContext);
     const { selectedImage } = useContext(ImageContext);
@@ -35,7 +36,7 @@ export default function ChannelScreen({ navigation, route }) {
     const [channelData, setChannelData] = useState([]);
     const [channelText, setChannelText] = useState('');
     const [shouldFetchChannelData, setShouldFetchChannelData] = useState(true);
-
+    const [isLoading, setIsLoading] = useState(true);
     const fetchChannelData = async () => {
         try {
             const response = await fetch(`https://linking-api.onrender.com/api/channels/${channelId}`, {
@@ -47,6 +48,7 @@ export default function ChannelScreen({ navigation, route }) {
             });
 
             if (response.ok) {
+
                 const channelData = await response.json();
                 const isCreator = user?.id === channelData.creator?.id;
                 const member = channelData.members.find(member => member.user.id === user.id);
@@ -64,6 +66,7 @@ export default function ChannelScreen({ navigation, route }) {
                 setIsDisable(isCreator);
                 setChannelData(channelData);
                 setChannelText(channelData.channel.name);
+                setIsLoading(false);
             } else {
             }
         } catch (error) {
@@ -114,6 +117,10 @@ export default function ChannelScreen({ navigation, route }) {
         window.location.reload();
       }
     const isFormValid = inputText.nickname;
+    const handleLogout = () => {
+        logout();
+        window.location.reload();
+    }
     const buttons = [
         {
             onPress: ({ }) => navigation.navigate('Profile'),
@@ -182,22 +189,10 @@ export default function ChannelScreen({ navigation, route }) {
 
     return (
         <View style={styles.containerMain}>
-            <View style={styles.barChanContainer}>
-                <Text style={styles.barText}>{channelText}</Text>
-                <View>
-                    <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} disabled={isDisable} />
-                </View>
-                {isMember && isAdmin && (
-                    <View style={{ marginRight: 20 }}>
-                        <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.channel.id })}>
-                            <SettingsSvg />
-                        </TouchableHighlight>
-                    </View>
-                )}
-            </View>
+
             <View style={styles.profileContainer}>
                 <ShowAvatar imageUrl={imageSource} profile={true} />
-                <Text style={{ color: '#000000', fontSize:  Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{userText ? userText : user.name}</Text>
+                <Text style={{ color: '#000000', fontSize: Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{user.name}</Text>
                 {buttons.map((data, index) => (
                     <View style={{ width: '70%' }} key={index}>
                         <BorderButton  data={data} />
@@ -205,44 +200,78 @@ export default function ChannelScreen({ navigation, route }) {
                 ))}
             </View>
             <View style={styles.historyContainer}>
-                <ScrollView
-                    style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-                    {channelData?.messages?.map((message) => {
-                        const senderId = message.sender?.id;
-                        const matchingMember = channelData.members.find((member) => member.user.id === senderId);
+                {isLoading && (
+                    <View style={styles.barChanContainer}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+                        </View>
+                    </View>
+                )}
 
-                        const role = matchingMember?.role?.name;
 
-                        return (
-                            <MessageBody
-                                key={message.id}
-                                data={{
-                                    imageUrl: message.sender?.image,
-                                    nickname: message.sender?.name,
-                                    role: role,
-                                    message: message.data,
-                                    date: message.date,
-                                    own: message.sender?.name === user.name,
-                                    channel: true,
-                                    unauth: false,
-                                    ident: message.id
-                                }}
-                                currentUser={user}
-                            />
-                        );
-                    })}
+                {!isLoading && (
+                    <View style={styles.barChanContainer}>
+                        <Text style={styles.barText}>{channelText}</Text>
+                        <View>
+                            <HeaderButton title={isMember ? 'Покинуть' : 'Присоединиться'} onPress={handleJoinLeave} disabled={isDisable} />
+                        </View>
+                        {isAdmin && isMember && (
+                            <View style={{ marginRight: 20 }}>
+                                <TouchableHighlight onPress={({ }) => navigation.navigate('Settings', { channelId: channelData.channel.id })}>
+                                    <SettingsSvg style={{
+                                        transform: `scale(${scaleChange})`,
 
-                </ScrollView>
+                                    }} />
+                                </TouchableHighlight>
+                            </View>
+                        )}
+                    </View>
+                )}
+                {isLoading && (
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' />
+                    </View>
+                )}
+                {!isLoading && (
+                    <ScrollView
+                        style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
+                        {channelData?.messages?.map((message) => {
+                            const senderId = message.sender?.id;
+                            const matchingMember = channelData.members.find((member) => member.user.id === senderId);
+
+                            const role = matchingMember?.role?.name;
+
+                            return (
+                                <MessageBody
+                                    key={message.id}
+                                    data={{
+                                        imageUrl: message.sender?.image,
+                                        nickname: message.sender?.name,
+                                        role: role,
+                                        message: message.data,
+                                        date: message.date,
+                                        own: message.sender?.name === user.name,
+                                        channel: true,
+                                        unauth: false,
+                                        ident: message.id
+                                    }}
+                                    currentUser={user}
+                                />
+                            );
+                        })}
+
+                    </ScrollView>
+                )}
+                {isMember && (
+                    <View style={styles.sendContainer}>
+                        <MessageInput channel={true} curuser={user.name} chanInf={channelData} onMessageSent={handleMessageSent} />
+                    </View>
+                )}
             </View>
-            {isMember && (
-                <View style={styles.sendContainer}>
-                    <MessageInput channel={true} curuser={userText ? userText : user.name} chanInf={channelData} onMessageSent={handleMessageSent} />
-                </View>
-            )}
+
             <View style={styles.bottomLeft}>
-                <TouchableHighlight onPress={() => setShowPopup(true)}>
-                    <CreateSvg />
-                </TouchableHighlight>
+                <HeaderButton title='Создать канал' onPress={() => setShowPopup(true)}>
+                </HeaderButton>
             </View>
             <Modal visible={showPopup} transparent={true}>
                 <View style={styles.popupContainer}>

@@ -30,31 +30,57 @@ const MessageBody = ({ data, currentUser }) => {
   ];
 
   const handleForwardPress = async () => {
-    setIsFocused(prevState => !prevState);
-    const body = {
-      username: user.name,
-      messageId: ident
-    };
-
-    try {
-      const response = await fetch('https://linking-api.onrender.com/api/saved_message/save', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
-        },
-        body: JSON.stringify(body),
-      });
-
-      if (response.ok) {
-
-      } else {
-        alert('Не удалось сохранить сообщение');
+    setIsFocused((prevIsFocused) => !prevIsFocused);
+    if (isFocused) {
+      const user_id = user.id;
+      const message_id = ident;
+  
+      try {
+        const response = await fetch(`https://linking-api.onrender.com/api/saved_message/delete?user_id=${user_id}&message_id=${message_id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${btoa(`${username}:${password}`)}`
+          },
+        });
+  
+        if (response.ok) {
+         
+        } else {
+          alert('Не удалось удалить сообщение');
+        }
+      } catch (error) {
+        console.log('Ошибка при удалении сообщения', error);
       }
-    } catch (error) {
-      console.log('Ошибка при сохранении сообщения', error);
+    } else {
+      const body = {
+        username: user.name,
+        messageId: ident
+      };
+  
+      try {
+        const response = await fetch('https://linking-api.onrender.com/api/saved_message/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${btoa(`${username}:${password}`)}`,
+          },
+          body: JSON.stringify(body),
+        });
+  
+        if (response.ok) {
+          // Handle successful save
+        } else {
+          alert('Не удалось сохранить сообщение');
+        }
+      } catch (error) {
+        console.log('Ошибка при сохранении сообщения', error);
+      }
     }
+  
+    
   };
+  
 
   return (
     <View style={own ? styles.ownContainer : styles.container}>
