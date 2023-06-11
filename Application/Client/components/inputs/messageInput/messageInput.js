@@ -14,13 +14,13 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
     if (message) {
       try {
         if (channel) {
-          setMessage('');
+        
           const requestBody = {
             currentUsername: curuser,
             message: message,
             channelName: chanInf.channel.name,
           };
-    
+          setMessage('');
           const response = await fetch('https://linking-api.onrender.com/api/channels/add_message', {
             method: 'POST',
             headers: {
@@ -36,13 +36,13 @@ const MessageInput = ({ curuser, chanInf, channel, onMessageSent }) => {
             alert('Не удалось отправить сообщение');
           }
         } else {
-          setMessage('');
+          
           const requestBody = {
             currentUsername: curuser,
             otherUsername: chanInf,
             message: message,
           };
-    
+          setMessage('');
           const response = await fetch('https://linking-api.onrender.com/api/chats/add_message', {
             method: 'POST',
             headers: {
