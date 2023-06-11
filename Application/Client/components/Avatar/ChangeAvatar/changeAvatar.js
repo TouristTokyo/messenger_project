@@ -112,7 +112,7 @@ export default function ChangeAvatar({ children, ...data }) {
                   <PlusSvg />
                 </View>
               ) : (
-                <ImageViewer isAvatar={true} selectedImage={base64Image} />
+                <ImageViewer style = {styles.image} isAvatar={true} selectedImage={base64Image} />
               )}
             </View>
           )}

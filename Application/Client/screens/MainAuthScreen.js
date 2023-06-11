@@ -35,7 +35,7 @@ export default function MainAuthScreen({ navigation }) {
     React.useCallback(() => {
       fetchUserData();
       fetchProfileNickname();
-     
+
     }, [])
   );
 
@@ -59,7 +59,6 @@ export default function MainAuthScreen({ navigation }) {
         const userData = await response.json();
         updateUserCallback(userData);
         setIsLoading(false);
-        console.log(user?.savedMessages);
       } else {
         console.log('Не удалось подгрузить данные пользователя');
       }
@@ -228,13 +227,26 @@ export default function MainAuthScreen({ navigation }) {
       </View>
       <View style={styles.profileContainer}>
         <ShowAvatar imageUrl={selectedImage} profile={true} />
-        <Text style={{
-          color: '#000000',
-          fontSize: Math.min(width * 0.03, height * 0.055),
-          textAlign: 'center',
-          marginBottom: 13,
-          fontFamily: 'Montserrat-Regular',
-        }}>{userText ? userText : user.name}</Text>
+        {isLoading && (
+          <Text style={{
+            color: '#000000',
+            fontSize: Math.min(width * 0.03, height * 0.055),
+            textAlign: 'center',
+            marginBottom: 13,
+            fontFamily: 'Montserrat-Regular',
+          }}> <ActivityIndicator size="large" color='rgba(0, 118, 185, 0.35)' /></Text>
+        )}
+
+        {!isLoading && (
+          <Text style={{
+            color: '#000000',
+            fontSize: Math.min(width * 0.03, height * 0.055),
+            textAlign: 'center',
+            marginBottom: 13,
+            fontFamily: 'Montserrat-Regular',
+          }}> {user.name}</Text>
+        )}
+
         {buttons.map((data, index) => (
           <View style={{ width: '70%' }} key={index}>
             <BorderButton data={data} />
@@ -277,10 +289,10 @@ export default function MainAuthScreen({ navigation }) {
                             : message.channel.name,
                           id: message.id,
                           nav: message.chat
-                          ? message.chat.sender?.name === user.name
-                            ? message.chat.recipient
-                            : message.chat.sender
-                          : user.channels.find(channel => channel.name === message.channel.name)?.id,
+                            ? message.chat.sender?.name === user.name
+                              ? message.chat.recipient
+                              : message.chat.sender
+                            : user.channels.find(channel => channel.name === message.channel.name)?.id,
                           answer: message.chat ? true : false,
                         }}
                       />

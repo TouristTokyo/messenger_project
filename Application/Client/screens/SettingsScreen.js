@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TouchableHighlight, ScrollView, useWindowDimensions,  ActivityIndicator } from 'react-native-web';
+import { View, TouchableHighlight, ScrollView, useWindowDimensions, ActivityIndicator } from 'react-native-web';
 import useStyles from './styles/mainAuthScreen.module';
 import HeaderButton from '../components/buttons/headerButton';
 import BackSvg from '../assets/icons/backSvg';
@@ -9,6 +9,7 @@ import AddSvg from '../assets/icons/addSvg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import AuthContext from '../context/AuthContext';
+import ChangeSvg from '../assets/icons/changeSvg';
 
 export default function SettingsScreen({ navigation, route }) {
   const { channelId } = route.params;
@@ -16,7 +17,7 @@ export default function SettingsScreen({ navigation, route }) {
   const styles = useStyles();
   const [isAdmin, setIsAdmin] = useState(false);
   const [role, setRole] = useState('');
-
+  const [rotationDeg, setRotationDeg] = useState(0);
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [channelData, setChannelData] = useState([]);
   const username = 'admin';
@@ -24,7 +25,7 @@ export default function SettingsScreen({ navigation, route }) {
   const { width, height } = useWindowDimensions();
   const scale = Math.min(width * 0.0009, height * 0.001);
   const [isLoading, setIsLoading] = useState(true);
-
+  const scaleChange = Math.min(width * 0.0006, height * 0.001);
   useFocusEffect(
     React.useCallback(() => {
       fetchChannelData();
@@ -44,7 +45,7 @@ export default function SettingsScreen({ navigation, route }) {
       });
 
       if (response.ok) {
-      
+
         const channelData = await response.json();
 
         setChannelData(channelData);
@@ -96,6 +97,7 @@ export default function SettingsScreen({ navigation, route }) {
   const handleAddButtonClick = async () => {
     if (isEditingNickname) {
       setIsEditingNickname(false);
+      setRotationDeg(0);
       try {
         const response = await fetch(`https://linking-api.onrender.com/api/channels/${channelId}/update?name=${encodeURIComponent(inputText.nickname)}`, {
           method: 'PUT',
@@ -128,6 +130,7 @@ export default function SettingsScreen({ navigation, route }) {
       }
     } else {
       setIsEditingNickname(true);
+      setRotationDeg(90);
     }
   };
 
@@ -145,7 +148,10 @@ export default function SettingsScreen({ navigation, route }) {
           />
         </View>
         <TouchableHighlight onPress={handleAddButtonClick}>
-          <AddSvg />
+          <ChangeSvg style={{
+            transform: `rotate(${isEditingNickname ? 360 : 0}deg) scale(${scale})`,
+            transition: 'transform 0.5s ease',
+          }} />
         </TouchableHighlight>
       </View>
       <View style={styles.settingsContainer}>
