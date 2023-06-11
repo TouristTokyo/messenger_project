@@ -4,6 +4,7 @@ export default function useStyles() {
   const { width, height } = useWindowDimensions();
   return StyleSheet.create({
     container: {
+      marginTop: 10,
       flexDirection: 'row',
       alignItems: 'flex-end',
       marginBottom: 10,
