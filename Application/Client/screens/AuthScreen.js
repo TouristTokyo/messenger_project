@@ -68,7 +68,7 @@ function AuthScreen({ navigation }) {
         {!isLoading && (
            <View style={styles.textContainer}>
           <View style={styles.inputContainer}>
-          <View style={{ marginBottom: 13 }}>
+          <View style={{ marginBottom: 20 }}>
             <DataInput
               value={inputText.email}
               setValue={text => setInputText({ ...inputText, email: text })}
@@ -77,7 +77,7 @@ function AuthScreen({ navigation }) {
               flex={false}
             />
           </View>
-          <View style={{ marginBottom: 13 }}>
+          <View style={{ marginBottom: 20 }}>
             <DataInput
               value={inputText.password}
               setValue={text => setInputText({ ...inputText, password: text })}
@@ -87,7 +87,7 @@ function AuthScreen({ navigation }) {
             />
           </View>
         </View>
-        <View style={{ marginTop: 13, marginRight: 13 }}>
+        <View style={{ marginTop: 20, marginRight: 13 }}>
           <TouchableHighlight onPress={() => navigation.navigate('Forgot')}>
             <Text style = {{fontFamily: 'Montserrat-Regular'}}>Забыли пароль?</Text>
           </TouchableHighlight>

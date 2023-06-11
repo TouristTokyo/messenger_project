@@ -110,6 +110,7 @@ export default function ProfileScreen({ navigation }) {
         if (inputText.name !== user.name) {
           try {
             await updateName(inputText.name);
+            await setProfileNickname(inputText.name);
           } catch (error) {
             console.log('Ошибка при обновлении имени пользователя:', error);
             setShowInputField(true); 
@@ -121,7 +122,7 @@ export default function ProfileScreen({ navigation }) {
         console.log('Ошибка сохранения никнейма:', error);
       }
       try {
-        await setProfileNickname(user.name);
+        await setProfileNickname(inputText.name);
       } catch (error) {
         console.log('Ошибка при подгрузке никнейма:', error);
       }
