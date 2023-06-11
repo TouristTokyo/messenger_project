@@ -146,7 +146,7 @@ function ForgotScreen({ navigation }) {
       {!isLoading && (
         <View style={styles.textContainer}>
         <View style={styles.inputContainer}>
-          <View style={{ marginBottom: 13 }}>
+          <View style={{ marginBottom: 20 }}>
             <DataInput
               value={inputText.email}
               setValue={(text) => setInputText({ ...inputText, email: text })}
@@ -155,7 +155,7 @@ function ForgotScreen({ navigation }) {
               flex={false}
             />
           </View>
-          <View style={{ marginBottom: 13 }}>
+          <View style={{ marginBottom: 20 }}>
             <DataInput
               value={inputText.newPassword}
               setValue={(text) => setInputText({ ...inputText, newPassword: text })}
@@ -164,7 +164,7 @@ function ForgotScreen({ navigation }) {
               flex={false}
             />
           </View>
-          <View style={{ marginBottom: 13 }}>
+          <View style={{ marginBottom: 20 }}>
             <DataInput
               value={inputText.confirmPassword}
               setValue={(text) => setInputText({ ...inputText, confirmPassword: text })}
@@ -173,7 +173,7 @@ function ForgotScreen({ navigation }) {
               flex={false}
             />
           </View>
-          <View style={{ marginBottom: 13 }}>
+          <View style={{ marginBottom: 20 }}>
             <DataInput
               value={inputText.code}
               setValue={(text) => setInputText({ ...inputText, code: text })}

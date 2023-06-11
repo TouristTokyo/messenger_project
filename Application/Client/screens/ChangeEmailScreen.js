@@ -100,7 +100,7 @@ function ChangeEmailScreen({ navigation }) {
       {!isLoading && (
         <View style={styles.textContainer}>
           <View style={styles.inputContainer}>
-            <View style={{ marginBottom: 13 }}>
+            <View style={{ marginBottom: 20 }}>
               <DataInput
                 value={inputText.email}
                 setValue={(text) => setInputText({ ...inputText, email: text })}
@@ -109,7 +109,7 @@ function ChangeEmailScreen({ navigation }) {
                 flex={false}
               />
             </View>
-            <View style={{ marginBottom: 13 }}>
+            <View style={{ marginBottom: 20 }}>
               <DataInput
                 value={inputText.code}
                 setValue={(text) => setInputText({ ...inputText, code: text })}

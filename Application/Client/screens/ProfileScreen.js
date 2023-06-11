@@ -31,6 +31,7 @@ export default function ProfileScreen({ navigation }) {
   useFocusEffect(
     React.useCallback(() => {
       fetchEmail();
+      fetchSavedNickname();
     }, [user])
   );
 
@@ -70,7 +71,7 @@ export default function ProfileScreen({ navigation }) {
     try {
       const savedNickname = await AsyncStorage.getItem('profile_nickname');
       if (savedNickname) {
-        setInputText({ name: savedNickname });
+        setInputText({ name: user.name });
       }
     } catch (error) {
       console.log('Error fetching saved nickname:', error);
@@ -92,9 +93,11 @@ export default function ProfileScreen({ navigation }) {
         if (response.ok) {
         } else {
           alert('Не удалось обновить имя пользователя');
+          setProfileNickname(user.name);
           setUpdateNameSuccess(false);
           setShowInputField(true); 
             setRotationDeg(90); 
+
         }
       }
     } catch (error) {
@@ -110,7 +113,7 @@ export default function ProfileScreen({ navigation }) {
         if (inputText.name !== user.name) {
           try {
             await updateName(inputText.name);
-            await setProfileNickname(inputText.name);
+            
           } catch (error) {
             console.log('Ошибка при обновлении имени пользователя:', error);
             setShowInputField(true); 
