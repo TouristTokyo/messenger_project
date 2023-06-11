@@ -76,7 +76,7 @@ function ChangePasswordScreen({ navigation }) {
       {!isLoading && (
         <View style={styles.textContainer}>
           <View style={styles.inputContainer}>
-            <View style={{ marginBottom: 13 }}>
+            <View style={{ marginBottom: 20 }}>
               <DataInput
                 value={inputText.password}
                 setValue={(text) => setInputText({ ...inputText, password: text })}
@@ -85,7 +85,7 @@ function ChangePasswordScreen({ navigation }) {
                 flex={false}
               />
             </View>
-            <View style={{ marginBottom: 13 }}>
+            <View style={{ marginBottom: 20 }}>
               <DataInput
                 value={inputText.newPassword}
                 setValue={(text) => setInputText({ ...inputText, newPassword: text })}
@@ -94,7 +94,7 @@ function ChangePasswordScreen({ navigation }) {
                 flex={false}
               />
             </View>
-            <View style={{ marginBottom: 13 }}>
+            <View style={{ marginBottom: 20 }}>
               <DataInput
                 value={inputText.confirmPassword}
                 setValue={(text) => setInputText({ ...inputText, confirmPassword: text })}
