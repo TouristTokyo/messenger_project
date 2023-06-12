@@ -111,11 +111,7 @@ export default function ChannelScreen({ navigation, route }) {
             console.log('Ошибка при подгрузке никнейма', error);
         }
     };
-    const handleLogout = () => {
-        console.log('trigger');
-        logout();
-        window.location.reload();
-      }
+  
     const isFormValid = inputText.nickname;
     const handleLogout = () => {
         logout();
@@ -134,7 +130,7 @@ export default function ChannelScreen({ navigation, route }) {
 
     const handleJoinLeave = async () => {
         try {
-            const name = userText || user.name;
+            const name = user.name;
             const channelName = channelText;
             const apiUrl = isMember
                 ? `https://linking-api.onrender.com/api/channels/${channelId}/leave?username=${name}`
