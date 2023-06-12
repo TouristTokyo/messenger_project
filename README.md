@@ -60,6 +60,8 @@
 
 6) [Видеопрезентация проекта](https://youtu.be/m0fTdEdH5b4)
 
+7) [Видео обзор изменений в проекте](https://youtu.be/yOhv0cZyyA8)
+
 ### Запуск приложения
-Перейдите по [ссылке](https://messenger-project-olfum8j2e-touristtokyo.vercel.app/), чтобы начать работу с мессенджером.
+Перейдите по [ссылке](https://messenger-project-phi.vercel.app/), чтобы начать работу с мессенджером.
 
