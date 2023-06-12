@@ -12,7 +12,7 @@ export default function ChannelUnauthScreen({ navigation, route }) {
     const styles = useStyles();
     const { channelId } = route.params;
     const [shouldUseFocusEffect, setShouldUseFocusEffect] = useState(false);
-    
+
     useEffect(() => {
         setShouldUseFocusEffect(false);
     }, [channelId]);
@@ -68,19 +68,20 @@ export default function ChannelUnauthScreen({ navigation, route }) {
     };
 
     if (!channelData) {
-        return null; 
-      }
+        return null;
+    }
     return (
         <View style={styles.containerMain}>
-            <View style={styles.barChanContainer}>
-                <Text style={styles.barText}>{channelText}</Text>
-                <View>
-                    <HeaderButton title={'Присоединиться'} onPress={() => navigation.navigate('Auth')} />
-                </View>
-            </View >
+
             <View style={styles.historyContainer}>
+                <View style={styles.barChanContainer}>
+                    <Text style={styles.barText}>{channelText}</Text>
+                    <View>
+                        <HeaderButton title={'Присоединиться'} onPress={() => navigation.navigate('Auth')} />
+                    </View>
+                </View >
                 <ScrollView ref={scrollViewRef} onContentSizeChange={handleContentSizeChange} style={{ flex: 1, scrollbarWidth: 0, flexDirection: 'column' }}>
-                {channelData?.messages?.map((message) => {
+                    {channelData?.messages?.map((message) => {
                         const senderId = message.sender?.id;
                         const matchingMember = channelData.members.find((member) => member.user.id === senderId);
 
@@ -99,18 +100,18 @@ export default function ChannelUnauthScreen({ navigation, route }) {
                                     channel: true,
                                     unauth: true
                                 }}
-                              
+
                             />
                         );
                     })}
                 </ScrollView>
 
             </View>
-            <View style = {styles.bottomLeft}>
-            <HeaderButton title = 'Создать канал' onPress={() => navigation.navigate('Auth')}> 
-        </HeaderButton>
-        
-        </View>
+            <View style={styles.bottomLeft}>
+                <HeaderButton title='Создать канал' onPress={() => navigation.navigate('Auth')}>
+                </HeaderButton>
+
+            </View>
         </View>
     );
 }
