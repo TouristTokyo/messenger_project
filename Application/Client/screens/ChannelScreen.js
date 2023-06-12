@@ -111,7 +111,7 @@ export default function ChannelScreen({ navigation, route }) {
             console.log('Ошибка при подгрузке никнейма', error);
         }
     };
-
+  
     const isFormValid = inputText.nickname;
     const handleLogout = () => {
         logout();
@@ -130,7 +130,7 @@ export default function ChannelScreen({ navigation, route }) {
 
     const handleJoinLeave = async () => {
         try {
-            const name = userText || user.name;
+            const name = user.name;
             const channelName = channelText;
             const apiUrl = isMember
                 ? `https://linking-api.onrender.com/api/channels/${channelId}/leave?username=${name}`
@@ -155,8 +155,6 @@ export default function ChannelScreen({ navigation, route }) {
             alert('Ошибка при подключении к серверу', error);
         }
     };
-
-
 
     const imageSource = selectedImage || (user && user.image);
     const handleCreateChannel = async () => {
@@ -193,7 +191,7 @@ export default function ChannelScreen({ navigation, route }) {
                 <Text style={{ color: '#000000', fontSize: Math.min(width * 0.03, height * 0.055), textAlign: 'center', marginBottom: 13, fontFamily: 'Montserrat-Regular', }}>{user.name}</Text>
                 {buttons.map((data, index) => (
                     <View style={{ width: '70%' }} key={index}>
-                        <BorderButton key={index} data={data} />
+                        <BorderButton  data={data} />
                     </View>
                 ))}
             </View>
